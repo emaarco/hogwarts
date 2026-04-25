@@ -1,0 +1,8 @@
+{
+  "name": "revelio",
+  "description": "Reveals what AI agents try and fail at — logs failed tool calls, API errors, and permission denials to .claude/logs/revelio.jsonl.",
+  "version": "0.1.0",
+  "author": { "name": "emaarco" },
+  "repository": "https://github.com/emaarco/hogwarts",
+  "license": "MIT"
+}

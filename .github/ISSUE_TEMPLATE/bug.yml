@@ -1,0 +1,57 @@
+name: Bug report
+description: Report a bug or broken behavior
+title: "<plugin>: <short description of the broken behavior>"
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep the title concise and prefix with the plugin (`agento-patronum:` or `revelio:`).
+        Example: `revelio: failed calls not appearing in log`.
+
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Plugin
+      options:
+        - agento-patronum
+        - revelio
+        - other / unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is broken?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical
+    attributes:
+      label: Technical context
+      description: "Optional: OS, Node version, Claude Code version, relevant log snippets."

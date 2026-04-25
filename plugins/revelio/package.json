@@ -1,0 +1,11 @@
+{
+  "name": "revelio",
+  "version": "0.1.0",
+  "description": "Reveals what AI agents try and fail at.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test \"hooks/**/*.test.mjs\""
+  }
+}

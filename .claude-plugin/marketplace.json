@@ -1,0 +1,21 @@
+{
+  "name": "emaarco",
+  "owner": {
+    "name": "emaarco"
+  },
+  "metadata": {
+    "description": "Claude Code plugins by emaarco — protection, observability, and more."
+  },
+  "plugins": [
+    {
+      "name": "agento-patronum",
+      "source": "./plugins/agento-patronum",
+      "description": "Protects sensitive files, credentials, and commands from unintended AI access via PreToolUse hooks."
+    },
+    {
+      "name": "revelio",
+      "source": "./plugins/revelio",
+      "description": "Reveals failed tool calls, API errors, and permission denials via per-repo JSONL log."
+    }
+  ]
+}

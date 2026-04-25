@@ -1,0 +1,51 @@
+name: Feature request
+description: Propose a new capability or enhancement
+title: "<plugin>: <short description of the feature>"
+labels:
+  - feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Both plugins stay intentionally small. Features that expand scope (new config surface, runtime deps, dashboards) need strong justification.
+
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Plugin
+      options:
+        - agento-patronum
+        - revelio
+        - new plugin / monorepo-wide
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do that the plugin doesn't yet support?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope impact
+      description: Does this add a config surface, a dependency, or a new event? How would you keep the change minimal?
+    validations:
+      required: false
