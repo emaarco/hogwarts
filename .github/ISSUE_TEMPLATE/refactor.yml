@@ -1,0 +1,47 @@
+name: Refactor proposal
+description: Suggest a structural or code-quality improvement
+title: "<plugin>: <short description of the refactor>"
+labels:
+  - refactor
+body:
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Plugin
+      options:
+        - agento-patronum
+        - revelio
+        - monorepo-wide (CI, structure, etc.)
+    validations:
+      required: true
+
+  - type: textarea
+    id: target
+    attributes:
+      label: Target area
+      description: Which files or modules?
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current shape
+      description: What does the code look like today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed shape
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: What does this make easier, safer, or faster? Any risk?
+    validations:
+      required: true
