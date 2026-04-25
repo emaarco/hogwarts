@@ -110,4 +110,7 @@ jobs:
           done
 
       - name: Run tests
-        run: node --test "hooks/**/*.test.mjs"
+        shell: bash
+        run: |
+          shopt -s globstar
+          node --test hooks/**/*.test.mjs
