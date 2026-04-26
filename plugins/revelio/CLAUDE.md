@@ -8,6 +8,8 @@ A Claude Code plugin that reveals failures. Every time a tool call fails, the tu
 
 `stdin (hook payload) → normalize for this event → append JSONL line → exit 0`
 
+On session start (`UserPromptSubmit`), `ensure-gitignore.js` idempotently adds `.claude/logs/` to the project `.gitignore` so log files are never accidentally committed.
+
 One hook script per event. Shared lib for stdin + log-path + append. No router, no config, no runtime deps.
 
 ## Files
@@ -20,6 +22,7 @@ One hook script per event. Shared lib for stdin + log-path + append. No router, 
 - `hooks/lib/read-stdin.js` — parse stdin JSON (null on error)
 - `hooks/lib/resolve-log-path.js` — compute log path with homedir fallback
 - `hooks/lib/append-record.js` — mkdir + append a JSONL line, never throws
+- `hooks/ensure-gitignore.js` — `UserPromptSubmit` entrypoint; idempotently adds `.claude/logs/` to `.gitignore`
 - `hooks/*.test.mjs` — co-located tests (every source file has one)
 - `hooks/multi-event.test.mjs` — cross-script sanity check
 - `skills/revelio/SKILL.md` — `/revelio` slash command
