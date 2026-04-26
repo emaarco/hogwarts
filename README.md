@@ -12,6 +12,7 @@ This repository is a Claude Code marketplace that bundles multiple plugins under
 
 # Install the plugins you want
 /plugin install agento-patronum@emaarco
+/plugin install felix-felicis@emaarco
 /plugin install revelio@emaarco
 ```
 
@@ -20,6 +21,7 @@ This repository is a Claude Code marketplace that bundles multiple plugins under
 | Plugin | What it does |
 |---|---|
 | [`agento-patronum`](./plugins/agento-patronum/) | Protects sensitive files, credentials, and commands from unintended AI access via PreToolUse hooks. |
+| [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — submit repos to awesome lists, draft meeting invitations, and more. |
 | [`revelio`](./plugins/revelio/) | Reveals failed tool calls, API errors, and permission denials by writing them to a per-repo JSONL log. |
 
 Each plugin has its own `README.md` and `CLAUDE.md` with full details.
@@ -32,6 +34,7 @@ hogwarts/
 ├── .github/workflows/                # Shared CI for all plugins
 └── plugins/
     ├── agento-patronum/
+    ├── felix-felicis/
     └── revelio/
 ```
 
