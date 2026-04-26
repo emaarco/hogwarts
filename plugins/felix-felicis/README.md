@@ -4,6 +4,10 @@ A Claude Code plugin for everyday automation tasks.
 
 ## Skills
 
+### `/analyze`
+
+Performs an end-to-end analysis of the current repository and delivers a structured Markdown report covering: project overview (problem, users, data flow, core abstractions), most important files, maturity assessment across six dimensions (documentation, dev tooling, tests, clean code, agent-skills, pipelines) using parallel expert subagents that benchmark against reference projects, and a prioritized issues list.
+
 ### `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`
 
 Analyzes a GitHub repository and adds it to an awesome list by submitting a PR or issue. Researches the repo, identifies the best-fit category, drafts the entry and submission body, confirms with you, then opens the PR or issue automatically.
