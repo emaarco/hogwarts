@@ -1,0 +1,10 @@
+{
+  "name": "felix-felicis",
+  "description": "Everyday automation skills — submit repos to awesome lists, draft meeting invitations, and more.",
+  "version": "0.1.0",
+  "author": {
+    "name": "emaarco"
+  },
+  "repository": "https://github.com/emaarco/hogwarts",
+  "license": "MIT"
+}

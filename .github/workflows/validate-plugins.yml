@@ -114,3 +114,23 @@ jobs:
         run: |
           shopt -s globstar
           node --test hooks/**/*.test.mjs
+
+  validate-felix-felicis:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugins/felix-felicis
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Validate JSON files
+        run: |
+          python3 -c "import json,sys; json.load(open('.claude-plugin/plugin.json'))" && echo "plugin.json: OK"
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          for f in skills/*/SKILL.md; do
+            head -10 "$f" | grep -q "^name:" || { echo "$f: missing name"; exit 1; }
+            head -10 "$f" | grep -q "^description:" || { echo "$f: missing description"; exit 1; }
+            echo "$f: frontmatter OK"
+          done
