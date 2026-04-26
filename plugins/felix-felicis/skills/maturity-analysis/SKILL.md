@@ -1,10 +1,10 @@
 ---
-name: analyze
+name: maturity-analysis
 description: "End-to-end repo analysis: project overview, key files, maturity assessment with expert subagents per dimension, and real issues found."
 allowed-tools: Agent, WebFetch, WebSearch, Bash, Read, Glob, Grep
 ---
 
-# Skill: analyze
+# Skill: maturity-analysis
 
 Performs a deep end-to-end analysis of the current repository and delivers a structured report across four sections.
 

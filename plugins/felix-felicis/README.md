@@ -4,7 +4,7 @@ A Claude Code plugin for everyday automation tasks.
 
 ## Skills
 
-### `/analyze`
+### `/maturity-analysis`
 
 Performs an end-to-end analysis of the current repository and delivers a structured Markdown report covering: project overview (problem, users, data flow, core abstractions), most important files, maturity assessment across six dimensions (documentation, dev tooling, tests, clean code, agent-skills, pipelines) using parallel expert subagents that benchmark against reference projects, and a prioritized issues list.
 

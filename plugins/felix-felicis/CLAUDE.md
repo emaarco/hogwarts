@@ -9,7 +9,7 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 
 ## Skills
 
-- **analyze** — End-to-end repo analysis: project overview, key files, maturity assessment (parallel expert subagents per dimension), and prioritized issues.
+- **maturity-analysis** — End-to-end repo analysis: project overview, key files, maturity assessment (parallel expert subagents per dimension), and prioritized issues.
 - **make-me-awesome** — Analyzes a GitHub repo and submits it to an awesome list via PR or issue.
 - **outlook-invitation** — Creates a German Outlook meeting invitation ready to copy-paste or auto-fill into a calendar event (macOS).
 
