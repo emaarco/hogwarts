@@ -4,7 +4,7 @@
     "name": "emaarco"
   },
   "metadata": {
-    "description": "Claude Code plugins by emaarco — protection, observability, and more."
+    "description": "Claude Code plugins by emaarco — protection, observability, automation, and more."
   },
   "plugins": [
     {
@@ -16,6 +16,11 @@
       "name": "revelio",
       "source": "./plugins/revelio",
       "description": "Reveals failed tool calls, API errors, and permission denials via per-repo JSONL log."
+    },
+    {
+      "name": "felix-felicis",
+      "source": "./plugins/felix-felicis",
+      "description": "Everyday automation skills — submit repos to awesome lists, draft meeting invitations, and more."
     }
   ]
 }
