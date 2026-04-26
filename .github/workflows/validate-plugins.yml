@@ -134,3 +134,12 @@ jobs:
             head -10 "$f" | grep -q "^description:" || { echo "$f: missing description"; exit 1; }
             echo "$f: frontmatter OK"
           done
+
+      - name: Validate command file frontmatter
+        run: |
+          for f in commands/*.md; do
+            head -10 "$f" | grep -q "^name:" || { echo "$f: missing name"; exit 1; }
+            head -10 "$f" | grep -q "^description:" || { echo "$f: missing description"; exit 1; }
+            head -10 "$f" | grep -q "^paths:" || { echo "$f: missing paths"; exit 1; }
+            echo "$f: frontmatter OK"
+          done
