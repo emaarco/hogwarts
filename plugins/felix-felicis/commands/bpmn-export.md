@@ -3,6 +3,7 @@ name: bpmn-export
 description: "BPMN image export guidance — auto-activated when working with .bpmn files."
 paths:
   - "**/*.bpmn"
+user-invocable: false
 ---
 
 # BPMN Image Export
