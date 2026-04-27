@@ -1,7 +1,7 @@
 ---
 name: medium-publish
 description: "Publish a markdown blog post to Medium via GitHub Gist import. Transforms headings to bold, creates a Gist, opens Medium's import page, then deletes the Gist."
-allowed-tools: AskUserQuestion, Bash(gh gist create:*), Bash(gh gist delete:*), Bash(open:*), Bash(sed:*), Bash(mktemp:*), Bash(rm:*)
+allowed-tools: AskUserQuestion, Bash(gh gist create:*), Bash(gh gist delete:*), Bash(open:*), Bash(pbcopy:*)
 ---
 
 # Skill: medium-publish
@@ -26,26 +26,27 @@ Please provide the full path to your .md file.
 
 ## Step 2 — Transform headings
 
-Create a temporary file with all markdown headings converted to bold:
+Read the file at `<input-path>`. For every line that starts with one or more `#` characters followed by a space, replace it with the heading text wrapped in `**...**`. Leave all other lines exactly unchanged. Hold the full transformed content in memory — do NOT write it to disk.
 
-```bash
-TMPFILE=$(mktemp /tmp/medium-publish-XXXXXX.md)
-sed -E 's/^#{1,6}[[:space:]]+(.*)/\*\*\1\*\*/' "<input-file>" > "$TMPFILE"
-```
-
-This converts `# Title`, `## Section`, `### Subsection`, etc. → `**Title**`, `**Section**`, `**Subsection**`.
+Example:
+- `# My Title` → `**My Title**`
+- `## Section` → `**Section**`
+- `### Sub` → `**Sub**`
+- `Normal paragraph` → `Normal paragraph` (unchanged)
 
 ## Step 3 — Create public Gist
 
+Pipe the transformed content directly into `gh gist create` — no temp file:
+
 ```bash
-GIST_URL=$(gh gist create --public "$TMPFILE" 2>&1 | tail -n1)
-GIST_ID=$(echo "$GIST_URL" | grep -o '[a-f0-9]\{32\}')
+printf '%s' "<transformed-content>" | gh gist create --public --filename "post.md" -
 ```
 
-Remove the temp file immediately after:
+Extract the Gist URL and ID:
 
 ```bash
-rm "$TMPFILE"
+GIST_URL=$(... | tail -n1)
+GIST_ID=$(echo "$GIST_URL" | grep -o '[a-f0-9]\{32\}')
 ```
 
 ## Step 4 — Confirm and open browser
@@ -96,9 +97,31 @@ Steps to complete:
 Have you finished importing in Medium?
 ```
 
-Options: "Yes, import done — delete the Gist" / "Not yet (wait)" / "Something went wrong — delete the Gist anyway"
+Options:
+- "Yes, import done — delete the Gist"
+- "Not yet (wait)"
+- "Something went wrong — delete the Gist anyway"
+- "The link didn't open — copy Gist URL to clipboard"
 
 If "Not yet": show the same question again (loop once more, then proceed regardless).
+
+If "The link didn't open — copy Gist URL to clipboard":
+
+```bash
+echo "$GIST_URL" | pbcopy
+```
+
+Then tell the user:
+
+```
+Gist URL copied to clipboard!
+
+To import manually:
+1. Go to https://medium.com/p/import-story
+2. Paste the Gist URL into the import field and click Import
+```
+
+Then loop back to the same Step 6 question so the user can signal completion or delete.
 
 ## Step 7 — Delete Gist and report
 
