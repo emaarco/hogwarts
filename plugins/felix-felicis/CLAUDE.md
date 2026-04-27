@@ -11,6 +11,7 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 
 - **maturity-analysis** — End-to-end repo analysis: project overview, key files, maturity assessment (parallel expert subagents per dimension), and prioritized issues.
 - **make-me-awesome** — Analyzes a GitHub repo and submits it to an awesome list via PR or issue.
+- **medium-publish** — Publishes a Markdown file to Medium via a temporary GitHub Gist import.
 - **outlook-invitation** — Creates a German Outlook meeting invitation ready to copy-paste or auto-fill into a calendar event (macOS).
 
 ## Rules
@@ -19,6 +20,7 @@ Path-scoped rules in `commands/` are flat `.md` files with `paths:` frontmatter.
 
 - **bpmn-export** (`**/*.bpmn`) — Use `npx bpmn-to-image` to generate images from BPMN files.
 - **kotlin-style** (`**/*.kt`) — Collection literal and function-body style conventions.
+- **typescript-style** (`**/*.ts`, `**/*.tsx`) — Descriptive variable naming conventions (no abbreviations).
 
 ## Adding a New Skill
 
