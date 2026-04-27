@@ -30,7 +30,7 @@ Create a temporary file with all markdown headings converted to bold:
 
 ```bash
 TMPFILE=$(mktemp /tmp/medium-publish-XXXXXX.md)
-sed 's/^#\+[[:space:]]\(.*\)$/\*\*\1\*\*/g' "<input-file>" > "$TMPFILE"
+sed -E 's/^#{1,6}[[:space:]]+(.*)/\*\*\1\*\*/' "<input-file>" > "$TMPFILE"
 ```
 
 This converts `# Title`, `## Section`, `### Subsection`, etc. → `**Title**`, `**Section**`, `**Subsection**`.
