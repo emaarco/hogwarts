@@ -21,6 +21,7 @@ Path-scoped rules in `commands/` are flat `.md` files with `paths:` frontmatter.
 
 - **kotlin-style** (`**/*.kt`) — Collection literal and function-body style conventions.
 - **typescript-style** (`**/*.ts`, `**/*.tsx`) — Descriptive variable naming conventions (no abbreviations).
+- **package-json-style** (`**/package.json`) — Enforce exact/fixed dependency versions; no `^`, `~`, or other ranges.
 
 ## Adding a New Skill
 
