@@ -8,6 +8,14 @@ A Claude Code plugin for everyday automation tasks.
 
 Performs an end-to-end analysis of the current repository and delivers a structured Markdown report covering: project overview (problem, users, data flow, core abstractions), most important files, maturity assessment across six dimensions (documentation, dev tooling, tests, clean code, agent-skills, pipelines) using parallel expert subagents that benchmark against reference projects, and a prioritized issues list.
 
+### `/pin-github-actions`
+
+Supply-chain audit of GitHub Actions: verifies every `uses:` reference is pinned to a full commit SHA (not a mutable `@v4` tag or `@main` branch), reports unpinned references with `file:line` evidence and severity, optionally rewrites them to SHA + version comment, and recommends Dependabot/Scorecard enforcement.
+
+### `/pin-node-dependencies`
+
+Supply-chain audit of Node.js (js/ts) dependencies: verifies every `package.json` spec is pinned to an exact version (no `^`/`~`/`>=`/`*`/`latest`/mutable git refs), checks the lockfile is committed, optionally rewrites ranges to exact pins with `save-exact`, and wires up the `Miragon/pin-npm-dependencies` CI guardrail plus Dependabot cooldown.
+
 ### `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`
 
 Analyzes a GitHub repository and adds it to an awesome list by submitting a PR or issue. Researches the repo, identifies the best-fit category, drafts the entry and submission body, confirms with you, then opens the PR or issue automatically.

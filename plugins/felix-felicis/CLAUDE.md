@@ -10,6 +10,8 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 ## Skills
 
 - **maturity-analysis** — End-to-end repo analysis: project overview, key files, maturity assessment (parallel expert subagents per dimension), and prioritized issues.
+- **pin-github-actions** — Supply-chain audit: verifies every GitHub Actions `uses:` reference is pinned to a full commit SHA, reports unpinned references, and optionally rewrites them to SHA + version comment.
+- **pin-node-dependencies** — Supply-chain audit: verifies every `package.json` dependency is pinned to an exact version, checks the committed lockfile, and wires up the `Miragon/pin-npm-dependencies` CI guardrail + `save-exact`.
 - **make-me-awesome** — Analyzes a GitHub repo and submits it to an awesome list via PR or issue.
 - **medium-publish** — Publishes a Markdown file to Medium via a temporary GitHub Gist import.
 - **outlook-invitation** — Creates a German Outlook meeting invitation ready to copy-paste or auto-fill into a calendar event (macOS).
