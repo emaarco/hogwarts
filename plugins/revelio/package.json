@@ -1,6 +1,6 @@
 {
   "name": "revelio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Reveals what AI agents try and fail at.",
   "type": "module",
   "private": true,
