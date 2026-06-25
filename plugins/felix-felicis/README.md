@@ -16,6 +16,10 @@ Supply-chain audit of GitHub Actions: verifies every `uses:` reference is pinned
 
 Supply-chain audit of Node.js (js/ts) dependencies: verifies every `package.json` spec is pinned to an exact version (no `^`/`~`/`>=`/`*`/`latest`/mutable git refs), checks the lockfile is committed, optionally rewrites ranges to exact pins with `save-exact`, and wires up the `Miragon/pin-npm-dependencies` CI guardrail plus Dependabot cooldown.
 
+### `/portless-dev-setup`
+
+Adopts [portless](https://portless.sh) for stable, git-worktree-aware `.localhost` dev URLs following its documented best practices — pinned devDependency, explicit `portless.json`, and a `dev`/`dev:app` script split (never a hand-rolled slug or `sh -c` wrapper) — then wires it into Conductor via `.conductor/settings.toml`. Detects the stack first, wraps only the JS/TS frontend dev server, and researches per-workspace isolation (`CONDUCTOR_PORT`, `COMPOSE_PROJECT_NAME`, `portless alias`, …) for the backends, databases, and Docker stacks portless can't cover. Stages edits and shows the diff without committing.
+
 ### `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`
 
 Analyzes a GitHub repository and adds it to an awesome list by submitting a PR or issue. Researches the repo, identifies the best-fit category, drafts the entry and submission body, confirms with you, then opens the PR or issue automatically.
