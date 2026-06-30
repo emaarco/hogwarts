@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.6.0...felix-felicis-v0.7.0) (2026-06-25)
+
+
+### Features
+
+* **felix-felicis:** add portless-dev-setup skill ([#21](https://github.com/emaarco/hogwarts/issues/21)) ([44274ff](https://github.com/emaarco/hogwarts/commit/44274fff32d9efa1aafaf1589f367fcdf66de7e0))
+
 ## 0.6.0 (2026-06-24)
 
 
