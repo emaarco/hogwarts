@@ -10,7 +10,7 @@ jobs:
   validate-marketplace:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Ensure jq is available
         run: |
@@ -36,7 +36,7 @@ jobs:
       run:
         working-directory: plugins/agento-patronum
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Ensure jq is available
         run: |
@@ -88,7 +88,7 @@ jobs:
       run:
         working-directory: plugins/revelio
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -121,7 +121,7 @@ jobs:
       run:
         working-directory: plugins/felix-felicis
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Validate JSON files
         run: |
