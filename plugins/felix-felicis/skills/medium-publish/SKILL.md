@@ -1,16 +1,18 @@
 ---
 name: medium-publish
-description: "Publish a markdown blog post to Medium via GitHub Gist import. Transforms headings to bold, creates a Gist, opens Medium's import page, then deletes the Gist."
+description: "Publish a markdown blog post to Medium via GitHub Gist import. Transforms headings to bold, creates a Gist, copies its URL to the clipboard, and opens Medium's import page for you to finish manually."
 allowed-tools: AskUserQuestion, Bash(gh gist create:*), Bash(gh gist delete:*), Bash(open:*), Bash(pbcopy:*)
 ---
 
 # Skill: medium-publish
 
-Publishes a markdown blog post to Medium by creating a temporary public GitHub Gist and opening Medium's import page.
+Prepares a markdown blog post for Medium by creating a temporary public GitHub Gist, copying its URL to the clipboard, and opening Medium's import page so you can paste the link and finish the import manually.
 
 **Why Gist?** Medium's import feature requires a publicly accessible URL. GitHub Gists are public and immediately accessible, making them ideal as a transport layer. The Gist is deleted after import.
 
 **Why heading transformation?** Medium's importer drops markdown heading syntax (`#`, `##`, etc.). Converting headings to bold (`**...**`) preserves visual hierarchy.
+
+**Why not build an import link?** Medium's import deep-links are brittle. Instead we open Medium's import page and hand you the Gist URL on the clipboard — you paste it and import manually, which is reliable and keeps you in control.
 
 ## Step 1 — Collect input
 
@@ -49,51 +51,35 @@ GIST_URL=$(... | tail -n1)
 GIST_ID=$(echo "$GIST_URL" | grep -o '[a-f0-9]\{32\}')
 ```
 
-## Step 4 — Confirm and open browser
+## Step 4 — Copy the Gist URL and open Medium's import page
 
-Build the Medium import URL:
-
-```bash
-ENCODED_GIST=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$GIST_URL', safe=''))")
-MEDIUM_IMPORT_URL="https://medium.com/p/import-story?importUrl=${ENCODED_GIST}"
-```
-
-Show the user the URLs and ask for confirmation via `AskUserQuestion`:
-
-```
-Ready to publish to Medium!
-
-Gist URL: <gist-url>
-Medium import URL: <medium-import-url>
-
-Note: Medium will use your active browser session. Make sure you are logged in to Medium before continuing.
-
-Shall I open the Medium import page in your browser?
-```
-
-Options: "Yes, open Medium" / "Cancel"
-
-If cancelled: delete the Gist (`gh gist delete <gist-id>`) and stop.
-
-## Step 5 — Open browser
+Copy the Gist URL to the clipboard and open Medium's import page:
 
 ```bash
-open "$MEDIUM_IMPORT_URL"
+echo "$GIST_URL" | pbcopy
+open "https://medium.com/p/import"
 ```
 
-## Step 6 — Wait for import completion
+Then tell the user:
+
+```
+Gist URL copied to clipboard: <gist-url>
+
+Medium's import page is now open in your browser.
+
+To finish (manually):
+1. Make sure you're logged in to Medium.
+2. Paste the Gist URL (already on your clipboard) into the import field.
+3. Click "Import" and review the preview.
+
+Tip: from your profile you can also reach this via your picture → Stories → "Import a story".
+```
+
+## Step 5 — Wait for import completion
 
 Ask via `AskUserQuestion`:
 
 ```
-Medium's import page is now open in your browser.
-
-Steps to complete:
-1. Medium will show a preview of your post
-2. Review the content looks correct
-3. Click "Import" to confirm
-4. Once imported, come back here
-
 Have you finished importing in Medium?
 ```
 
@@ -101,29 +87,19 @@ Options:
 - "Yes, import done — delete the Gist"
 - "Not yet (wait)"
 - "Something went wrong — delete the Gist anyway"
-- "The link didn't open — copy Gist URL to clipboard"
+- "Copy the Gist URL to clipboard again"
 
 If "Not yet": show the same question again (loop once more, then proceed regardless).
 
-If "The link didn't open — copy Gist URL to clipboard":
+If "Copy the Gist URL to clipboard again":
 
 ```bash
 echo "$GIST_URL" | pbcopy
 ```
 
-Then tell the user:
+Then loop back to the same Step 5 question so the user can signal completion or delete.
 
-```
-Gist URL copied to clipboard!
-
-To import manually:
-1. Go to https://medium.com/p/import-story
-2. Paste the Gist URL into the import field and click Import
-```
-
-Then loop back to the same Step 6 question so the user can signal completion or delete.
-
-## Step 7 — Delete Gist and report
+## Step 6 — Delete Gist and report
 
 ```bash
 gh gist delete "$GIST_ID"
@@ -137,3 +113,5 @@ Done! The Gist has been deleted.
 Your post is now in Medium's editor as a draft. You can find it at:
 https://medium.com/me/stories/drafts
 ```
+</content>
+</invoke>
