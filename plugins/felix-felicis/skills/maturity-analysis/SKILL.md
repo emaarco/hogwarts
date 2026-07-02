@@ -53,7 +53,7 @@ Launch all six subagents **in parallel** (single message, multiple Agent tool ca
 
 ### Subagent 6 — Pipelines
 **Persona:** CI/CD specialist who has designed pipelines for production systems.
-**Assess:** the full CI/CD build-up. Search for general best practices as well as practices specific to the detected technologies and frameworks. Identify what's mature, what's missing, structural improvements, and any current issues (e.g. slow jobs, missing cache, no deploy step). Search for reference projects with exemplary pipelines on this stack. Rate 0–10: what exists, what's missing, highest-value next step.
+**Assess:** the full CI/CD build-up. Search for general best practices as well as practices specific to the detected technologies and frameworks. Identify what's mature, what's missing, structural improvements, and any current issues (e.g. slow jobs, missing cache, no deploy step). Search for reference projects with exemplary pipelines on this stack. Rate 0–10: what exists, what's missing, highest-value next step. For a dedicated release/supply-chain deep-dive, recommend the sibling skill **`release-audit`** as the follow-up.
 
 ## Phase 4 — Issues Found
 

@@ -10,7 +10,7 @@ Analyzes `.github/dependabot.yml` and brings it to a known-good baseline — cre
 
 Also verifies the precondition that makes Dependabot useful at all: **manifest versions must be fixed/exact**. If versions float (`^1.2.3`, `~1.2.3`, `latest`, a mutable tag), the resolved dependency drifts on every install and Dependabot PRs stop reflecting what actually runs — flag this for every ecosystem, always.
 
-Run this when asked to "set up dependabot", review an existing dependabot config, or as the dependency-automation slice of a repo maturity/supply-chain audit.
+Run this when asked to "set up dependabot", review an existing dependabot config, or as the dependency-automation slice of a repo maturity/supply-chain audit (see the sibling skill **`release-audit`**).
 
 ## Phase 1 — Detect ecosystems
 
