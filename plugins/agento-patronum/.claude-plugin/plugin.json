@@ -1,7 +1,7 @@
 {
   "name": "agento-patronum",
   "description": "Protects sensitive files, credentials, and commands from unintended AI access via PreToolUse hooks.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "emaarco"
   },
