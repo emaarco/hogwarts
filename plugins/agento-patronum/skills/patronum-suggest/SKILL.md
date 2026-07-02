@@ -42,6 +42,10 @@ Based on detected stack and web research, suggest patterns that are NOT yet prot
 - **Vault**: `~/.vault-token`
 - **GPG**: `~/.gnupg/*`
 
+Also suggest **command patterns** where the stack warrants it, using the `Bash(<command>)` prefix-match format (see `docs/rules/bash-commands.md`), e.g. `Bash(aws sts)`, `Bash(gcloud auth print-access-token)`, `Bash(printenv)`.
+
+This catalogue can go stale — verify each path against the web research from Step 2 before suggesting it (e.g. Azure's `accessTokens.json` only exists on older CLI versions; modern ones use the MSAL token cache).
+
 Include any additional patterns discovered via web search.
 
 ### 5. Confirm with user
