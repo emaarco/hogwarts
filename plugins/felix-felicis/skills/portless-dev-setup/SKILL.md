@@ -30,7 +30,7 @@ git ls-files | grep -E 'vite\.config|next\.config|svelte\.config|astro\.config|s
 
 # Other components that portless does NOT cover
 git ls-files | grep -E '(docker-compose|compose)\.ya?ml$|Dockerfile|Makefile|Taskfile|pom\.xml|build\.gradle|go\.mod|requirements\.txt|pyproject\.toml'
-cat package.json | jq '.workspaces'   # monorepo?
+cat package.json | jq '.workspaces'   # monorepo? if yes, repeat the script/config inspection for each workspace package.json — the frontend's dev script usually lives there, not at the root
 
 # Is portless already wired in?
 cat package.json | jq '.dependencies.portless, .devDependencies.portless, .portless, .scripts'
@@ -74,6 +74,8 @@ run = "npm run dev"
 run_mode = "concurrent"
 ```
 
+Substitute the package manager detected in Phase 0 (`pnpm install` / `pnpm dev`, `yarn` / `yarn dev`, `bun install` / `bun dev`) — the snippet shows npm only as the default.
+
 - `run = "npm run dev"` gives each Conductor workspace its own `<workspace>.<project>.localhost` — **no `CONDUCTOR_PORT` threading needed for the frontend.**
 - `concurrent` is safe **only** because each worktree gets a distinct portless subdomain. If the repo has a shared single-instance resource (one fixed port, one DB, one Docker stack) that can't be made per-workspace, use `run_mode = "nonconcurrent"`.
 - The headless Run button has **no TTY for sudo**, so the proxy daemon must already be installed (`npx portless service install`). Note this in the docs.
@@ -98,10 +100,15 @@ portless **only** helps a JS/TS HTTP dev server. It does **not** isolate backend
 3. **For non-FE parts** — a concrete, researched isolation recommendation with trade-offs.
 4. **Verification, then stop:**
    ```bash
-   npm run dev --silent &              # resolves to portless without recursion
    node_modules/.bin/portless --version   # local binary resolves
    jq . portless.json                  # valid JSON
    # validate .conductor/settings.toml parses
+   ```
+   Then a self-terminating dev-server check — start it in the background, watch its output for the portless URL banner (`https://<worktree>.<project>.localhost` — that line appearing is the pass criterion), and always kill it afterwards:
+   ```bash
+   npm run dev > /tmp/portless-check.log 2>&1 &
+   sleep 8; grep -m1 '\.localhost' /tmp/portless-check.log   # pass: prints the portless URL
+   kill %1 2>/dev/null
    ```
    Show the diff — **do not commit.**
 

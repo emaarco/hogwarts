@@ -1,6 +1,6 @@
 ---
 name: maturity-analysis
-description: "End-to-end repo analysis: project overview, key files, maturity assessment with expert subagents per dimension, and real issues found."
+description: "End-to-end repo analysis: project overview, key files, maturity assessment with expert subagents per dimension, and real issues found. Use when asked how mature a repo is, to assess or audit a codebase, or for a project health check."
 allowed-tools: Agent, WebFetch, WebSearch, Bash, Read, Glob, Grep
 ---
 
@@ -10,7 +10,7 @@ Performs a deep end-to-end analysis of the current repository and delivers a str
 
 ## Phase 1 — Project Overview
 
-Launch a single Explore subagent to sweep the repository. Instruct it to read the README, entry points, main modules, and core types, then report back on:
+Launch a single Explore subagent (or a general-purpose subagent if the Explore type is unavailable) to sweep the repository. Instruct it to read the README, entry points, main modules, and core types, then report back on:
 
 - What problem the project solves (2–3 sentences, plain language)
 - Who uses it and how (consumers, dependents, runtime context)
@@ -53,11 +53,11 @@ Launch all six subagents **in parallel** (single message, multiple Agent tool ca
 
 ### Subagent 6 — Pipelines
 **Persona:** CI/CD specialist who has designed pipelines for production systems.
-**Assess:** the full CI/CD build-up. Search for general best practices as well as practices specific to the detected technologies and frameworks. Identify what's mature, what's missing, structural improvements, and any current issues (e.g. slow jobs, missing cache, no deploy step). Search for reference projects with exemplary pipelines on this stack. Rate 0–10: what exists, what's missing, highest-value next step.
+**Assess:** the full CI/CD build-up. Search for general best practices as well as practices specific to the detected technologies and frameworks. Identify what's mature, what's missing, structural improvements, and any current issues (e.g. slow jobs, missing cache, no deploy step). Search for reference projects with exemplary pipelines on this stack. Rate 0–10: what exists, what's missing, highest-value next step. For a dedicated release/supply-chain deep-dive, recommend the sibling skill **`release-audit`** as the follow-up.
 
 ## Phase 4 — Issues Found
 
-Read **all** source files. For each real issue (bug, design problem, type-safety gap, missing error handling, architectural inconsistency) report:
+Cover **all** source files — but not in your own context: for small repos (up to ~50 source files) read them directly; above that, fan out parallel subagents (one per top-level directory or package) that each read their slice and return an issue list, then merge and dedupe. For each real issue (bug, design problem, type-safety gap, missing error handling, architectural inconsistency) report:
 
 - File path + approximate line number
 - Severity: `Critical` / `High` / `Medium` / `Low`

@@ -28,6 +28,26 @@ Analyzes a GitHub repository and adds it to an awesome list by submitting a PR o
 
 Creates a professional German Outlook meeting invitation with context, goals, agenda, and emojis — ready to copy-paste or auto-fill into a new calendar event (macOS auto-fill requires Terminal accessibility permission).
 
+## Beta Skills
+
+New skills that are not yet battle-tested on real repos — expect rough edges and review their output more carefully.
+
+### `/branch-ruleset-setup`
+
+Sets up an idempotent GitHub branch ruleset on the default branch via `gh api`: no deletion, no force-push, linear history, signed commits, PR-only changes, and a required CI status check whose `integration_id` is resolved dynamically instead of hardcoded.
+
+### `/release-please-setup`
+
+Sets up release-please (config + manifest + workflow) authenticated with a GitHub App token — never the default `GITHUB_TOKEN`, whose PRs trigger no CI runs. Supports two versioning models with ready-to-copy config templates: a shared version line (all modules in lockstep) or independent versions per module, chosen interactively.
+
+### `/secure-publish-setup`
+
+Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, an idempotent skip-if-already-published step, and GitHub Environments for any unavoidable long-lived secrets.
+
+### `/release-audit`
+
+Orchestrator: evidence-based release & supply-chain readiness audit with an adversarial review subagent. Grades versioning, secure publishing, CI, PR validation, and supply-chain hardening against a gold-standard reference and delegates fixes to the matching setup skills.
+
 ## Rules
 
 The following rules are bundled as plugin commands and auto-activate when you work on matching file types.
