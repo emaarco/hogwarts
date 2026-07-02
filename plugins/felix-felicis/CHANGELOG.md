@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.7.0...felix-felicis-v0.7.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* **felix-felicis:** open Medium import page in medium-publish instead of building import link ([#25](https://github.com/emaarco/hogwarts/issues/25)) ([8ec1cc3](https://github.com/emaarco/hogwarts/commit/8ec1cc38bdf57fdd6af59169fbaa7acfa1ae44b0))
+
 ## [0.7.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.6.0...felix-felicis-v0.7.0) (2026-06-25)
 
 
