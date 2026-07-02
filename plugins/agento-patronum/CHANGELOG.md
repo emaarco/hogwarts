@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/emaarco/hogwarts/compare/agento-patronum-v0.1.0...agento-patronum-v0.1.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* resolve skill audit findings in agento-patronum and revelio ([#28](https://github.com/emaarco/hogwarts/issues/28)) ([4ee4fe7](https://github.com/emaarco/hogwarts/commit/4ee4fe716dfeb610453d107666b9f9d29934f0cc))
+
 ## 0.1.0 (2026-04-25)
 
 
