@@ -18,6 +18,8 @@ A reference is **pinned** only when the ref after `@` is a full 40-hex-character
 uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 ```
 
+(The SHA/version above only illustrates the format — never copy it; resolve the current SHA fresh via the Phase 3 commands.)
+
 | Reference form | Verdict |
 |---|---|
 | `owner/repo@<40-hex-sha>` | ✅ pinned |
