@@ -14,15 +14,20 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 - **pin-node-dependencies** — Supply-chain audit: verifies every `package.json` dependency is pinned to an exact version, checks the committed lockfile, and wires up the `Miragon/pin-npm-dependencies` CI guardrail + `save-exact`.
 - **dependabot-setup** — Analyzes and creates/updates `.github/dependabot.yml`: one block per detected ecosystem, minor+patch grouped, majors as separate PRs, reviewers via CODEOWNERS (deprecated `reviewers` key flagged), and flags floating dependency versions that make Dependabot PRs meaningless.
 - **contributor-setup** — Analyzes contributor experience and creates/updates what's missing: issue-form templates, an open-source target-group-focused README, CONTRIBUTING.md, and the remaining community-health files (PR template, CoC, SECURITY, LICENSE, CODEOWNERS).
-- **branch-ruleset-setup** `[beta]` — Sets up an idempotent GitHub branch ruleset on the default branch via `gh api` (no deletion, no force-push, linear history, signed commits, PR-only, required CI check with dynamically resolved `integration_id`).
-- **release-please-setup** `[beta]` — Sets up release-please (config + manifest + workflow) with a GitHub App token for authentication (never the default `GITHUB_TOKEN`), plus Conventional-Commit PR-title validation for squash-merge repos.
-- **secure-publish-setup** `[beta]` — Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN`, automatic provenance, idempotent publish step, GitHub Environments for unavoidable long-lived secrets.
-- **release-audit** `[beta]` — Orchestrator: evidence-based release & supply-chain readiness audit with an adversarial review subagent; delegates fixes to the setup skills above (`pin-*`, `dependabot-setup`, `branch-ruleset-setup`, `release-please-setup`, `secure-publish-setup`, `contributor-setup`).
 - **make-me-awesome** — Analyzes a GitHub repo and submits it to an awesome list via PR or issue.
 - **medium-publish** — Publishes a Markdown file to Medium via a temporary GitHub Gist import.
 - **outlook-invitation** — Creates a German Outlook meeting invitation ready to copy-paste or auto-fill into a calendar event (macOS).
 - **bpmn-export** — Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 - **portless-dev-setup** — Adopts portless (pinned devDependency + `portless.json` + `dev`/`dev:app` split) for stable, worktree-aware `.localhost` dev URLs, wires it into `.conductor/settings.toml`, and researches per-workspace isolation for the non-frontend components portless can't cover.
+
+### Beta Skills
+
+New and not yet battle-tested on real repos — see [Skill Status](#skill-status).
+
+- **branch-ruleset-setup** — Sets up an idempotent GitHub branch ruleset on the default branch via `gh api` (no deletion, no force-push, linear history, signed commits, PR-only, required CI check with dynamically resolved `integration_id`).
+- **release-please-setup** — Sets up release-please (config + manifest + workflow) with a GitHub App token for authentication (never the default `GITHUB_TOKEN`), plus Conventional-Commit PR-title validation for squash-merge repos.
+- **secure-publish-setup** — Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN`, automatic provenance, idempotent publish step, GitHub Environments for unavoidable long-lived secrets.
+- **release-audit** — Orchestrator: evidence-based release & supply-chain readiness audit with an adversarial review subagent; delegates fixes to sibling skills (`pin-*`, `dependabot-setup`, `branch-ruleset-setup`, `release-please-setup`, `secure-publish-setup`, `contributor-setup`).
 
 ## Rules
 
@@ -34,9 +39,9 @@ Path-scoped rules in `commands/` are flat `.md` files with `paths:` frontmatter.
 
 ## Skill Status
 
-Skills marked `[beta]` in the list above are new and not yet battle-tested on real repos — expect rough edges and review their output more carefully. The flag lives in two places that must stay in sync:
+Skills under **Beta Skills** are new and not yet battle-tested on real repos — expect rough edges and review their output more carefully. The flag lives in two places that must stay in sync:
 
-1. This list — a `[beta]` tag after the skill name.
+1. The skill list — beta skills go in the separate **Beta Skills** list, stable skills in the main list.
 2. The skill's frontmatter — via the spec's free-form `metadata` map (the [agentskills.io specification](https://agentskills.io/specification) reserves `metadata` for arbitrary key-value pairs; Claude Code ignores it):
 
    ```yaml
@@ -44,7 +49,7 @@ Skills marked `[beta]` in the list above are new and not yet battle-tested on re
      status: beta
    ```
 
-A skill graduates (drop the tag + the `metadata.status` key) once it has been run successfully against at least a couple of real repos. No tag / no `status` key means stable.
+A skill graduates (move it to the main list + drop the `metadata.status` key) once it has been run successfully against at least a couple of real repos. Main list / no `status` key means stable.
 
 ## Adding a New Skill
 
