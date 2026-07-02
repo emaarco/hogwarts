@@ -39,21 +39,16 @@ Path-scoped rules in `commands/` are flat `.md` files with `paths:` frontmatter.
 
 ## Skill Status
 
-Skills under **Beta Skills** are new and not yet battle-tested on real repos — expect rough edges and review their output more carefully. The flag lives in two places that must stay in sync:
+Skills under **Beta Skills** are new and not yet battle-tested on real repos — expect rough edges and review their output more carefully. The categorization lives in two places that must stay in sync (never in the SKILL.md frontmatter):
 
-1. The skill list — beta skills go in the separate **Beta Skills** list, stable skills in the main list.
-2. The skill's frontmatter — via the spec's free-form `metadata` map (the [agentskills.io specification](https://agentskills.io/specification) reserves `metadata` for arbitrary key-value pairs; Claude Code ignores it):
+1. This file — beta skills go in the separate **Beta Skills** list, stable skills in the main list.
+2. `README.md` — the same split under its **Beta Skills** section.
 
-   ```yaml
-   metadata:
-     status: beta
-   ```
-
-A skill graduates (move it to the main list + drop the `metadata.status` key) once it has been run successfully against at least a couple of real repos. Main list / no `status` key means stable.
+A skill graduates (move it to the main list in both files) once it has been run successfully against at least a couple of real repos. Main list means stable.
 
 ## Adding a New Skill
 
-Create `skills/<skill-name>/SKILL.md` with standard frontmatter (add `metadata.status: beta` for new skills per the Skill Status section):
+Create `skills/<skill-name>/SKILL.md` with standard frontmatter (list new skills under **Beta Skills** in this file and `README.md` per the Skill Status section):
 
 ```
 ---
