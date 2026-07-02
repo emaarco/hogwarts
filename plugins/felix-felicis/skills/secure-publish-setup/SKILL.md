@@ -2,6 +2,8 @@
 name: secure-publish-setup
 description: "Sets up tokenless npm publishing via OIDC trusted publishing: no NPM_TOKEN secret, automatic provenance attestations, an idempotent skip-if-already-published step, a reusable workflow_call structure, and GitHub Environments for any unavoidable long-lived secrets. Use when asked to publish npm packages securely, remove or replace NPM_TOKEN, or set up trusted publishing / provenance."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
+metadata:
+  status: beta
 ---
 
 # Skill: secure-publish-setup

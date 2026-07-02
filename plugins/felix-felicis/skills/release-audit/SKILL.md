@@ -2,6 +2,8 @@
 name: release-audit
 description: "Release & supply-chain readiness audit: gathers evidence from real workflows, manifests, and repo settings, compares against a gold-standard reference stack, has an adversarial subagent try to refute the draft, and returns a prioritized action plan (P1–P3) whose fixes are delegated to the sibling setup skills. Use when asked to audit release automation, publishing security, CI or supply-chain maturity, or whether a repo is ready to release. For a whole-repo health check (docs, tests, code quality) use maturity-analysis instead."
 allowed-tools: Agent, Bash, Read, Grep, Glob, WebFetch, WebSearch, AskUserQuestion
+metadata:
+  status: beta
 ---
 
 # Skill: release-audit

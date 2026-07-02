@@ -2,6 +2,8 @@
 name: branch-ruleset-setup
 description: "Sets up a GitHub branch ruleset protecting the default branch via the gh CLI: no deletion, no force-push, linear history, signed commits, PR-only changes, and a required CI status check with a dynamically resolved integration_id. Idempotent — creates the ruleset or updates an existing one. Use when asked to protect the default branch, set up branch protection or rulesets, or require status checks before merge."
 allowed-tools: Bash, Read, Write, Grep, Glob, AskUserQuestion
+metadata:
+  status: beta
 ---
 
 # Skill: branch-ruleset-setup

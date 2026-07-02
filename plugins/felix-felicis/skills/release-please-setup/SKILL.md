@@ -2,6 +2,8 @@
 name: release-please-setup
 description: "Sets up release-please for automated versioning, changelogs, and GitHub releases driven by Conventional Commits: config + manifest files, a release workflow authenticated with a GitHub App token (never the default GITHUB_TOKEN), and PR-title validation for squash-merge repos. Use when asked to set up release automation, automated versioning or changelogs, or release-please."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
+metadata:
+  status: beta
 ---
 
 # Skill: release-please-setup
