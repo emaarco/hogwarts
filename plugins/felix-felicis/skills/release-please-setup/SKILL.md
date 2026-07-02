@@ -17,11 +17,11 @@ Run this when asked to "set up release automation" / release-please, or as the v
 
 Determine single package vs. multi-module (`workspaces` in `package.json`, multiple manifests/plugins) and the ecosystem — `release-type: node` for JS/TS packages, `simple` for anything release-please has no native type for (version files bumped via `extra-files`); see the [release-please docs](https://github.com/googleapis/release-please/blob/main/docs/customizing.md) for `python`, `go`, etc.
 
-For a multi-module repo, **ask the user which model fits (AskUserQuestion)** — this is a product decision, not a technical one:
+Work out a proposal from that evidence, but **confirm it with the user via AskUserQuestion before writing any config**: present the detected topology and `release-type`, and — for a multi-module repo — the versioning model, with your recommendation marked as such. The model is a product decision, not a technical one:
 
-| Model | Behavior | Choose when | Reference / template |
-|---|---|---|---|
-| **Shared version line** | One Release PR, one tag; every module bumps in lockstep | Modules ship as one product; cross-module dependency pins must stay aligned | wardley-maps-modeler → `reference/config-shared-version.json` |
+| Model                    | Behavior                                                                                                                  | Choose when                                                                               | Reference / template                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Shared version line**  | One Release PR, one tag; every module bumps in lockstep                                                                   | Modules ship as one product; cross-module dependency pins must stay aligned               | wardley-maps-modeler → `reference/config-shared-version.json`   |
 | **Independent versions** | One release line, tag (`<component>@vX.Y.Z`), and CHANGELOG per module; `separate-pull-requests` for isolated Release PRs | Modules evolve at their own pace and are consumed independently (e.g. plugins, libraries) | emaarco/hogwarts → `reference/config-independent-versions.json` |
 
 Copy the matching template from this skill's `reference/` folder to `release-please-config.json`, replace the placeholder paths/names, and seed `.release-please-manifest.json` with the versions currently in the manifests:
@@ -33,7 +33,7 @@ Copy the matching template from this skill's `reference/` folder to `release-ple
 
 Key mechanics to preserve from the templates:
 
-- **Shared**: single root package, `include-component-in-tag: false`, `extra-files` entries bump every module version *and* cross-module dependency pins in lockstep.
+- **Shared**: single root package, `include-component-in-tag: false`, `extra-files` entries bump every module version _and_ cross-module dependency pins in lockstep.
 - **Independent**: one `packages` entry per module path with its own `component`, `include-component-in-tag: true`, `separate-pull-requests: true`; per-module `extra-files` for version fields outside the module's own manifest. For npm workspaces that depend on each other, add the `node-workspace` plugin so internal dependency pins are bumped on release.
 
 ## Phase 2 — Release workflow with a GitHub App token
@@ -80,20 +80,20 @@ jobs:
 
 ## Phase 3 — Conventional Commits prerequisite
 
-release-please only sees what lands on the default branch. For a **squash-merge repo** the PR *title* becomes the commit message, so validate titles with [amannn/action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) (own workflow, `pull_request` trigger, `permissions: pull-requests: read` — see `pr-title.yml` in the reference repo). For merge/rebase repos, enforce commit messages instead (e.g. commitlint). Confirm the merge strategy with the user before picking.
+release-please only sees what lands on the default branch. For a **squash-merge repo** the PR _title_ becomes the commit message, so validate titles with [amannn/action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request) (own workflow, `pull_request` trigger, `permissions: pull-requests: read` — see `pr-title.yml` in the reference repo). For merge/rebase repos, enforce commit messages instead (e.g. commitlint). Confirm the merge strategy with the user before picking.
 
 ## Phase 4 — Wire up publishing
 
 If the repo publishes artifacts (npm, marketplace, container), chain publish jobs on the release job's output — and delegate the tokenless npm publish setup to the sibling skill **`secure-publish-setup`**:
 
 ```yaml
-  publish:
-    needs: release-please
-    if: needs.release-please.outputs.releases_created == 'true'
-    permissions:
-      contents: read
-      id-token: write
-    uses: ./.github/workflows/publish-npm-package.yml
+publish:
+  needs: release-please
+  if: needs.release-please.outputs.releases_created == 'true'
+  permissions:
+    contents: read
+    id-token: write
+  uses: ./.github/workflows/publish-npm-package.yml
 ```
 
 ## Phase 5 — Verify
