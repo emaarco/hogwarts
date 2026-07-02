@@ -22,7 +22,7 @@ Work out a proposal from that evidence, but **confirm it with the user via AskUs
 | Model                    | Behavior                                                                                                                  | Choose when                                                                               | Reference / template                                            |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | **Shared version line**  | One Release PR, one tag; every module bumps in lockstep                                                                   | Modules ship as one product; cross-module dependency pins must stay aligned               | wardley-maps-modeler → `reference/config-shared-version.json`   |
-| **Independent versions** | One release line, tag (`<component>@vX.Y.Z`), and CHANGELOG per module; `separate-pull-requests` for isolated Release PRs | Modules evolve at their own pace and are consumed independently (e.g. plugins, libraries) | emaarco/hogwarts → `reference/config-independent-versions.json` |
+| **Independent versions** | One release line, tag (`<component>-vX.Y.Z`), and CHANGELOG per module; `separate-pull-requests` for isolated Release PRs | Modules evolve at their own pace and are consumed independently (e.g. plugins, libraries) | emaarco/hogwarts → `reference/config-independent-versions.json` |
 
 Copy the matching template from this skill's `reference/` folder to `release-please-config.json`, replace the placeholder paths/names, and seed `.release-please-manifest.json` with the versions currently in the manifests:
 
@@ -102,7 +102,7 @@ publish:
 - [ ] Merge a `feat:`/`fix:` commit to main → a Release PR appears with the correct version bump and CHANGELOG entry, **and CI runs on it** (the app-token proof)
 - [ ] Merge the Release PR → GitHub release + tag created; manifest updated
 - [ ] Shared model: every `extra-files` path was bumped in the Release PR
-- [ ] Independent model: a change scoped to one module produces a Release PR, tag (`<component>@vX.Y.Z`), and CHANGELOG for that module only
+- [ ] Independent model: a change scoped to one module produces a Release PR, tag (`<component>-vX.Y.Z`), and CHANGELOG for that module only
 
 ## Sources
 
