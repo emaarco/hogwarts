@@ -8,7 +8,7 @@ allowed-tools: Bash, Read, Edit, Grep, Glob, WebFetch
 
 Audits a Node.js / JS / TS repository and verifies that **every dependency in every `package.json` is pinned to an exact version**. Version ranges (`^1.2.3`, `~1.2.3`, `>=1`, `*`, `1.x`), floating dist-tags (`latest`, `next`), and mutable git refs (`#main`) mean `npm install` can silently pull a *different* build than the one that was reviewed and tested — the delivery vector behind worm-style npm supply-chain attacks. Exact pinning + a committed lockfile makes installs reproducible and shrinks the window for a malicious republish to slip in.
 
-Run this when asked to "check if dependencies are pinned", harden the npm supply chain, or as the Node slice of a release/supply-chain audit. Pairs with **`pin-github-actions`** for the CI side.
+Run this when asked to "check if dependencies are pinned", harden the npm supply chain, or as the Node slice of a release/supply-chain audit (see the sibling skill **`release-audit`**). Pairs with **`pin-github-actions`** for the CI side.
 
 ## Pinning rule
 
@@ -40,16 +40,18 @@ jq -r '
   to_entries[]
   | select(.key | IN("dependencies","devDependencies","peerDependencies","optionalDependencies"))
   | .key as $block | .value | to_entries[]
-  | select(.value | test("^([0-9]+\\.[0-9]+\\.[0-9]+([-+].*)?|workspace:|file:|link:|portal:|npm:.*@[0-9]|git\\+.*#[0-9a-f]{40}$|https?://.*\\.(tgz|tar\\.gz)$)") | not)
+  | select(.value | test("^([0-9]+\\.[0-9]+\\.[0-9]+([-+][0-9A-Za-z.-]+)?$|workspace:|file:|link:|portal:|npm:.*@[0-9]+\\.[0-9]+\\.[0-9]+([-+][0-9A-Za-z.-]+)?$|git\\+.*#[0-9a-f]{40}$|https?://.*\\.(tgz|tar\\.gz)$)") | not)
   | "\($block)  \(.key): \(.value)"
 ' path/to/package.json
 ```
 
+The semver, `npm:` alias, git, and tarball alternatives are end-anchored (`$`) on purpose — without the anchor, prefix matches classify hyphen ranges (`1.2.3 - 2.0.0`), OR ranges (`1.2.3 || 2.x`), and floating aliases (`npm:pkg@1.x`) as pinned. Keep the anchors if you adapt the filter.
+
 Detect the package manager + lockfile so transitive deps are covered too:
 
 ```bash
-ls package-lock.json npm-shrinkwrap.json pnpm-lock.yaml yarn.lock bun.lockb 2>/dev/null
-git ls-files | grep -E '(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lockb)$'
+ls package-lock.json npm-shrinkwrap.json pnpm-lock.yaml yarn.lock bun.lock bun.lockb 2>/dev/null
+git ls-files | grep -E '(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lock|bun\.lockb)$'
 ```
 
 ## Phase 2 — Classify & report
@@ -104,6 +106,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: Miragon/pin-npm-dependencies@58fe24377aef66748a1444ff69ab05e3f938a798 # v1.2.1
 ```
+
+The SHAs/versions in the snippet are placeholders that drift — resolve each action's current release SHA at apply time (`gh api repos/<owner>/<repo>/commits/<latest-tag> --jq .sha`, as `pin-github-actions` Phase 3 does) instead of copying them verbatim.
 
 Useful inputs: `root-path` (scan a monorepo subdir), `files` (explicit newline-separated list), `check-peer-dependencies` (default `false`), `check-optional-dependencies` (default `true`). Recursive scan from repo root is the default.
 

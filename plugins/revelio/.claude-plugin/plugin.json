@@ -1,7 +1,7 @@
 {
   "name": "revelio",
   "description": "Reveals what AI agents try and fail at — logs failed tool calls, API errors, and permission denials to .claude/logs/revelio.jsonl.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "emaarco"
   },
