@@ -8,48 +8,35 @@ metadata:
 
 # Skill: release-please-setup
 
-Sets up [release-please](https://github.com/googleapis/release-please): it parses Conventional Commits on the default branch, maintains a rolling **Release PR** (version bump + CHANGELOG), and cuts the GitHub release + tag when that PR is merged. Reference implementation: [Miragon/wardley-maps-modeler](https://github.com/Miragon/wardley-maps-modeler) (`release-please.yml`, `release-please-config.json`, `.release-please-manifest.json`).
+Sets up [release-please](https://github.com/googleapis/release-please): it parses Conventional Commits on the default branch, maintains a rolling **Release PR** (version bump + CHANGELOG), and cuts the GitHub release + tag when that PR is merged. Two reference implementations, one per versioning model:
+
+- **Shared version line** (all modules move together): [Miragon/wardley-maps-modeler](https://github.com/Miragon/wardley-maps-modeler)
+- **Independent versions per module**: [emaarco/hogwarts](https://github.com/emaarco/hogwarts) (one release line per plugin in a marketplace monorepo)
 
 Run this when asked to "set up release automation" / release-please, or as the versioning slice of a release/supply-chain audit (see the sibling skill **`release-audit`**).
 
-## Phase 1 — Detect topology & write config
+## Phase 1 — Detect topology & pick the versioning model
 
-Determine single package vs. monorepo (`workspaces` in `package.json`, multiple manifests) and the ecosystem (`release-type: node` for JS/TS; `simple`, `python`, `go`, etc. otherwise — check the [release-please docs](https://github.com/googleapis/release-please/blob/main/docs/customizing.md) for the stack).
+Determine single package vs. multi-module (`workspaces` in `package.json`, multiple manifests/plugins) and the ecosystem — `release-type: node` for JS/TS packages, `simple` for anything release-please has no native type for (version files bumped via `extra-files`); see the [release-please docs](https://github.com/googleapis/release-please/blob/main/docs/customizing.md) for `python`, `go`, etc.
 
-Create both files at the repo root:
+For a multi-module repo, **ask the user which model fits (AskUserQuestion)** — this is a product decision, not a technical one:
 
-```jsonc
-// release-please-config.json — single package or shared-version monorepo
-{
-  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "release-type": "node",
-  "include-component-in-tag": false,
-  "bump-minor-pre-major": true,
-  "packages": {
-    ".": {
-      "package-name": "<repo-name>",
-      "changelog-path": "CHANGELOG.md"
-    }
-  }
-}
-```
+| Model | Behavior | Choose when | Reference / template |
+|---|---|---|---|
+| **Shared version line** | One Release PR, one tag; every module bumps in lockstep | Modules ship as one product; cross-module dependency pins must stay aligned | wardley-maps-modeler → `reference/config-shared-version.json` |
+| **Independent versions** | One release line, tag (`<component>@vX.Y.Z`), and CHANGELOG per module; `separate-pull-requests` for isolated Release PRs | Modules evolve at their own pace and are consumed independently (e.g. plugins, libraries) | emaarco/hogwarts → `reference/config-independent-versions.json` |
+
+Copy the matching template from this skill's `reference/` folder to `release-please-config.json`, replace the placeholder paths/names, and seed `.release-please-manifest.json` with the versions currently in the manifests:
 
 ```json
-{ ".": "<current-version>" }
+{ ".": "1.4.0" }                                          // shared: single root entry
+{ "plugins/a": "0.7.1", "plugins/b": "0.2.0" }            // independent: one entry per module path
 ```
 
-(`.release-please-manifest.json` — seed with the version currently in `package.json`.)
+Key mechanics to preserve from the templates:
 
-**Monorepo with one shared version line** (the reference repo's approach): keep the single root package above and add `extra-files` entries so every workspace `package.json` version — and cross-workspace dependency pins — are bumped in lockstep:
-
-```jsonc
-"extra-files": [
-  { "type": "json", "path": "packages/<pkg>/package.json", "jsonpath": "$.version" },
-  { "type": "json", "path": "packages/<app>/package.json", "jsonpath": "$.dependencies['<pkg-name>']" }
-]
-```
-
-**Monorepo with independent versions per package**: instead list each package under `packages:` and use the `node-workspace` plugin (plus `linked-versions` for packages that must move together). Prefer the shared-version setup unless packages genuinely release independently.
+- **Shared**: single root package, `include-component-in-tag: false`, `extra-files` entries bump every module version *and* cross-module dependency pins in lockstep.
+- **Independent**: one `packages` entry per module path with its own `component`, `include-component-in-tag: true`, `separate-pull-requests: true`; per-module `extra-files` for version fields outside the module's own manifest. For npm workspaces that depend on each other, add the `node-workspace` plugin so internal dependency pins are bumped on release.
 
 ## Phase 2 — Release workflow with a GitHub App token
 
@@ -116,7 +103,8 @@ If the repo publishes artifacts (npm, marketplace, container), chain publish job
 - [ ] Workflow YAML parses; actions SHA-pinned; `vars.RELEASE_PLEASE_APP_CLIENT_ID` / secret exist (`gh variable list`, `gh secret list`)
 - [ ] Merge a `feat:`/`fix:` commit to main → a Release PR appears with the correct version bump and CHANGELOG entry, **and CI runs on it** (the app-token proof)
 - [ ] Merge the Release PR → GitHub release + tag created; manifest updated
-- [ ] Monorepo: every `extra-files` path was bumped in the Release PR
+- [ ] Shared model: every `extra-files` path was bumped in the Release PR
+- [ ] Independent model: a change scoped to one module produces a Release PR, tag (`<component>@vX.Y.Z`), and CHANGELOG for that module only
 
 ## Sources
 
@@ -125,4 +113,5 @@ If the repo publishes artifacts (npm, marketplace, container), chain publish job
 - `GITHUB_TOKEN` does not trigger workflows: https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
 - actions/create-github-app-token (`client-id` recommended, `app-id` legacy): https://github.com/actions/create-github-app-token
 - GitHub App JWT authentication ("Use of the client ID is recommended"): https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app
-- Reference implementation: https://github.com/Miragon/wardley-maps-modeler
+- Reference implementation (shared version line): https://github.com/Miragon/wardley-maps-modeler
+- Reference implementation (independent versions per module): https://github.com/emaarco/hogwarts
