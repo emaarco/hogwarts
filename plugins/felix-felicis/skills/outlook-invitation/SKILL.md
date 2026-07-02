@@ -65,15 +65,17 @@ Frage via `AskUserQuestion`:
 
 ### 6. Direkt in Outlook öffnen (macOS)
 
-Falls der Nutzer "In Outlook öffnen" gewählt hat, öffne das moderne Outlook-Terminfenster via UI-Scripting und fülle Betreff und Body automatisch ein.
+Falls der Nutzer "In Outlook öffnen" gewählt hat, öffne das moderne Outlook-Terminfenster via AppleScript UI-Scripting und fülle Betreff und Body automatisch ein.
 
 **Wichtig:** `make new calendar event` öffnet immer das alte Outlook-UI. Stattdessen Cmd+N via System Events auslösen — das öffnet das moderne Terminfenster mit Terminplanungs-Assistent.
 
 **Voraussetzung:** Das Terminal muss Accessibility-Berechtigung haben (Systemeinstellungen → Datenschutz & Sicherheit → Bedienungshilfen).
 
+**UI-Versions-Vorbehalt:** Tab-Reihenfolge und Fokusverhalten wurden gegen das "neue" Outlook für Mac verifiziert (Stand Juli 2026). Outlook-Updates können die Feldreihenfolge ändern — das Skript fügt dann ohne Fehlermeldung ins falsche Feld ein. Weise den Nutzer darauf hin, das Ergebnis zu prüfen; sieht es falsch aus, den Copy-Paste-Weg aus Schritt 4 nutzen.
+
 **Tab-Navigation im modernen Outlook-Terminfenster:**
 - Erst `Cmd+2` (Kalender-Ansicht), dann `Cmd+N` → Fokus startet direkt auf dem Betreff-Feld
-- Sofort tippen → Betreff wird gesetzt
+- Betreff per Zwischenablage einfügen (`Cmd+V`) — `keystroke` ist layoutabhängig und verstümmelt Umlaute und Emojis
 - 10× Tab vorwärts → Body-Feld (Recipients → Date → StartH → StartM → EndH → EndM → Ganztägig → TZ → Recurrence → Location → Teams)
 - `key code 115 using command down` (Cmd+Home) → Cursor an den Anfang des Body (Signatur bleibt erhalten)
 
@@ -93,8 +95,10 @@ tell application "System Events"
     keystroke "n" using command down
     delay 1.5
 
-    -- Fokus startet direkt auf Betreff — sofort tippen
-    keystroke "<Betreff hier>"
+    -- Fokus startet direkt auf Betreff — per Zwischenablage einfügen
+    -- (keystroke verstümmelt Umlaute/Emojis, da layoutabhängig)
+    set the clipboard to "<Betreff hier>"
+    keystroke "v" using command down
     delay 0.3
 
     -- 10x Tab → Body

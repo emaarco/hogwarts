@@ -1,7 +1,7 @@
 ---
 name: medium-publish
-description: "Publish a markdown blog post to Medium via GitHub Gist import. Transforms headings to bold, creates a Gist, copies its URL to the clipboard, and opens Medium's import page for you to finish manually."
-allowed-tools: AskUserQuestion, Bash(gh gist create:*), Bash(gh gist delete:*), Bash(open:*), Bash(pbcopy:*)
+description: "Publish a markdown blog post to Medium via GitHub Gist import (macOS). Transforms headings to bold, creates a Gist, copies its URL to the clipboard, and opens Medium's import page for you to finish manually."
+allowed-tools: AskUserQuestion, Read, Bash(gh gist create:*), Bash(gh gist delete:*), Bash(open:*), Bash(pbcopy:*), Bash(printf:*), Bash(echo:*)
 ---
 
 # Skill: medium-publish
@@ -44,21 +44,18 @@ Pipe the transformed content directly into `gh gist create` — no temp file:
 printf '%s' "<transformed-content>" | gh gist create --public --filename "post.md" -
 ```
 
-Extract the Gist URL and ID:
-
-```bash
-GIST_URL=$(... | tail -n1)
-GIST_ID=$(echo "$GIST_URL" | grep -o '[a-f0-9]\{32\}')
-```
+The command prints the Gist URL (last line of output). Note the URL and its 32-hex-char ID from the output — shell variables do not survive between Bash calls, so substitute these literal values into every later command (written as `<gist-url>` / `<gist-id>` below).
 
 ## Step 4 — Copy the Gist URL and open Medium's import page
 
 Copy the Gist URL to the clipboard and open Medium's import page:
 
 ```bash
-echo "$GIST_URL" | pbcopy
+echo "<gist-url>" | pbcopy
 open "https://medium.com/p/import"
 ```
+
+(`pbcopy` and `open` are macOS commands — on Linux, fall back to `xclip -selection clipboard` / `wl-copy` and `xdg-open`, which are not pre-granted.)
 
 Then tell the user:
 
@@ -89,12 +86,12 @@ Options:
 - "Something went wrong — delete the Gist anyway"
 - "Copy the Gist URL to clipboard again"
 
-If "Not yet": show the same question again (loop once more, then proceed regardless).
+If "Not yet": keep asking the same question — NEVER delete the Gist without an explicit "import done" or "delete anyway" answer, since deleting before Medium has fetched it breaks the import. If the user stops responding, end the turn and tell them the Gist URL so they can ask for deletion later.
 
 If "Copy the Gist URL to clipboard again":
 
 ```bash
-echo "$GIST_URL" | pbcopy
+echo "<gist-url>" | pbcopy
 ```
 
 Then loop back to the same Step 5 question so the user can signal completion or delete.
@@ -102,7 +99,7 @@ Then loop back to the same Step 5 question so the user can signal completion or 
 ## Step 6 — Delete Gist and report
 
 ```bash
-gh gist delete "$GIST_ID"
+gh gist delete "<gist-id>"
 ```
 
 Report:
@@ -113,5 +110,3 @@ Done! The Gist has been deleted.
 Your post is now in Medium's editor as a draft. You can find it at:
 https://medium.com/me/stories/drafts
 ```
-</content>
-</invoke>
