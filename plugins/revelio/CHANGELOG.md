@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/emaarco/hogwarts/compare/revelio-v0.2.0...revelio-v0.2.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* resolve skill audit findings in agento-patronum and revelio ([#28](https://github.com/emaarco/hogwarts/issues/28)) ([4ee4fe7](https://github.com/emaarco/hogwarts/commit/4ee4fe716dfeb610453d107666b9f9d29934f0cc))
+
 ## 0.2.0 (2026-06-24)
 
 
