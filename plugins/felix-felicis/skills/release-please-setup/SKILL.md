@@ -57,7 +57,7 @@ One-time app setup (walk the user through it):
 
 1. Create a GitHub App (org or user scope): only **Repository permissions** `Contents: Read and write` + `Pull requests: Read and write`, no webhook.
 2. Install it on the target repo.
-3. Store the App ID as a repo **variable** `RELEASE_PLEASE_APP_ID` and the generated private key as a **secret** `RELEASE_PLEASE_APP_PRIVATE_KEY`.
+3. Store the app's **Client ID** as a repo **variable** `RELEASE_PLEASE_APP_CLIENT_ID` and the generated private key as a **secret** `RELEASE_PLEASE_APP_PRIVATE_KEY`. Use the Client ID, not the numeric App ID — GitHub recommends the client ID for app authentication, and the action's `app-id` input is documented as legacy in favor of `client-id`.
 
 `.github/workflows/release-please.yml` (SHA-pin the actions — resolve current SHAs fresh via `gh api repos/<owner>/<repo>/commits/<tag> --jq .sha`, see **`pin-github-actions`**; the SHAs below were current for v3.2.0 / v5.0.0 as of 2026-07):
 
@@ -81,7 +81,7 @@ jobs:
       - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
-          app-id: ${{ vars.RELEASE_PLEASE_APP_ID }}
+          client-id: ${{ vars.RELEASE_PLEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_PLEASE_APP_PRIVATE_KEY }}
       - id: release_please
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
@@ -111,7 +111,7 @@ If the repo publishes artifacts (npm, marketplace, container), chain publish job
 
 ## Phase 5 — Verify
 
-- [ ] Workflow YAML parses; actions SHA-pinned; `vars.RELEASE_PLEASE_APP_ID` / secret exist (`gh variable list`, `gh secret list`)
+- [ ] Workflow YAML parses; actions SHA-pinned; `vars.RELEASE_PLEASE_APP_CLIENT_ID` / secret exist (`gh variable list`, `gh secret list`)
 - [ ] Merge a `feat:`/`fix:` commit to main → a Release PR appears with the correct version bump and CHANGELOG entry, **and CI runs on it** (the app-token proof)
 - [ ] Merge the Release PR → GitHub release + tag created; manifest updated
 - [ ] Monorepo: every `extra-files` path was bumped in the Release PR
@@ -121,5 +121,6 @@ If the repo publishes artifacts (npm, marketplace, container), chain publish job
 - release-please action: https://github.com/googleapis/release-please-action
 - release-please manifest/config docs: https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md
 - `GITHUB_TOKEN` does not trigger workflows: https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-- actions/create-github-app-token: https://github.com/actions/create-github-app-token
+- actions/create-github-app-token (`client-id` recommended, `app-id` legacy): https://github.com/actions/create-github-app-token
+- GitHub App JWT authentication ("Use of the client ID is recommended"): https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app
 - Reference implementation: https://github.com/Miragon/wardley-maps-modeler
