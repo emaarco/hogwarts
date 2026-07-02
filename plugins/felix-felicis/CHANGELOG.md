@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.7.1...felix-felicis-v0.8.0) (2026-07-02)
+
+
+### Features
+
+* **felix-felicis:** add dependabot-setup and contributor-setup skills ([#27](https://github.com/emaarco/hogwarts/issues/27)) ([5b6b0d9](https://github.com/emaarco/hogwarts/commit/5b6b0d96803f0800fcb42834f794254e71907f8e))
+* **felix-felicis:** add release & supply-chain skills ([#33](https://github.com/emaarco/hogwarts/issues/33)) ([5ac1634](https://github.com/emaarco/hogwarts/commit/5ac1634e8be610e979ab468148ecb44e5df8cd6d))
+
+
+### Bug Fixes
+
+* **felix-felicis:** resolve skill audit findings ([#31](https://github.com/emaarco/hogwarts/issues/31)) ([163cb8c](https://github.com/emaarco/hogwarts/commit/163cb8c40cf1f92e0f545a25ac0199783aad1f62))
+
 ## [0.7.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.7.0...felix-felicis-v0.7.1) (2026-07-02)
 
 
