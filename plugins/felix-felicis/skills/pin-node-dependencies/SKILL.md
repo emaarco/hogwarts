@@ -8,7 +8,7 @@ allowed-tools: Bash, Read, Edit, Grep, Glob, WebFetch
 
 Audits a Node.js / JS / TS repository and verifies that **every dependency in every `package.json` is pinned to an exact version**. Version ranges (`^1.2.3`, `~1.2.3`, `>=1`, `*`, `1.x`), floating dist-tags (`latest`, `next`), and mutable git refs (`#main`) mean `npm install` can silently pull a *different* build than the one that was reviewed and tested — the delivery vector behind worm-style npm supply-chain attacks. Exact pinning + a committed lockfile makes installs reproducible and shrinks the window for a malicious republish to slip in.
 
-Run this when asked to "check if dependencies are pinned", harden the npm supply chain, or as the Node slice of a release/supply-chain audit. Pairs with **`pin-github-actions`** for the CI side.
+Run this when asked to "check if dependencies are pinned", harden the npm supply chain, or as the Node slice of a release/supply-chain audit (see the sibling skill **`release-audit`**). Pairs with **`pin-github-actions`** for the CI side.
 
 ## Pinning rule
 

@@ -8,7 +8,7 @@ allowed-tools: Bash, Read, Edit, Grep, Glob, WebFetch
 
 Audits a repository's GitHub Actions and verifies that **every action reference is pinned to a full-length commit SHA**. Mutable tags (`@v4`, `@v4.2.2`) and branches (`@main`) can be silently repointed by whoever controls the upstream repo — the [`tj-actions/changed-files` compromise (CVE-2025-30066, March 2025)](https://github.com/tj-actions/changed-files/security/advisories) repointed existing tags to a malicious commit that dumped CI secrets; only SHA-pinned consumers were unaffected. SHA pinning is the [GitHub-recommended hardening](https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#using-third-party-actions) and the OpenSSF Scorecard [`Pinned-Dependencies`](https://github.com/ossf/scorecard/blob/main/docs/checks.md#pinned-dependencies) check.
 
-Run this when asked to "check if actions are pinned", harden CI supply chain, or as the GitHub-Actions slice of a release/supply-chain audit.
+Run this when asked to "check if actions are pinned", harden CI supply chain, or as the GitHub-Actions slice of a release/supply-chain audit (see the sibling skill **`release-audit`**).
 
 ## Pinning rule
 
