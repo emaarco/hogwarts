@@ -29,9 +29,9 @@ Use `AskUserQuestion` to confirm the removal. Present:
 
 ### 4. Remove the pattern
 
-After the user confirms, run:
+After the user confirms, run the script with the exact pattern string identified in Step 2 and confirmed in Step 3 — never raw $ARGUMENTS (the script requires an exact match against the stored pattern):
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-remove.sh" "$ARGUMENTS"
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-remove.sh" "<exact-pattern>"
 ```
 
 ### 5. Present updated list

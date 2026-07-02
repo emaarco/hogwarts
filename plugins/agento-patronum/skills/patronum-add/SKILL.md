@@ -9,11 +9,17 @@ allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-add.sh" *), Bas
 
 Add a protection pattern to the agento-patronum shield.
 
+## Pattern formats
+
+- **File globs** — matched against file paths: `**/.env`, `~/.aws/credentials`, `**/*.tfstate`
+- **Commands** — must be wrapped as `Bash(<command>)`, e.g. `Bash(printenv)`; the hook prefix-matches the command inside the parentheses. A bare command name like `printenv` is treated as a file glob and will NOT block the command. Details: `docs/rules/bash-commands.md`.
+
 ## Steps
 
 ### 1. Parse input
 
 Parse the user's input from $ARGUMENTS. Expect a pattern and an optional `--reason`.
+If the user described what to protect conversationally, derive the concrete pattern yourself using the formats above (wrap commands as `Bash(<command>)`).
 If no reason is provided, generate a short reason based on what the pattern protects.
 
 ### 2. Confirm with user
@@ -25,10 +31,12 @@ Use `AskUserQuestion` to confirm the addition. Present:
 
 ### 3. Add the pattern
 
-After the user confirms, run:
+After the user confirms, run the script with the pattern and reason from Steps 1–2 (never raw $ARGUMENTS):
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-add.sh" $ARGUMENTS
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-add.sh" "<pattern>" --reason "<reason>"
 ```
+
+If the script reports the pattern already exists, tell the user it was already protected and stop — do not present it as a new addition.
 
 ### 4. Present result
 
