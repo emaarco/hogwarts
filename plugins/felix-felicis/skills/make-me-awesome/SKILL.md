@@ -1,7 +1,7 @@
 ---
 name: make-me-awesome
 description: "Analyze a GitHub repo and submit it to an awesome list via PR or issue. Usage: /make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]"
-allowed-tools: AskUserQuestion, WebFetch, WebSearch, Bash
+allowed-tools: AskUserQuestion, WebFetch, WebSearch, Bash, Read, Edit
 ---
 
 # Skill: make-me-awesome
@@ -24,7 +24,7 @@ gh repo view [REPO_TO_PROMOTE] --json description,homepageUrl,topics,languages
 
 Summarize internally:
 - What problem it solves
-- Unique selling points vs. similar tools
+- Unique selling points vs. similar tools (use `WebSearch` to find and compare against similar tools)
 - Key features, languages/frameworks/platforms
 - Any documentation site or homepage worth linking
 
@@ -124,6 +124,9 @@ Options: "Submit as-is" / "Edit entry" / "Edit body" / "Cancel"
 ### Via PR:
 
 **8a — Ensure the fork exists (create only if needed):**
+
+Resolve `[GITHUB_USER]` first via `gh api user --jq .login` and substitute the literal login into this and all later steps.
+
 ```bash
 # Check if a fork already exists under the authenticated user
 gh repo view [GITHUB_USER]/[REPO] --json name 2>/dev/null \
@@ -156,9 +159,10 @@ git checkout -b add-[repo-name]
 ```
 
 **8d — Insert the entry and push:**
-```bash
-# Edit README.md to insert the entry line at the correct position
 
+Read the cloned `README.md`, find the target category section (or the right place for the proposed new section), and use `Edit` to insert the entry line at the position matching the list's ordering (usually alphabetical). Then:
+
+```bash
 git add README.md
 git commit -m "feat: add [repo-name] under [Category]"
 git push origin add-[repo-name]
