@@ -77,8 +77,9 @@ Work through the confirmed list. Rules:
 - `reference/fix.yml` — bug report (label `bug`)
 - `reference/feat.yml` — feature request (label `enhancement`)
 - `reference/refactor.yml` — refactoring proposal (label `refactor`)
+- `reference/config.yml` — issue chooser config (blank-issues toggle, optional contact links)
 
-Copy them to `.github/ISSUE_TEMPLATE/`, replace the `<project>` placeholder with the repo name, and adjust fields only where the project genuinely differs. Add a `config.yml` per the Phase 1 checklist.
+Copy them to `.github/ISSUE_TEMPLATE/`, replace the `<project>`/`<owner>` placeholders with the real repo, and adjust fields only where the project genuinely differs. For `config.yml`, settle `blank_issues_enabled` and any `contact_links` with the user per the Phase 1 checklist.
 
 **Ensure the labels exist** — a form that references a missing label opens the issue silently unlabeled. Check and create what's missing:
 

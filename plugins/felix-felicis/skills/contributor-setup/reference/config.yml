@@ -1,0 +1,11 @@
+# Controls the "New issue" chooser. Decide blank_issues_enabled with the user:
+# true keeps an escape hatch for issues the forms don't cover; false forces a template.
+blank_issues_enabled: true
+# Optional: route questions/security reports away from the issue tracker.
+# contact_links:
+#   - name: Questions & Discussions
+#     url: https://github.com/<owner>/<project>/discussions
+#     about: Ask questions and discuss ideas before opening an issue.
+#   - name: Security Vulnerability
+#     url: https://github.com/<owner>/<project>/security/advisories/new
+#     about: Report vulnerabilities privately — never in a public issue.
