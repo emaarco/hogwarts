@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "rust",
+  "plugins": [
+    // Cargo-workspace equivalent of node-workspace: builds the graph from each crate's
+    // Cargo.toml "path = ../other-crate" dependencies, then patch-bumps + updates the
+    // Cargo.lock for any crate whose dependency just released — same mechanic, different manifest
+    "cargo-workspace"
+  ],
+  "packages": {
+    // each entry below defines one independently-released crate (own version, tag, changelog).
+    // {} is enough since cargo-workspace reads name/version straight from each Cargo.toml
+    // (verified against graphprotocol/indexer-rs — see reference/examples.md)
+    "crates/<module-a>": {},
+    "crates/<module-b>": {},
+    "crates/<module-c>": {}
+  }
+}

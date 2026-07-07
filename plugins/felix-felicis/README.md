@@ -38,7 +38,7 @@ Sets up an idempotent GitHub branch ruleset on the default branch via `gh api`: 
 
 ### `/release-please-setup`
 
-Sets up release-please (config + manifest + workflow) authenticated with a GitHub App token — never the default `GITHUB_TOKEN`, whose PRs trigger no CI runs. Supports two versioning models with ready-to-copy config templates: a shared version line (all modules in lockstep) or independent versions per module, chosen interactively.
+Sets up release-please (config + manifest + workflow) authenticated with a GitHub App token — never the default `GITHUB_TOKEN`, whose PRs trigger no CI runs. Scopes to one of three release forms, chosen interactively: a single release for the whole repo, per-module releases where dependents auto-bump when a dependency releases, or fully independent per-module releases — each with a ready-to-copy config template and real-world reference repos.
 
 ### `/secure-publish-setup`
 
