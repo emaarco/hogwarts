@@ -14,17 +14,21 @@ Run this when asked to "set up dependabot", review an existing config, or as the
 
 The core decision is **how much review attention dependency PRs deserve**. Ready-to-adapt templates ship in `reference/` next to this SKILL.md.
 
-| Mode | Grouping | Cadence | Right for | Template |
+| Mode | Grouping | Cadence starting point | Right for | Template |
 |---|---|---|---|---|
 | **low-noise** | Everything (patch+minor+major) in one PR per ecosystem; optionally ONE repo-wide PR via multi-ecosystem groups | monthly | Solution templates, examples, internal tooling — minimal review capacity, CI is the gate | `mode-low-noise.yml`, `mode-low-noise-single-pr.yml` |
 | **balanced** *(default)* | minor+patch grouped per ecosystem; **each major = own PR** | weekly | Open-source projects, production code, anything with external users — breaking changes get individual review | `mode-balanced.yml` |
 | **fine-grained** | balanced + family groups (framework / testing / linting / …) + monorepo consolidation | weekly | Large dependency trees (≈40+ direct deps in one ecosystem), grouped PRs that repeatedly conflict or fail CI, monorepos | `mode-fine-grained.yml` |
+
+"Cadence starting point" is the mode's default before per-ecosystem tuning — see **Per-ecosystem cadence** in Phase 1 and the confirmation step in Phase 4. Security updates are never affected by `schedule.interval` (Dependabot opens those the moment a vulnerability is detected regardless of cadence), so the interval only trades off routine-update noise vs. staleness.
 
 Within low-noise, **one PR per ecosystem is the default**: a single-tech repo is simply one fully-grouped block, and unrelated stacks (npm frontend + gradle backend) stay in separate PRs so a broken gradle major never blocks frontend updates. The repo-wide single PR is the escalation for when even one PR per ecosystem is too many — never for unrelated stacks.
 
 The mode may differ per ecosystem: even in balanced mode, `github-actions` is commonly fully grouped (majors are mostly mechanical when actions are SHA-pinned and CI gates); keep actions majors separate only when workflows are the release pipeline.
 
 **Stack-groups variant** (`mode-stack-groups.yml`) — multi-ecosystem groups also work *selectively*, orthogonal to the mode: ecosystems that move together share one PR per stack (backend manifest + the docker/compose images it runs on; backend & client released in lockstep; terraform + infra images) while everything else keeps its normal blocks. Propose it when Phase 1 finds coupled manifests — e.g. a compose file whose service images match the backend's drivers. Trade-offs to state: the stack shares one CI gate, and majors ride along with everything the patterns match — ecosystems whose majors need individual review stay outside the stack in a balanced block (mixing is fine).
+
+**Combining fine-grained with a targeted pairing** (`mode-fine-grained-stack-groups.yml`) — for when only *one specific dependency pair* is coupled, not a whole ecosystem: e.g. the postgres image in `docker` and the postgres driver in `gradle` must bump together, but the rest of each ecosystem should stay on normal fine-grained family groups. Two blocks per coupled ecosystem, same directory: a "regular" block with fine-grained groups that `ignore`s the coupled dependency, and a "stack" block scoped via `patterns` to just that dependency, joining the shared `multi-ecosystem-group` — `ignore` only suppresses updates within the block that declares it, so the stack block still gets version and security updates for the coupled dependency. Propose it when Phase 1 finds one specific coupled pair rather than whole coupled stacks.
 
 ## Phase 1 — Discover
 
@@ -65,6 +69,17 @@ Answer these explicitly before recommending anything:
 - **What it ships** — how many artifacts does it deploy or publish (npm packages, container images, marketplace extensions)? Every published artifact raises the cost of a silently-broken major.
 - **Safety net** — CI tests that actually gate merges; release automation.
 - **Scale & shape** — dep count per ecosystem, number of packages/workspaces, coupled stacks (compose file + backend manifest).
+
+**Per-ecosystem cadence.** The mode sets a starting point, but `schedule.interval` is decided **per ecosystem**, not once for the whole config — different ecosystems in the same repo release at different speeds:
+
+| Ecosystem tendency | Typical starting interval |
+|---|---|
+| Fast-moving app deps (npm, pip, gradle/maven app libs) in an actively developed repo | weekly |
+| Slow-moving / mostly mechanical (github-actions, terraform providers, devcontainers) | monthly |
+| Docker base images | weekly — patches land often and cooldown already absorbs the risk of a too-fresh tag |
+| Any ecosystem in a low-activity or maintenance-mode repo, regardless of mode | monthly (or slower) — matches actual review bandwidth |
+
+Treat this table as a heuristic to seed the Phase 4 question, not a rule to apply silently — always confirm the actual interval per ecosystem with the user rather than defaulting to the mode's starting point.
 
 **c) Update history — calibration only, never the basis.** The existing config and past habits may be exactly what needs to change; deriving the target from the status quo would just ratify it. Use history to *tune within* the recommended mode:
 
@@ -121,8 +136,8 @@ Post the findings **as a normal message first** — table of Phase 2/3 checks pl
 
 Then confirm via **AskUserQuestion** — recommendation first, marked "(recommended)", every option stating its consequence. Ask only what the evidence can't answer, max 4 questions:
 
-1. **Mode** — the three modes with one-line trade-offs; include the single-PR multi-ecosystem variant as an option only for clear low-noise repos, and the stack-groups variant as an option when Phase 1 found coupled ecosystems (name the concrete stacks, e.g. "gradle + docker-compose as one backend PR").
-2. **Cadence** — weekly vs monthly, only if PR history and repo type point in different directions.
+1. **Mode** — the three modes with one-line trade-offs; include the single-PR multi-ecosystem variant only for clear low-noise repos, the stack-groups variant when Phase 1 found whole coupled ecosystems (name the concrete stacks, e.g. "gradle + docker-compose as one backend PR"), and the targeted-pairing variant when Phase 1 found just one coupled dependency pair (e.g. "postgres image + postgres driver as one PR, rest of gradle/docker stays fine-grained").
+2. **Cadence per ecosystem** — always confirm, never silently apply the mode's starting point. Propose an interval per detected ecosystem from the **Per-ecosystem cadence** heuristic (Phase 1) adjusted by PR history (Phase 1c) and repo activity level, and let the user override any of them.
 3. **Review wiring** — CODEOWNERS-only (recommended for small teams) vs keep `assignees`, only if the existing config has assignees/reviewers.
 4. **Existing customizations** (multiSelect) — which `ignore:` rules, labels, or schedule quirks to carry over vs drop.
 
@@ -131,7 +146,7 @@ Then confirm via **AskUserQuestion** — recommendation first, marked "(recommen
 Enter this phase only once the Phase 3 pin gate is resolved — pins fixed (sibling skills run, other ecosystems patched) or floating versions explicitly accepted by the user.
 
 - **Update > replace.** Fix the specific gaps; carry over confirmed customizations (especially `ignore:` rules) verbatim, including comments.
-- Start from the chosen `reference/mode-*.yml`, one block per detected ecosystem/directory. For fine-grained: derive family groups from the *actual* manifests, never ship template families the repo doesn't use, and confirm the families with the user.
+- Start from the chosen `reference/mode-*.yml`, one block per detected ecosystem/directory. Templates show `weekly`/`monthly` as illustrative placeholders only — write the interval **confirmed per ecosystem in Phase 4**, not the template's literal value. For fine-grained: derive family groups from the *actual* manifests, never ship template families the repo doesn't use, and confirm the families with the user.
 - Every mode keeps: `labels: ['dependencies']`, `commit-message` prefix `chore` + `include: scope`, `cooldown`, and an `applies-to: security-updates` group per ecosystem.
 - If no `CODEOWNERS` exists, create `.github/CODEOWNERS` with a default owner (suggest from `gh api repos/{owner}/{repo} --jq .owner.login`):
 
@@ -154,6 +169,7 @@ Enter this phase only once the Phase 3 pin gate is resolved — pins fixed (sibl
 - Options reference: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference
 - Grouped updates / PR optimization: https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/optimizing-pr-creation-version-updates
 - Multi-ecosystem groups: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-multi-ecosystem-updates
+- Targeted-pairing shape (two blocks, same ecosystem+directory, `ignore` + `patterns`/`multi-ecosystem-group`): https://github.com/dependabot/dependabot-core/discussions/12437
 - Cross-directory `group-by: dependency-name` (Feb 2026): https://github.blog/changelog/2026-02-24-dependabot-can-group-updates-by-dependency-name-across-multiple-directories/
 - `reviewers` removal in favor of CODEOWNERS: https://github.blog/changelog/2025-04-29-dependabot-reviewers-configuration-option-being-replaced-by-code-owners/
 - Reference implementations: low-noise — https://github.com/Miragon/miravelo-shop-example/blob/main/.github/dependabot.yml · balanced — https://github.com/Miragon/bpmn-modeler/blob/main/.github/dependabot.yml

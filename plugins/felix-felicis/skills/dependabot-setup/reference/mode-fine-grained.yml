@@ -9,6 +9,10 @@
 #
 # Derive families from the actual manifests (read package.json / build.gradle
 # first) — never ship template families the repo doesn't use.
+#
+# `schedule.interval` below is an illustrative placeholder — propose one per
+# ecosystem from repo signals (release velocity, activity, PR history) and
+# confirm with the user before writing; don't apply this value silently.
 version: 2
 updates:
   - package-ecosystem: 'npm'

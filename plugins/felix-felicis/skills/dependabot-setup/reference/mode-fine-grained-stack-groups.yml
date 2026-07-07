@@ -1,0 +1,99 @@
+# Variant: fine-grained + targeted stack pairing — family groups PLUS one
+# multi-ecosystem group for a single dependency PAIR that must move together
+# (here: the postgres image in docker and the postgres driver in gradle),
+# while every other dependency keeps normal per-ecosystem fine-grained
+# treatment. Narrower than mode-stack-groups.yml, which bundles WHOLE
+# ecosystems — this bundles only the specific coupled dependency.
+#
+# THE TRICK: Dependabot rejects two blocks with the same package-ecosystem +
+# directory... UNLESS their scope doesn't overlap. So each coupled ecosystem
+# gets TWO blocks for the same directory:
+#   1. the "regular" block — normal fine-grained groups, with `ignore` on the
+#      coupled dependency so it isn't ALSO offered here (ignore suppresses
+#      both version AND security updates for that block only)
+#   2. the "stack" block — `patterns` scoped to just the coupled dependency,
+#      joining the shared multi-ecosystem-group; carries its own version AND
+#      security handling for that one dependency since it's not ignored here
+# Confirmed working shape: https://github.com/dependabot/dependabot-core/discussions/12437
+#
+# Adjust the coupled pattern names (`org.postgresql:postgresql`, `postgres`)
+# to the repo's actual driver dependency and image name before use — verify
+# behavior once live, this feature is still young.
+#
+# `schedule.interval` below is an illustrative placeholder — propose one per
+# ecosystem/group from repo signals (release velocity, activity, PR history)
+# and confirm with the user before writing; don't apply it silently.
+version: 2
+multi-ecosystem-groups:
+  postgres-stack:
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'postgres'
+
+updates:
+  # ---- regular gradle updates, coupled driver excluded (handled below) ----
+  - package-ecosystem: 'gradle'
+    directory: '/backend'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+    open-pull-requests-limit: 15
+    cooldown:
+      default-days: 5
+      semver-major-days: 14
+    ignore:
+      - dependency-name: 'org.postgresql:postgresql'
+    groups:
+      spring:
+        applies-to: version-updates
+        patterns: ['org.springframework*', 'io.spring*']
+        update-types: ['minor', 'patch']
+      kotlin:
+        applies-to: version-updates
+        patterns: ['org.jetbrains.kotlin*']
+        update-types: ['minor', 'patch']
+      gradle-minor-patch:
+        applies-to: version-updates
+        patterns: ['*']
+        update-types: ['minor', 'patch']
+      gradle-security:
+        applies-to: security-updates
+        patterns: ['*']
+
+  # ---- regular docker updates, coupled image excluded (handled below) ----
+  - package-ecosystem: 'docker'
+    directory: '/backend'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+    cooldown:
+      default-days: 5
+    ignore:
+      - dependency-name: 'postgres'
+    groups:
+      docker-minor-patch:
+        applies-to: version-updates
+        patterns: ['*']
+        update-types: ['minor', 'patch']
+      docker-security:
+        applies-to: security-updates
+        patterns: ['*']
+
+  # ---- coupled pair: postgres driver + postgres image, one PR ----
+  # NOTE: everything matching `patterns` here rides together — including
+  # majors — regardless of the minor/patch split used above for the rest of
+  # each ecosystem. That's the point (driver and server version stay in
+  # lockstep) but state it explicitly when proposing this to the user.
+  - package-ecosystem: 'gradle'
+    directory: '/backend'
+    patterns: ['org.postgresql:postgresql']
+    multi-ecosystem-group: 'postgres-stack'
+
+  - package-ecosystem: 'docker'
+    directory: '/backend'
+    patterns: ['postgres']
+    multi-ecosystem-group: 'postgres-stack'

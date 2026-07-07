@@ -16,6 +16,10 @@
 # not in balanced. Requires a CI test job that actually gates merges; without
 # CI, grouped majors are merged blind → recommend balanced instead (or add CI
 # first).
+#
+# `schedule.interval` below is an illustrative placeholder — propose one per
+# ecosystem from repo signals (release velocity, activity, PR history) and
+# confirm with the user before writing; don't apply this value silently.
 version: 2
 updates:
   # frontend: everything npm in one monthly PR

@@ -16,6 +16,10 @@
 # Syntax rules (same as the single-PR variant): schedule lives on the group,
 # NOT on member blocks; `patterns` is REQUIRED on every member block.
 # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-multi-ecosystem-updates
+#
+# `schedule.interval` below is an illustrative placeholder — propose one per
+# group/ecosystem from repo signals (release velocity, activity, PR history)
+# and confirm with the user before writing; don't apply it silently.
 version: 2
 multi-ecosystem-groups:
   backend:
