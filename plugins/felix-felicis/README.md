@@ -32,6 +32,10 @@ Creates a professional German Outlook meeting invitation with context, goals, ag
 
 New skills that are not yet battle-tested on real repos — expect rough edges and review their output more carefully.
 
+### `/dependabot-setup`
+
+Collaborative Dependabot audit & setup with three grouping modes — **low-noise** (one PR per ecosystem, or one repo-wide PR via multi-ecosystem groups; for templates and internal tooling), **balanced** (minor+patch grouped, one PR per major; for open-source and production repos), and **fine-grained** (family groups for large or conflict-prone dependency trees and monorepos) — plus a **stack-groups** variant that bundles ecosystems that move together (e.g. backend deps + the docker/compose images they run on) into one PR per stack. Recommends a mode from the repo's use-case — open-source vs internal, what it ships and to whom, CI safety net, dependency count — with past Dependabot PR history used only to fine-tune cadence and cooldown, confirms decisions interactively, cleans dead config (removed `reviewers` key, redundant `target-branch`, duplicate blocks, nonexistent labels), prefers CODEOWNERS over `assignees` for small teams, groups security updates, enforces cooldown, and gates setup on pinned dependency versions — delegating fixes to `/pin-github-actions` and `/pin-node-dependencies` before any config is written.
+
 ### `/branch-ruleset-setup`
 
 Sets up an idempotent GitHub branch ruleset on the default branch via `gh api`: no deletion, no force-push, linear history, signed commits, PR-only changes, and a required CI status check whose `integration_id` is resolved dynamically instead of hardcoded.

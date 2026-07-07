@@ -1,0 +1,70 @@
+# Variant: stack groups — multi-ecosystem groups used for TARGETED bundling,
+# not maximum noise reduction: ecosystems that move together share one PR per
+# stack, everything else keeps its normal per-ecosystem mode.
+#
+# Propose this when Phase 1 finds coupled manifests:
+#   - a backend manifest + the docker/compose images it runs on
+#     (postgres image + JDBC driver, node base image + @types/node)
+#   - backend & client that are versioned/released in lockstep
+#   - terraform providers + the infra images they deploy
+#
+# Trade-offs to state when proposing: the whole stack shares one CI gate, and
+# everything the patterns match rides together — majors included. If majors
+# need individual review for an ecosystem, keep that ecosystem OUT of the
+# stack group and give it a normal balanced block instead (mixing is fine).
+#
+# Syntax rules (same as the single-PR variant): schedule lives on the group,
+# NOT on member blocks; `patterns` is REQUIRED on every member block.
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-multi-ecosystem-updates
+version: 2
+multi-ecosystem-groups:
+  backend:
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'backend'
+  frontend:
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+      - 'frontend'
+updates:
+  # backend stack: code deps + the images they run on move together
+  - package-ecosystem: 'gradle'
+    directory: '/backend'
+    patterns: ['*']
+    multi-ecosystem-group: 'backend'
+  - package-ecosystem: 'docker'
+    directory: '/backend'
+    patterns: ['*']
+    multi-ecosystem-group: 'backend'
+  - package-ecosystem: 'docker-compose'
+    directory: '/'
+    patterns: ['*']
+    multi-ecosystem-group: 'backend'
+
+  # client stack updates independently of the backend
+  - package-ecosystem: 'npm'
+    directory: '/client'
+    patterns: ['*']
+    multi-ecosystem-group: 'frontend'
+
+  # standalone blocks mix freely with stack groups — github-actions keeps its
+  # own schedule and grouping here
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+    cooldown:
+      default-days: 5
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns: ['*']
+      github-actions-security:
+        applies-to: security-updates
+        patterns: ['*']

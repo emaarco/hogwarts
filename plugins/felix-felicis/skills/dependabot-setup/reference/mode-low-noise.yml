@@ -1,0 +1,64 @@
+# Mode: low-noise — ONE PR per ecosystem per interval; patch, minor and major
+# ride together. For solution templates, example repos, and internal tooling
+# where review capacity is minimal and CI is the gate.
+#
+# This per-ecosystem shape is the low-noise DEFAULT:
+#   - one tech only (say, just npm)  → the config is simply a single block
+#   - several unrelated techs (npm frontend + gradle backend, as below)
+#     → one fully-grouped block each, one PR per ecosystem: a broken gradle
+#       major never blocks the frontend's updates
+# Reach for mode-low-noise-single-pr.yml (one repo-wide PR across ecosystems)
+# only when even one PR per ecosystem is too many AND a shared CI gate across
+# all stacks is acceptable.
+#
+# Trade-off to state explicitly when proposing this mode: one breaking major
+# blocks that ecosystem's whole PR until someone fixes it. Acceptable here —
+# not in balanced. Requires a CI test job that actually gates merges; without
+# CI, grouped majors are merged blind → recommend balanced instead (or add CI
+# first).
+version: 2
+updates:
+  # frontend: everything npm in one monthly PR
+  - package-ecosystem: 'npm'
+    directory: '/frontend'
+    schedule:
+      interval: 'monthly'
+    labels:
+      - 'dependencies'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    # longer cooldown: nobody watches this repo closely, let releases mature
+    cooldown:
+      default-days: 7
+    groups:
+      npm-all:
+        applies-to: version-updates
+        patterns: ['*']
+        update-types: ['patch', 'minor', 'major']
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
+
+  # backend: everything gradle in one monthly PR, independent of the frontend
+  - package-ecosystem: 'gradle'
+    directory: '/backend'
+    schedule:
+      interval: 'monthly'
+    labels:
+      - 'dependencies'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    cooldown:
+      default-days: 7
+    groups:
+      gradle-all:
+        applies-to: version-updates
+        patterns: ['*']
+        update-types: ['patch', 'minor', 'major']
+      gradle-security:
+        applies-to: security-updates
+        patterns: ['*']
+
+  # repeat the same shape per further ecosystem (github-actions, docker, …)
