@@ -62,7 +62,8 @@ Point each finding at the sibling skill that implements it instead of re-explain
 
 | Finding area | Sibling skill |
 |---|---|
-| Versioning / changelog / release automation | `release-please-setup` |
+| Versioning / changelog / release automation — **absent** | `release-please-setup` (setup mode) |
+| Versioning config **already present** but suspect — wrong-fit (release form no longer matches the topology, validation vs. merge strategy, publishing) or drift (dangling `extra-files`, untracked package, version out of sync with manifest) | `release-please-setup` (Phase 0 → Phase 8 audit: questions the design via `AskUserQuestion`, fixes drift) |
 | Long-lived registry tokens, missing provenance | `secure-publish-setup` |
 | Unpinned GitHub Actions | `pin-github-actions` |
 | Floating npm versions / missing lockfile | `pin-node-dependencies` |
