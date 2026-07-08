@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.8.0...felix-felicis-v0.9.0) (2026-07-08)
+
+
+### Features
+
+* **felix-felicis:** dependabot-setup — use-case-driven grouping modes ([#37](https://github.com/emaarco/hogwarts/issues/37)) ([628487c](https://github.com/emaarco/hogwarts/commit/628487c2a2aa67ae7d96e50b303ce86fb264c854))
+
 ## [0.8.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.7.1...felix-felicis-v0.8.0) (2026-07-02)
 
 
