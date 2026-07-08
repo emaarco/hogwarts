@@ -1,14 +1,34 @@
 ---
 name: release-please-setup
-description: "Sets up release-please for automated versioning, changelogs, and GitHub releases driven by Conventional Commits: config + manifest files scoped to one of three release forms (single release, per-module dependency-aware, per-module self-contained), a release workflow authenticated with a GitHub App token (never the default GITHUB_TOKEN), and PR-title validation for squash-merge repos. Use when asked to set up release automation, automated versioning or changelogs, or release-please."
+description: "Sets up, audits, or optimizes release-please (Conventional-Commit versioning, changelogs, GitHub releases). Fresh repo → creates the config + manifest scoped to one of three release forms, an App-token release workflow (never the default GITHUB_TOKEN), and PR-title validation. Repo that already has release-please → audits it: mainly judging whether the setup still makes sense (right release form for today's topology, PR validation matching the merge strategy, publishing, auth), and along the way catching mechanical drift (broken extra-files paths, untracked packages, versions out of sync with the manifest) — resolving changes with the user via AskUserQuestion, never a silent rewrite. Use to set up release automation, automated versioning or changelogs, or release-please — or to audit, review, question, or fix an existing setup."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 
 # Skill: release-please-setup
 
-Sets up [release-please](https://github.com/googleapis/release-please): it parses Conventional Commits on the default branch, maintains a rolling **Release PR** (version bump + CHANGELOG), and cuts the GitHub release + tag when that PR is merged.
+Sets up, audits, **or** optimizes [release-please](https://github.com/googleapis/release-please): it parses Conventional Commits on the default branch, maintains a rolling **Release PR** (version bump + CHANGELOG), and cuts the GitHub release + tag when that PR is merged.
 
-Run this when asked to "set up release automation" / release-please, or as the versioning slice of a release/supply-chain audit (see the sibling skill **`release-audit`**).
+Run this when asked to "set up release automation" / release-please, to audit / review / question / fix an existing release-please setup, or as the versioning slice of a release/supply-chain audit (see the sibling skill **`release-audit`**).
+
+**The first move on any repo is always Phase 0 — detect, then branch.** Never assume greenfield, and never conclude "looks configured, done" without running Phase 8.
+
+- **Setup mode** (nothing found): run Phases 1–7 to create config, manifest, workflow, and PR validation from templates.
+- **Audit mode** (release-please already present): run **Phase 8** — mainly *questioning whether the setup still makes sense* (release form, validation, publishing, auth), plus catching mechanical drift. Resolve every change with the user via `AskUserQuestion`; Phases 1–6 are the reference for what a correct file looks like.
+
+## Phase 0 — Detect existing setup
+
+Before anything else, check whether release-please is already installed. Run all three checks:
+
+```bash
+ls release-please-config.json .release-please-manifest.json 2>/dev/null
+ls .github/workflows/ 2>/dev/null | grep -iE 'release' || true
+grep -rl 'release-please-action' .github/workflows/ 2>/dev/null || true
+```
+
+- **Nothing found** → **setup mode**: Phase 1, then the full greenfield flow (Phases 1–7).
+- **Config, manifest, or a release-please workflow found** → **audit mode**: don't overwrite anything up front. Go to **Phase 8** (re-run Phase 1 there to re-derive today's topology).
+
+A partial install (config but no workflow, workflow but no manifest) is itself a finding — audit mode, raise the missing piece as a decision, don't silently regenerate the stack.
 
 ## The three release forms
 
@@ -160,6 +180,82 @@ For Form B/C, `releases_created` is a map keyed by component path — gate each 
 - [ ] **Form A:** every `extra-files` path (including cross-package dependency pins) was bumped in the same Release PR
 - [ ] **Form B:** a change scoped to only one module produces a Release PR, tag, and CHANGELOG for that module; then confirm a change to a module it *depends on* produces a follow-up patch release for the dependent too, with no code change of its own
 - [ ] **Form C:** a change scoped to one module produces a Release PR, tag, and CHANGELOG for that module only — and a change to an unrelated module does **not** touch it
+
+## Phase 8 — Audit an existing setup
+
+The job is mainly to judge **whether the current setup still makes sense** — fixing drift is only one part. Two kinds of finding, plus an interactive close. Cite evidence (`path:line`, config key, command output) for each.
+
+- **Decisions** (the main pass) — does the *design* still fit today's repo? Raise each with `AskUserQuestion`; never change unilaterally.
+- **Defects** — mechanical drift that silently breaks releases. Fix these.
+- **Observations** — a deliberate choice (check git history first); note it, don't rewrite.
+
+### 8A — Does the setup still make sense? (decisions)
+
+Re-run **Phase 1** on the repo as it is today, then question each design choice. Divergences are the highest-value thing this audit finds — raise them via `AskUserQuestion` like the Phase 2 form choice:
+
+- **Release form vs. topology:** Form A but packages are now consumed independently → B/C? Form C but packages now depend on each other → B (they won't auto-bump otherwise)? Form B but the ecosystem has no workspace plugin (see the Form B caveat in `reference/examples.md`) → the graph isn't propagating, so A or C? A new top-level package/app no form covers?
+- **Validation vs. merge strategy:** check the *current* strategy (`gh api repos/{owner}/{repo} --jq '{squash:.allow_squash_merge,merge:.allow_merge_commit,rebase:.allow_rebase_merge}'`). Squash-merge with no PR-title validation → offer `amannn/action-semantic-pull-request`; a title validator left in place after squash was disabled → commit-message linting is what's needed.
+- **Publishing:** repo ships artifacts (npm/marketplace/container) but the workflow stops at the tag (no publish job gated on `releases_created`, Phase 6) → wire it via **`secure-publish-setup`**.
+- **Auth:** a PAT instead of a GitHub App token works but is a long-lived personal credential → offer migration (Phase 4). A deliberately-kept PAT is an observation.
+- **Scopes (Form B/C):** spot-check recent commits — `fix(core):` scopes should match `component`/path names so changes land in the right changelog.
+
+**Respect deliberate choices.** If git history shows a convention was intentional — tag-pins instead of SHAs (`pin-github-actions` would tighten it), custom secret names, a chosen merge strategy, a kept PAT — record it as an observation, don't impose this skill's defaults.
+
+### 8B — Mechanical drift (defects)
+
+Each is a silent-breakage bug:
+
+1. **Every `extra-files` path resolves.** release-please silently ignores a path it can't find, so a renamed package (e.g. `packages/workspace-mcp` → `packages/repository-mcp`) falls out of the release and strands at its old version with no error. The motivating failure for this whole mode.
+2. **Every workspace package is tracked** — Form A: its `version` (+ cross-package pins) under `extra-files`; Form B/C: a `packages` + manifest key. A member on disk but absent from config silently fell out; a config path with no package on disk was renamed/deleted.
+3. **Versions agree** — Form A: all tracked `version` fields equal each other and the manifest `"."`; Form B/C: each manifest entry equals that package's own `version`.
+4. **Config + manifest are strict JSON** (no leftover `//` comments/trailing commas) with matching keys.
+5. **Credentials exist** at repo **or org** scope (check both; org 403 = *unverified*, not missing).
+6. **Workflow uses the App token**, not `GITHUB_TOKEN`.
+
+Node repos — this one-liner covers 1–4 (walks `extra-files` + `packages`, asserts each path exists, diffs versions against the manifest; adapt filenames for Rust `Cargo.toml` / Maven `pom.xml`):
+
+```bash
+node -e '
+const fs = require("fs");
+const cfg = JSON.parse(fs.readFileSync("release-please-config.json", "utf8"));
+const man = JSON.parse(fs.readFileSync(".release-please-manifest.json", "utf8"));
+const problems = [];
+const readVersion = (p) => { try { return JSON.parse(fs.readFileSync(p, "utf8")).version; } catch { return undefined; } };
+const collectExtra = (obj) => Object.values(obj?.packages ?? {}).concat(obj)
+  .flatMap((pkg) => (pkg?.["extra-files"] ?? []).map((e) => (typeof e === "string" ? e : e.path)))
+  .filter(Boolean);
+for (const p of collectExtra(cfg)) if (!fs.existsSync(p)) problems.push(`extra-files path missing: ${p}`);
+for (const path of Object.keys(cfg.packages ?? {})) {
+  if (path !== "." && !fs.existsSync(path)) problems.push(`packages path missing: ${path}`);
+  if (!(path in man)) problems.push(`config package not in manifest: ${path}`);
+}
+for (const path of Object.keys(man)) if (!(path in (cfg.packages ?? {}))) problems.push(`manifest key not in config: ${path}`);
+for (const [path, v] of Object.entries(man)) {
+  if (path === ".") continue;
+  const real = readVersion(`${path}/package.json`);
+  if (real && real !== v) problems.push(`version drift ${path}: manifest ${v} vs package.json ${real}`);
+}
+console.log(problems.length ? problems.map((p) => "✗ " + p).join("\n") : "✓ config/manifest consistent");
+'
+```
+
+Credentials (5) and workflow auth (6):
+
+```bash
+gh variable list; gh secret list                       # repo scope
+ORG=$(gh repo view --json owner --jq .owner.login)     # org scope — empty repo output ≠ missing
+gh api "/orgs/$ORG/actions/variables" --jq '.variables[].name' 2>/dev/null || true
+grep -nE 'create-github-app-token|token:|GITHUB_TOKEN' .github/workflows/*.yml
+```
+
+### 8C — Resolve with the user (`AskUserQuestion`)
+
+Audit mode never edits silently and never just prints a report. Once 8A/8B are done:
+
+1. **Summarize** with evidence: decisions, defects, observations.
+2. **Fix defects** (dangling paths, untracked packages, version/manifest mismatch, `GITHUB_TOKEN` regression), using Phases 3–6 as the reference. Ask only if the repair is itself a judgment call (e.g. *which* version an out-of-sync package should settle on).
+3. **Ask one `AskUserQuestion` per decision**, phrased like the Phase 2 form choice, with a recommended option — never migrate a form, add validation, wire publishing, or change auth unpicked. E.g. *"`renderer` now depends on `dsl` but the config is Form C, so it won't auto-bump — switch to Form B?"* → `Switch to Form B` / `Keep Form C` / `Explain the tradeoff`.
+4. **Apply** what was approved, then hand off the **Phase 7** behavioural check as the live proof. Leave observations as observations.
 
 ## Resources
 

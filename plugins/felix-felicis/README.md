@@ -42,7 +42,7 @@ Sets up an idempotent GitHub branch ruleset on the default branch via `gh api`: 
 
 ### `/release-please-setup`
 
-Sets up release-please (config + manifest + workflow) authenticated with a GitHub App token — never the default `GITHUB_TOKEN`, whose PRs trigger no CI runs. Scopes to one of three release forms, chosen interactively: a single release for the whole repo, per-module releases where dependents auto-bump when a dependency releases, or fully independent per-module releases — each with a ready-to-copy config template and real-world reference repos.
+Sets up, audits, **or** optimizes release-please. On a greenfield repo it creates the config + manifest + workflow (GitHub App token auth, never the default `GITHUB_TOKEN`), scoped to one of three release forms chosen interactively — single release, per-module dependency-aware, or per-module self-contained — each with a ready-to-copy template and reference repos. On a repo that already has release-please it audits instead: mainly judging whether the setup still makes sense (is the release form still right for today's topology? does PR-title validation match the merge strategy? is publishing wired? is auth still best-practice?), and along the way catching mechanical drift (`extra-files` paths that no longer resolve — the silent version-stranding bug — forgotten packages, versions out of sync with the manifest). Changes are resolved through `AskUserQuestion`, never a silent rewrite, with deliberate conventions left alone.
 
 ### `/secure-publish-setup`
 
