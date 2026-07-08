@@ -1,5 +1,5 @@
 {
   "plugins/agento-patronum": "0.1.1",
-  "plugins/felix-felicis": "0.11.0",
+  "plugins/felix-felicis": "0.12.0",
   "plugins/revelio": "0.2.1"
 }
