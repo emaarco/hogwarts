@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.11.0...felix-felicis-v0.12.0) (2026-07-08)
+
+
+### Features
+
+* **felix-felicis:** release-please-setup — detect + audit mode ([#44](https://github.com/emaarco/hogwarts/issues/44)) ([d499a6f](https://github.com/emaarco/hogwarts/commit/d499a6f894edc81309c128feebe549156a909390))
+
 ## [0.11.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.10.0...felix-felicis-v0.11.0) (2026-07-08)
 
 
