@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.12.0...felix-felicis-v0.13.0) (2026-07-08)
+
+
+### Features
+
+* **felix-felicis:** expand conductor-run-setup into conductor-setup ([#46](https://github.com/emaarco/hogwarts/issues/46)) ([d7eaf73](https://github.com/emaarco/hogwarts/commit/d7eaf73618be875166eadcbd8f0fcb22b1575860))
+
 ## [0.12.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.11.0...felix-felicis-v0.12.0) (2026-07-08)
 
 
