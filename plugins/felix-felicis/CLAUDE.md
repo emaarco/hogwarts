@@ -18,6 +18,7 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 - **outlook-invitation** — Creates a German Outlook meeting invitation ready to copy-paste or auto-fill into a calendar event (macOS).
 - **bpmn-export** — Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 - **portless-dev-setup** — Adopts portless (pinned devDependency + `portless.json` + `dev`/`dev:app` split) for stable, worktree-aware `.localhost` dev URLs, wires it into `.conductor/settings.toml`, and researches per-workspace isolation for the non-frontend components portless can't cover.
+- **conductor-setup** — Sets up a repo's full Conductor workspace lifecycle in `.conductor/settings.toml`: install/setup script, selectable Run targets (menu instead of one auto-starting script), and archive cleanup on workspace removal.
 
 ### Beta Skills
 
