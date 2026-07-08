@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.10.0...felix-felicis-v0.11.0) (2026-07-08)
+
+
+### Features
+
+* **felix-felicis:** conductor-run-setup — selectable Run targets & no autostart ([#42](https://github.com/emaarco/hogwarts/issues/42)) ([e985885](https://github.com/emaarco/hogwarts/commit/e985885b7856920f9522a6d383975d9e7322d520))
+
 ## [0.10.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.9.0...felix-felicis-v0.10.0) (2026-07-08)
 
 
