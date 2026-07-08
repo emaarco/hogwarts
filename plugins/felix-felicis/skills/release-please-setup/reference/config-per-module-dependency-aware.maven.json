@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "maven", // "java-yoshi" is a stricter Google-internal flavor of this, used by some googleapis Java repos
+  "plugins": [
+    // Maven equivalent of node-workspace: builds the graph from each module's pom.xml
+    // <dependency>/parent-module references, then patch-bumps any module whose dependency just released
+    { "type": "maven-workspace", "considerAllArtifacts": true }
+  ],
+  "packages": {
+    // each entry below defines one independently-released Maven module (own version, tag, changelog);
+    // maven-workspace reads the dependency graph from each module's pom.xml
+    // (verified against chingor13/release-please-playground, a release-please maintainer's own
+    // demo repo for this exact plugin — see reference/examples.md)
+    "<parent-dir>/<module-a>": { "component": "<module-a>" },
+    "<parent-dir>/<module-b>": { "component": "<module-b>" }
+  }
+}

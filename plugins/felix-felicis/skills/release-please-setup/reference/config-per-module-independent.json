@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "simple", // no package manager release-please understands here (e.g. plugin manifests); "node"/"rust"/"maven" etc. also valid per module
+  "include-component-in-tag": true, // tag becomes "<component>-vX.Y.Z" instead of a bare "vX.Y.Z"
+  "include-v-in-tag": true,
+  "separate-pull-requests": true, // one Release PR per module instead of one PR bundling every module's bump
+  "changelog-path": "CHANGELOG.md",
+  "packages": {
+    // each entry below defines one distinct, independently-released module (own version, tag, changelog).
+    // no "plugins" key here: these modules don't depend on each other, so there's no graph to propagate
+    "plugins/<module-a>": {
+      "package-name": "<module-a>",
+      "component": "<module-a>", // used in the tag ("<module-a>-v1.0.0") and to route Conventional Commit scopes, e.g. fix(<module-a>): ...
+      "extra-files": [
+        // version fields that live outside this module's own manifest but still belong to it
+        { "type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version" }
+      ]
+    },
+    "plugins/<module-b>": {
+      "package-name": "<module-b>",
+      "component": "<module-b>",
+      "extra-files": [
+        { "type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "package.json", "jsonpath": "$.version" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "bump-minor-pre-major": true,
+  "separate-pull-requests": true, // false (default) would bundle a module + its auto-bumped dependents into one PR instead
+  "plugins": [
+    // the actual dependency-graph engine — see config-per-module-dependency-aware.{rust,maven}.json for other ecosystems.
+    // this file does NOT declare which module depends on which; the plugin reads that from each
+    // module's own package.json "dependencies"/"peerDependencies" at run time (see SKILL.md Phase 3)
+    { "type": "node-workspace", "updatePeerDependencies": true }
+  ],
+  "packages": {
+    // each entry below defines one independently-released module (own version, tag, changelog).
+    // {} is enough when the module's own package.json already has the right name/type — node-workspace fills in the rest
+    "packages/<module-a>": {},
+    "packages/<module-b>": {},
+    "packages/<module-c>": {}
+  }
+}

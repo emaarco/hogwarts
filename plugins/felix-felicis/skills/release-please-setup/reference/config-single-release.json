@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node", // ecosystem release-please natively understands; use "simple" if none fits
+  "include-component-in-tag": false, // one tag for the whole repo (e.g. v1.4.0), no per-module prefix
+  "bump-minor-pre-major": true, // treat 0.x as minor-on-feat instead of jumping to 1.0.0
+  "packages": {
+    // the entry below defines the single release unit for the whole repo ("." = repo root);
+    // everything bumps together in one PR/tag/changelog
+    ".": {
+      "package-name": "<repo-name>",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        // files outside "."'s own manifest that must be bumped in the same PR to stay in lockstep
+        { "type": "json", "path": "packages/<module-a>/package.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "packages/<module-b>/package.json", "jsonpath": "$.version" },
+        {
+          "type": "json",
+          "path": "packages/<module-b>/package.json",
+          // no workspace plugin in Form A, so cross-package dependency pins are kept in sync by hand here
+          "jsonpath": "$.dependencies['<module-a-package-name>']"
+        }
+      ]
+    }
+  }
+}
