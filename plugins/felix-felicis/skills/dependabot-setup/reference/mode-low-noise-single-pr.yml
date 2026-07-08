@@ -1,0 +1,38 @@
+# Mode: low-noise, single-PR variant — ONE PR for the whole repo across ALL
+# ecosystems, via multi-ecosystem groups (GA since July 2025). The maximum
+# noise reduction; only for repos where nobody reviews dependency PRs
+# individually and a CI test job gates the merge.
+#
+# NOT for unrelated stacks: with npm (frontend) + gradle (backend), a broken
+# gradle bump blocks the frontend's updates too — use the per-ecosystem shape
+# in mode-low-noise.yml there, and this variant only when even one PR per
+# ecosystem is too many.
+#
+# Syntax rules (verify against the reference before writing — this feature
+# still evolves): the schedule lives on the group, NOT on the member blocks;
+# `patterns` is REQUIRED on every block that joins a multi-ecosystem group.
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-multi-ecosystem-updates
+#
+# `schedule.interval` below is an illustrative placeholder — propose one for
+# the repo-wide group from repo signals (release velocity, activity, PR
+# history) and confirm with the user before writing; don't apply it silently.
+version: 2
+multi-ecosystem-groups:
+  everything:
+    schedule:
+      interval: 'monthly'
+    labels:
+      - 'dependencies'
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    patterns: ['*']
+    multi-ecosystem-group: 'everything'
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    patterns: ['*']
+    multi-ecosystem-group: 'everything'
+  - package-ecosystem: 'docker'
+    directory: '/'
+    patterns: ['*']
+    multi-ecosystem-group: 'everything'

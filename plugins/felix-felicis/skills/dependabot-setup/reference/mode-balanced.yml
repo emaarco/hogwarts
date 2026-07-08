@@ -1,0 +1,62 @@
+# Mode: balanced (default) — minor + patch arrive grouped per ecosystem,
+# every major lands as its own PR. For open-source and production repos where
+# breaking changes deserve individual review and testing.
+#
+# Adapt per repo: one block per detected ecosystem/directory. Carry over any
+# existing `ignore:` rules verbatim, including their comments.
+#
+# `schedule.interval` below is an illustrative placeholder — propose one per
+# ecosystem from repo signals (release velocity, activity, PR history) and
+# confirm with the user before writing; don't apply this value silently.
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+    # majors arrive as individual PRs — leave headroom above the default of 5
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    # let new releases mature before a PR opens (supply-chain guard);
+    # cooldown applies to version updates only — security fixes are never delayed
+    cooldown:
+      default-days: 5
+      semver-major-days: 14
+      semver-minor-days: 5
+      semver-patch-days: 3
+    groups:
+      npm-minor-patch:
+        applies-to: version-updates
+        patterns: ['*']
+        update-types: ['minor', 'patch']
+      # without a security-updates group, every CVE opens its own PR
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
+    # majors intentionally NOT grouped → one reviewable PR per breaking change
+
+  # github-actions: majors are usually mechanical (runner/node bumps), so
+  # grouping everything is fine when CI gates and actions are SHA-pinned.
+  # Keep majors separate instead if workflows ARE the release pipeline.
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    cooldown:
+      default-days: 5
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns: ['*']
+      github-actions-security:
+        applies-to: security-updates
+        patterns: ['*']

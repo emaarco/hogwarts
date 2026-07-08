@@ -1,0 +1,100 @@
+# Mode: fine-grained — balanced semantics plus family groups. For large or
+# conflict-prone dependency trees: ≈40+ direct deps in one ecosystem, grouped
+# PRs that repeatedly fail CI or conflict, or monorepos. Families keep
+# unrelated breakage from blocking each other and make a red CI run
+# attributable to one toolchain.
+#
+# ORDER MATTERS: Dependabot puts a dependency into the FIRST group it matches —
+# specific families must come before the catch-all.
+#
+# Derive families from the actual manifests (read package.json / build.gradle
+# first) — never ship template families the repo doesn't use.
+#
+# `schedule.interval` below is an illustrative placeholder — propose one per
+# ecosystem from repo signals (release velocity, activity, PR history) and
+# confirm with the user before writing; don't apply this value silently.
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+    open-pull-requests-limit: 15
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    cooldown:
+      default-days: 5
+      semver-major-days: 14
+      semver-minor-days: 5
+      semver-patch-days: 3
+    groups:
+      # families: minor+patch by default so majors stay individual PRs.
+      # Low-risk toolchain families (linting) may include 'major'.
+      react:
+        applies-to: version-updates
+        patterns: ['react', 'react-dom', 'react-*', '@types/react*']
+        update-types: ['minor', 'patch']
+      testing:
+        applies-to: version-updates
+        patterns: ['vitest*', 'jest*', '@testing-library/*', 'playwright*']
+        update-types: ['minor', 'patch']
+      linting:
+        applies-to: version-updates
+        patterns: ['eslint*', '@typescript-eslint/*', 'prettier*']
+        update-types: ['minor', 'patch', 'major']
+      # catch-all LAST — everything not claimed by a family
+      npm-minor-patch:
+        applies-to: version-updates
+        patterns: ['*']
+        update-types: ['minor', 'patch']
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
+
+  # JVM example — same idea with gradle (or maven) families
+  - package-ecosystem: 'gradle'
+    directory: '/backend'
+    schedule:
+      interval: 'weekly'
+    labels:
+      - 'dependencies'
+    open-pull-requests-limit: 15
+    cooldown:
+      default-days: 5
+      semver-major-days: 14
+    groups:
+      spring:
+        applies-to: version-updates
+        patterns: ['org.springframework*', 'io.spring*']
+        update-types: ['minor', 'patch']
+      kotlin:
+        applies-to: version-updates
+        patterns: ['org.jetbrains.kotlin*', 'org.jetbrains.kotlinx*']
+        update-types: ['minor', 'patch']
+      testing:
+        applies-to: version-updates
+        patterns: ['org.junit*', 'org.testcontainers*', 'io.mockk*']
+        update-types: ['minor', 'patch']
+      gradle-minor-patch:
+        applies-to: version-updates
+        patterns: ['*']
+        update-types: ['minor', 'patch']
+      gradle-security:
+        applies-to: security-updates
+        patterns: ['*']
+
+# Monorepo levers:
+# 1. `directories` (supports globs) instead of one copy-pasted block per package:
+#      directories: ['/apps/*', '/packages/*']
+# 2. `group-by: dependency-name` inside a group (GA Feb 2026) collapses the
+#    same bump across directories into a single PR — e.g. one lodash PR for
+#    all workspaces instead of one per workspace:
+#      groups:
+#        npm-minor-patch:
+#          applies-to: version-updates
+#          patterns: ['*']
+#          update-types: ['minor', 'patch']
+#          group-by: dependency-name

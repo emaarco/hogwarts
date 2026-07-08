@@ -12,7 +12,6 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 - **maturity-analysis** — End-to-end repo analysis: project overview, key files, maturity assessment (parallel expert subagents per dimension), and prioritized issues.
 - **pin-github-actions** — Supply-chain audit: verifies every GitHub Actions `uses:` reference is pinned to a full commit SHA, reports unpinned references, and optionally rewrites them to SHA + version comment.
 - **pin-node-dependencies** — Supply-chain audit: verifies every `package.json` dependency is pinned to an exact version, checks the committed lockfile, and wires up the `Miragon/pin-npm-dependencies` CI guardrail + `save-exact`.
-- **dependabot-setup** — Analyzes and creates/updates `.github/dependabot.yml`: one block per detected ecosystem, minor+patch grouped, majors as separate PRs, reviewers via CODEOWNERS (deprecated `reviewers` key flagged), and flags floating dependency versions that make Dependabot PRs meaningless.
 - **contributor-setup** — Analyzes contributor experience and creates/updates what's missing: issue-form templates, an open-source target-group-focused README, CONTRIBUTING.md, and the remaining community-health files (PR template, CoC, SECURITY, LICENSE, CODEOWNERS).
 - **make-me-awesome** — Analyzes a GitHub repo and submits it to an awesome list via PR or issue.
 - **medium-publish** — Publishes a Markdown file to Medium via a temporary GitHub Gist import.
@@ -24,6 +23,7 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 
 New and not yet battle-tested on real repos — see [Skill Status](#skill-status).
 
+- **dependabot-setup** — Collaborative Dependabot audit & setup with three grouping modes (low-noise / balanced / fine-grained, templates in `reference/`). Recommends a mode from the repo's use-case (open-source vs internal, what it ships and to whom, CI safety net) with update history used only for fine-tuning, confirms via AskUserQuestion, cleans dead config (removed `reviewers` key, redundant `target-branch`, duplicate blocks, CODEOWNERS over `assignees`), groups security updates, enforces cooldown, and gates setup on pinned dependency versions, delegating fixes to the `pin-github-actions` / `pin-node-dependencies` siblings.
 - **branch-ruleset-setup** — Sets up an idempotent GitHub branch ruleset on the default branch via `gh api` (no deletion, no force-push, linear history, signed commits, PR-only, required CI check with dynamically resolved `integration_id`).
 - **release-please-setup** — Sets up release-please (config + manifest + workflow) with a GitHub App token for authentication (never the default `GITHUB_TOKEN`), plus Conventional-Commit PR-title validation for squash-merge repos.
 - **secure-publish-setup** — Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN`, automatic provenance, idempotent publish step, GitHub Environments for unavoidable long-lived secrets.
