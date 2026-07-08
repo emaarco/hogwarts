@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.9.0...felix-felicis-v0.10.0) (2026-07-08)
+
+
+### Features
+
+* **felix-felicis:** dependabot-setup — cross-ecosystem coupling detection ([#40](https://github.com/emaarco/hogwarts/issues/40)) ([e25dd01](https://github.com/emaarco/hogwarts/commit/e25dd01acb94403009d215fbe1671b9b503103cf))
+
 ## [0.9.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.8.0...felix-felicis-v0.9.0) (2026-07-08)
 
 
