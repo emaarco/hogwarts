@@ -26,9 +26,12 @@ Within low-noise, **one PR per ecosystem is the default**: a single-tech repo is
 
 The mode may differ per ecosystem: even in balanced mode, `github-actions` is commonly fully grouped (majors are mostly mechanical when actions are SHA-pinned and CI gates); keep actions majors separate only when workflows are the release pipeline.
 
-**Stack-groups variant** (`mode-stack-groups.yml`) — multi-ecosystem groups also work *selectively*, orthogonal to the mode: ecosystems that move together share one PR per stack (backend manifest + the docker/compose images it runs on; backend & client released in lockstep; terraform + infra images) while everything else keeps its normal blocks. Propose it when Phase 1 finds coupled manifests — e.g. a compose file whose service images match the backend's drivers. Trade-offs to state: the stack shares one CI gate, and majors ride along with everything the patterns match — ecosystems whose majors need individual review stay outside the stack in a balanced block (mixing is fine).
+**Stack-groups variants — width follows repo type.** When Phase 1d finds coupling (dependencies across ecosystems tracking the same underlying software), two widths can bundle it, both orthogonal to the mode. **The choice is driven by *what the repo is* (Phase 1b), not by how many dependencies happen to be coupled:**
 
-**Combining fine-grained with a targeted pairing** (`mode-fine-grained-stack-groups.yml`) — for when only *one specific dependency pair* is coupled, not a whole ecosystem: e.g. the postgres image in `docker` and the postgres driver in `gradle` must bump together, but the rest of each ecosystem should stay on normal fine-grained family groups. Two blocks per coupled ecosystem, same directory: a "regular" block with fine-grained groups that `ignore`s the coupled dependency, and a "stack" block scoped via `patterns` to just that dependency, joining the shared `multi-ecosystem-group` — `ignore` only suppresses updates within the block that declares it, so the stack block still gets version and security updates for the coupled dependency. Propose it when Phase 1 finds one specific coupled pair rather than whole coupled stacks.
+- **Wide** (`mode-stack-groups.yml`) — bundle each coupled ecosystem *whole* into one PR per stack (all gradle + all docker/compose as one backend group; backend & client in lockstep; terraform + infra images). Right for **solution templates, examples, internal repos not consumed by other projects**: nobody reviews these PRs individually, CI is the gate, and consolidation beats precision.
+- **Narrow** (`mode-fine-grained-stack-groups.yml`) — only the coupled dependency *pair* joins a multi-ecosystem group; the rest of each ecosystem keeps normal per-ecosystem handling. Right for **libraries/OSS consumed elsewhere, or a large dependency tree**, where unrelated majors still deserve individual review. Two blocks per coupled ecosystem, same directory: a "regular" block with the ecosystem's normal groups that `ignore`s the coupled dependency, and a "stack" block scoped via `patterns` to just that dependency, joining the shared `multi-ecosystem-group` — `ignore` only suppresses updates within the block that declares it, so the stack block still gets version and security updates for the coupled dependency.
+
+**Trade-offs to state for *either* width when proposing a stack group:** the stack shares one CI gate; everything the patterns match rides together, majors included; and **a member block that joins a multi-ecosystem group carries only `package-ecosystem`, `directory`, `patterns`, and `multi-ecosystem-group`** — `schedule`/`labels` live on the group, and `cooldown`, `commit-message`, and `groups` cannot sit on members. So every ecosystem pulled into a stack **loses its per-block `cooldown`, `commit-message` prefix, and forced `applies-to: security-updates` grouping**. Keep an ecosystem whose majors (or those knobs) need individual handling out of the stack, in a normal balanced/fine-grained block (mixing is fine).
 
 ## Phase 1 — Discover
 
@@ -68,7 +71,7 @@ Answer these explicitly before recommending anything:
 - **Audience** — open-source with external users, or closed/internal where the team is the only consumer?
 - **What it ships** — how many artifacts does it deploy or publish (npm packages, container images, marketplace extensions)? Every published artifact raises the cost of a silently-broken major.
 - **Safety net** — CI tests that actually gate merges; release automation.
-- **Scale & shape** — dep count per ecosystem, number of packages/workspaces, coupled stacks (compose file + backend manifest).
+- **Scale & shape** — dep count per ecosystem, number of packages/workspaces. (Cross-ecosystem coupling is its own mandatory step — see **d** below.)
 
 **Per-ecosystem cadence.** The mode sets a starting point, but `schedule.interval` is decided **per ecosystem**, not once for the whole config — different ecosystems in the same repo release at different speeds:
 
@@ -90,6 +93,15 @@ gh pr list --author 'app/dependabot' --state all --limit 100 --json state,create
 - **Many closed-without-merge / PRs open 30+ days** → noise exceeded capacity → slower cadence or higher cooldown inside the chosen mode.
 - **Grouped PRs repeatedly superseded, conflicting, or red** → groups too broad → corroborates fine-grained.
 - **Patches merge fast, majors rot** → raise `semver-major-days` cooldown, don't change mode.
+
+**d) Cross-ecosystem coupling — mandatory, explicit.** Coupling is not a judgement call to leave to prose — run it as an explicit step. After collecting the pinned version of every dependency in every ecosystem (you read these anyway for the Phase 3 pin gate), **identify dependencies in different ecosystems that track the same underlying software or release train**, and flag each such pair as a coupled candidate — manifests that must bump together. Two signals surface a pair, don't rely on only the first: an **identical version string** shared across manifests (the strongest and easiest to grep — e.g. one library pinned in two places), *and* **different version strings that nonetheless track one product** — a server and the client library that talks to it version their releases independently, so a literal-value match would miss them; recognise the shared software by name, not by number.
+
+Stay general — flag *any* shared software, not just the familiar shapes. Illustrative pairs only:
+- a server image in `docker`/`docker-compose` and its client SDK or driver in `npm`/`gradle`/`pip` — e.g. the `postgres` image (tag `16`) and the `org.postgresql:postgresql` driver (`42.7.x`): different version numbers, same server, must move together
+- a backend library and the client's pinned copy of the same library — usually an *identical* version string (backend & client released in lockstep)
+- a provider/tool and the deployed image tag it manages — e.g. a terraform provider and the infra image it provisions (typically different numbers)
+
+Every coupled pair becomes a candidate carried into **Phase 4**, where the *width* of the bundle is chosen by repo type. If nothing across ecosystems tracks the same software, record "no coupling found" and skip the stack-group variants.
 
 ## Phase 2 — Analyze the existing config (if present)
 
@@ -131,12 +143,17 @@ Post the findings **as a normal message first** — table of Phase 2/3 checks pl
 | Solution template, example/demo, internal tooling with no external consumers | low-noise |
 | Open-source project or product with external users; publishes artifacts — the more it deploys, the stronger the case | balanced |
 | Large dependency tree (≈40+ direct deps in one ecosystem), many packages/workspaces, monorepo with shared deps | fine-grained |
-| Coupled stacks (backend manifest + the compose/docker images it runs on; backend & client in lockstep) | stack-groups variant on top |
+| Coupling found (Phase 1d) **and** the repo is a solution template / example / internal tool not consumed by other projects | **wide** stack groups on top — bundle each coupled ecosystem whole into one PR (`mode-stack-groups`); CI is the gate, consolidation beats precision |
+| Coupling found (Phase 1d) **and** the repo is a library/OSS consumed elsewhere, or has a large dependency tree | **narrow** targeted pairing on top — only the coupled pair joins a multi-ecosystem group, the rest of each ecosystem stays per-ecosystem (`mode-fine-grained-stack-groups`) so unrelated majors keep individual review |
 | **No CI test job** | never low-noise — grouped majors would merge blind; recommend balanced and adding CI |
 
 Then confirm via **AskUserQuestion** — recommendation first, marked "(recommended)", every option stating its consequence. Ask only what the evidence can't answer, max 4 questions:
 
-1. **Mode** — the three modes with one-line trade-offs; include the single-PR multi-ecosystem variant only for clear low-noise repos, the stack-groups variant when Phase 1 found whole coupled ecosystems (name the concrete stacks, e.g. "gradle + docker-compose as one backend PR"), and the targeted-pairing variant when Phase 1 found just one coupled dependency pair (e.g. "postgres image + postgres driver as one PR, rest of gradle/docker stays fine-grained").
+1. **Mode** — the three modes with one-line trade-offs. Include the single-PR multi-ecosystem variant only for clear low-noise repos. **Whenever Phase 1d found coupling, surface *both* stack-group widths in the same question** and mark the one matching the Phase-1b use-case "(recommended)":
+   - **wide** — whole coupled ecosystems bundled (`mode-stack-groups`), recommended for solution-template/example/internal repos not consumed elsewhere (e.g. "all gradle + all docker/compose as one backend PR");
+   - **narrow** — only the coupled pair joins the group, the rest stays per-ecosystem (`mode-fine-grained-stack-groups`), recommended for libraries/OSS consumed elsewhere or large dependency trees (e.g. "postgres image + postgres driver as one PR, rest of gradle/docker stays fine-grained").
+
+   Name the concrete coupled manifests/pair. State the stack-group trade-off in the option text: bundled member blocks lose their per-block `cooldown`, `commit-message` prefix, and forced `applies-to: security-updates` grouping (`schedule`/`labels` live on the group; `cooldown`/`commit-message`/`groups` can't sit on members).
 2. **Cadence per ecosystem** — always confirm, never silently apply the mode's starting point. Propose an interval per detected ecosystem from the **Per-ecosystem cadence** heuristic (Phase 1) adjusted by PR history (Phase 1c) and repo activity level, and let the user override any of them.
 3. **Review wiring** — CODEOWNERS-only (recommended for small teams) vs keep `assignees`, only if the existing config has assignees/reviewers.
 4. **Existing customizations** (multiSelect) — which `ignore:` rules, labels, or schedule quirks to carry over vs drop.
@@ -146,6 +163,7 @@ Then confirm via **AskUserQuestion** — recommendation first, marked "(recommen
 Enter this phase only once the Phase 3 pin gate is resolved — pins fixed (sibling skills run, other ecosystems patched) or floating versions explicitly accepted by the user.
 
 - **Update > replace.** Fix the specific gaps; carry over confirmed customizations (especially `ignore:` rules) verbatim, including comments.
+- **Strip teaching comments — never emit them.** The `reference/mode-*.yml` files carry long explanatory prose comments for *agent* context only; they must **not** appear in the generated `.github/dependabot.yml`. Copy the config shape, not the rationale. The written file keeps at most **brief one-line section labels in the host repo's existing comment style** (or none at all). This does not conflict with *update > replace* above: comments already present in the repo's own config (e.g. a rationale line on an `ignore:` rule) are still carried over verbatim.
 - Start from the chosen `reference/mode-*.yml`, one block per detected ecosystem/directory. Templates show `weekly`/`monthly` as illustrative placeholders only — write the interval **confirmed per ecosystem in Phase 4**, not the template's literal value. For fine-grained: derive family groups from the *actual* manifests, never ship template families the repo doesn't use, and confirm the families with the user.
 - Every mode keeps: `labels: ['dependencies']`, `commit-message` prefix `chore` + `include: scope`, `cooldown`, and an `applies-to: security-updates` group per ecosystem.
 - If no `CODEOWNERS` exists, create `.github/CODEOWNERS` with a default owner (suggest from `gh api repos/{owner}/{repo} --jq .owner.login`):
