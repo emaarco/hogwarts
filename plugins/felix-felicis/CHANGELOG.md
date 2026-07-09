@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.14.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.13.0...felix-felicis-v0.14.0) (2026-07-09)
+
+
+### Features
+
+* **felix-felicis:** add create-github-ticket skill ([#51](https://github.com/emaarco/hogwarts/issues/51)) ([01099de](https://github.com/emaarco/hogwarts/commit/01099debb7324ac5ee1c137206d8d2257ca180e5))
+* **felix-felicis:** auto setup/archive, no-default multi-run, drop settings.local in conductor-setup ([#48](https://github.com/emaarco/hogwarts/issues/48)) ([8887749](https://github.com/emaarco/hogwarts/commit/8887749da20f8059d3ec168e7f278c46ca1a4a68))
+* **felix-felicis:** release-please-setup handles form-migration continuity ([#50](https://github.com/emaarco/hogwarts/issues/50)) ([0d63d3d](https://github.com/emaarco/hogwarts/commit/0d63d3d58a460a020f8ad6a43cd600a504c1c6e8))
+
 ## [0.13.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.12.0...felix-felicis-v0.13.0) (2026-07-08)
 
 
