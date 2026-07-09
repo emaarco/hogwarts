@@ -56,6 +56,10 @@ Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, aut
 
 Orchestrator: evidence-based release & supply-chain readiness audit with an adversarial review subagent. Grades versioning, secure publishing, CI, PR validation, and supply-chain hardening against a gold-standard reference and delegates fixes to the matching setup skills.
 
+### `/create-github-ticket`
+
+Creates or updates a GitHub issue — feature request, bug report, or refactor task — using the `gh` CLI. Detects create vs. update mode from your input, optionally researches unfamiliar libraries or APIs with WebSearch/WebFetch, discovers the repo's `.github/ISSUE_TEMPLATE/` forms (in the current or a referenced repo) and falls back to bundled default templates, drafts the title and body, confirms with you before writing, then creates or edits the issue and reports the final state with its URL.
+
 ## Rules
 
 The following rules are bundled as plugin commands and auto-activate when you work on matching file types.
