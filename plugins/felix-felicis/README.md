@@ -32,6 +32,10 @@ Analyzes a GitHub repository and adds it to an awesome list by submitting a PR o
 
 Creates a professional German Outlook meeting invitation with context, goals, agenda, and emojis — ready to copy-paste or auto-fill into a new calendar event (macOS auto-fill requires Terminal accessibility permission).
 
+### `/create-github-ticket`
+
+Creates or updates a GitHub issue — feature request, bug report, or refactor task — using the `gh` CLI. Detects create vs. update mode from your input, optionally researches unfamiliar libraries or APIs with WebSearch/WebFetch, discovers the repo's `.github/ISSUE_TEMPLATE/` forms (in the current or a referenced repo) and falls back to bundled default templates, drafts the title and body, confirms with you before writing, then creates or edits the issue and reports the final state with its URL.
+
 ## Beta Skills
 
 New skills that are not yet battle-tested on real repos — expect rough edges and review their output more carefully.
@@ -55,10 +59,6 @@ Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, aut
 ### `/release-audit`
 
 Orchestrator: evidence-based release & supply-chain readiness audit with an adversarial review subagent. Grades versioning, secure publishing, CI, PR validation, and supply-chain hardening against a gold-standard reference and delegates fixes to the matching setup skills.
-
-### `/create-github-ticket`
-
-Creates or updates a GitHub issue — feature request, bug report, or refactor task — using the `gh` CLI. Detects create vs. update mode from your input, optionally researches unfamiliar libraries or APIs with WebSearch/WebFetch, discovers the repo's `.github/ISSUE_TEMPLATE/` forms (in the current or a referenced repo) and falls back to bundled default templates, drafts the title and body, confirms with you before writing, then creates or edits the issue and reports the final state with its URL.
 
 ## Rules
 
