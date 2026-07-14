@@ -36,6 +36,18 @@ Creates a professional German Outlook meeting invitation with context, goals, ag
 
 Creates or updates a GitHub issue — feature request, bug report, or refactor task — using the `gh` CLI. Detects create vs. update mode from your input, optionally researches unfamiliar libraries or APIs with WebSearch/WebFetch, discovers the repo's `.github/ISSUE_TEMPLATE/` forms (in the current or a referenced repo) and falls back to bundled default templates, drafts the title and body, confirms with you before writing, then creates or edits the issue and reports the final state with its URL.
 
+### `/contributor-setup`
+
+Analyzes a repo's contributor experience and creates or updates what's missing: GitHub issue-form templates (bug / feature / refactor), an open-source, target-group-focused README, `CONTRIBUTING.md`, and the remaining community-health files (PR template, `CODE_OF_CONDUCT`, `SECURITY`, `LICENSE`, `CODEOWNERS`).
+
+### `/medium-publish`
+
+Publishes a Markdown blog post to Medium via a temporary GitHub Gist import (macOS): transforms headings to bold, creates a Gist, copies its URL to the clipboard, and opens Medium's import page for you to finish manually.
+
+### `/bpmn-export`
+
+Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`, with output placed under the module's `assets/` directory.
+
 ## Beta Skills
 
 New skills that are not yet battle-tested on real repos — expect rough edges and review their output more carefully.
@@ -64,13 +76,17 @@ Orchestrator: evidence-based release & supply-chain readiness audit with an adve
 
 The following rules are bundled as plugin commands and auto-activate when you work on matching file types.
 
-### BPMN Image Export (`**/*.bpmn`)
-
-Instructs Claude to use `npx bpmn-to-image` when generating images from BPMN files, with output placed under the module's `assets/` directory.
-
 ### Kotlin Code Style (`**/*.kt`)
 
 Enforces collection literal formatting (one element per line when multi-line) and prefers function-body style over expression-body style for multi-line functions.
+
+### TypeScript Code Style (`**/*.ts`, `**/*.tsx`)
+
+Enforces descriptive variable naming conventions (no abbreviations).
+
+### package.json Version Pinning (`**/package.json`)
+
+Enforces exact/fixed dependency versions — no `^`, `~`, or other ranges.
 
 ## License
 
