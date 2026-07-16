@@ -19,6 +19,15 @@ Work in **phases** and report findings before any large change. The scope bounda
 - **Smallest change that follows the documented pattern.** Never build a branch/host slug yourself — portless derives it from the git worktree.
 - **Use semantic commit messages. Do NOT commit unless explicitly asked** — stage edits, then show the diff and stop.
 
+## Proxy privilege model — pick one, apply it consistently
+
+The port-443 proxy is the **only** thing that can touch root, and only because binding a port below 1024 requires privilege on macOS/Linux. **Your dev server always runs as the user who launched `portless` — portless elevates only the proxy child, never your app.** So the whole "is my stuff running as root?" question reduces to two choices. Pick one (via `AskUserQuestion` if unclear) and wire it into **both** the docs (Phase 1) and `.conductor/settings.toml` (Phase 2):
+
+- **Option A — clean URLs (default).** Install the proxy once as a root-owned service: `npx portless service install` (one `sudo`, per machine). Only that small daemon is root; it never touches repo files, so there are **no** root-owned `.next` / `.vite` / `node_modules` — dev servers and build artifacts stay unprivileged. URLs are port-less: `https://<worktree>.<project>.localhost`. **Never run `npm run dev` (or the dev script) under `sudo`** — that would make the dev server and its artifacts root-owned, the exact failure this avoids.
+- **Option B — fully rootless.** Set `PORTLESS_PORT=<port ≥ 1024>` (e.g. `1355`). Nothing ever needs `sudo` — not the proxy, not the app — so nothing can run as root and **no pre-install step** is required (works out of the box for the headless Conductor Run button). Cost: the port shows in the URL: `https://<worktree>.<project>.localhost:1355`.
+
+Recommend **A** when the user wants clean URLs and only cares that *their own* code and artifacts aren't root; recommend **B** when "zero root anywhere" is a hard requirement. A root proxy daemon is not a contradiction to "rootless" — it is the clean separation: the one privileged thing isolated, all dev work unprivileged.
+
 ## Phase 0 — Detect the stack
 
 Inspect and report before changing anything:
@@ -45,7 +54,7 @@ If portless is **not present**, add it. If portless **is present but hand-rolled
 
 **Target shape:**
 
-1. Add `portless` as a **pinned devDependency** so `npm install` is enough — no global install. The proxy daemon is still a one-time per-machine step; document `npx portless service install` (needs `sudo` once).
+1. Add `portless` as a **pinned devDependency** so `npm install` is enough — no global install. Then apply the [privilege model](#proxy-privilege-model--pick-one-apply-it-consistently) chosen above: for **Option A**, document the one-time `npx portless service install` (one `sudo` per machine) and the port-less URL shape; for **Option B**, document the `PORTLESS_PORT=<port ≥ 1024>` env var and that no `sudo` is ever needed.
 2. Create **`portless.json`** with explicit config instead of inference:
    ```json
    { "name": "<project-name>", "script": "dev:app" }
@@ -59,7 +68,7 @@ If portless is **not present**, add it. If portless **is present but hand-rolled
    - Add only framework flags that are actually required, and **verify them for THIS framework**. Vite-based servers on macOS often need `--host` / `--bind 127.0.0.1` (because `localhost` resolves to IPv6 `::1`, which portless can't proxy) plus `'.localhost'` in Vite's `server.allowedHosts`.
 4. **Remove** leftover manual slug/hostname construction and any `npm install -g portless` assumptions from scripts and docs.
 
-Update README / CLAUDE.md / AGENT.md dev instructions to match: devDependency (not global), the one-time `npx portless service install`, the `<worktree>.<project>.localhost` URL shape, and that the slug is portless-derived (not hand-built).
+Update README / CLAUDE.md / AGENT.md dev instructions to match: devDependency (not global), the chosen privilege model (Option A: one-time `npx portless service install`; Option B: `PORTLESS_PORT` env var, no sudo), the `<worktree>.<project>.localhost` URL shape (with `:<port>` under Option B), and that the slug is portless-derived (not hand-built).
 
 ## Phase 2 — Conductor scripts
 
@@ -70,15 +79,17 @@ Add or refresh **`.conductor/settings.toml`** (shared, committed) per the [Condu
 
 [scripts]
 setup = "npm install"
-run = "npm run dev"
+run = "npm run dev"                        # Option A: proxy pre-installed as a service, clean URLs
+# run = "PORTLESS_PORT=1355 npm run dev"   # Option B: fully rootless, URL carries :1355
 run_mode = "concurrent"
 ```
 
-Substitute the package manager detected in Phase 0 (`pnpm install` / `pnpm dev`, `yarn` / `yarn dev`, `bun install` / `bun dev`) — the snippet shows npm only as the default.
+Keep the `run` line for the privilege model chosen above and drop the other. Substitute the package manager detected in Phase 0 (`pnpm install` / `pnpm dev`, `yarn` / `yarn dev`, `bun install` / `bun dev`) — the snippet shows npm only as the default.
 
 - `run = "npm run dev"` gives each Conductor workspace its own `<workspace>.<project>.localhost` — **no `CONDUCTOR_PORT` threading needed for the frontend.**
 - `concurrent` is safe **only** because each worktree gets a distinct portless subdomain. If the repo has a shared single-instance resource (one fixed port, one DB, one Docker stack) that can't be made per-workspace, use `run_mode = "nonconcurrent"`.
-- The headless Run button has **no TTY for sudo**, so the proxy daemon must already be installed (`npx portless service install`). Note this in the docs.
+- **Never wrap the run command in `sudo`** under either option — the dev server would run as root and leave root-owned build artifacts.
+- **Option A only:** the headless Run button has **no TTY for sudo**, so the proxy service MUST already be installed (`npx portless service install`) before the Run button is used — otherwise portless cannot bind 443 and the run fails. **Option B needs no pre-install** — the unprivileged port binds without sudo, so it works headless out of the box.
 
 ## Phase 3 — Non-frontend components (IMPORTANT)
 
