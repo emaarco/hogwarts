@@ -86,6 +86,7 @@ If a repo template exists, follow it and fill only the sections you have real co
 Compose the title (Step 3) and body (Step 4). Keep it **compact**:
 
 - **Why** before **What**; bullets over prose; no filler.
+- **No manual line breaks inside a sentence or bullet** — write each paragraph and list item as one continuous line and let GitHub soft-wrap it. Break only between sections (a blank line). Hard-wrapping mid-sentence splits list items and reads as broken in the diff.
 - Put the issue link where the template expects it, otherwise as the **last line** of the body.
 - Include optional sections (breaking changes, out-of-scope, screenshots) only when they add value.
 

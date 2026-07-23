@@ -17,6 +17,11 @@ Order is deliberate: **Why** (motivation) before **What** (changes) before **Ver
 (evidence), with the issue reference last. Everything else is optional and included only when it
 adds value.
 
+**Never insert a manual line break inside a sentence or a bullet.** Write each paragraph and list
+item as one continuous line — GitHub soft-wraps it. Add a break only between sections (a blank
+line). A hard wrap mid-sentence turns the tail into its own broken-looking line and detaches
+wrapped bullet continuations from their item.
+
 ## Template
 
 ```markdown
@@ -58,9 +63,7 @@ Closes #<issue>
 ```markdown
 ## Why
 
-The repo ships no Maven wrapper and there's no global Maven, so `mvn` isn't found and the
-project can't be built out of the box. Just like `gradlew` for Gradle, a committed `mvnw`
-pins one Maven version for everyone and builds with no global install.
+The repo ships no Maven wrapper and there's no global Maven, so `mvn` isn't found and the project can't be built out of the box. Just like `gradlew` for Gradle, a committed `mvnw` pins one Maven version for everyone and builds with no global install.
 
 ## What
 
