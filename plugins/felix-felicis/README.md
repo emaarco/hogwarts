@@ -72,6 +72,10 @@ Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, aut
 
 Orchestrator: evidence-based release & supply-chain readiness audit with an adversarial review subagent. Grades versioning, secure publishing, CI, PR validation, and supply-chain hardening against a gold-standard reference and delegates fixes to the matching setup skills.
 
+### `/pull-request-description`
+
+Drafts a consistent pull-request / merge-request title and body, then creates or updates it via `gh` (GitHub) or `glab` (GitLab). The title defaults to a Conventional Commit but respects repo-defined types and scopes when present (commitlint, release-please packages, `amannn/action-semantic-pull-request`, or `CONTRIBUTING.md`). The body follows the repo's own PR/MR template if it has one, otherwise a bundled compact default — **Why** → **What** → **Verification**, with the issue link as the last line — plus only-when-relevant sections for breaking changes and follow-ups. Discovers the issue the change builds on (from the branch name, commits, or you) and links it with the correct closing or reference keyword. Shows the full draft for confirmation before writing anything.
+
 ## Rules
 
 The following rules are bundled as plugin commands and auto-activate when you work on matching file types.
