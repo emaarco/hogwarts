@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.15.0...felix-felicis-v0.16.0) (2026-07-23)
+
+
+### Features
+
+* **dependabot-setup:** add optional patch/minor auto-merge companion ([#57](https://github.com/emaarco/hogwarts/issues/57)) ([5852cd4](https://github.com/emaarco/hogwarts/commit/5852cd40d938035fcd53056b33992b507157a00b))
+
 ## [0.15.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.14.0...felix-felicis-v0.15.0) (2026-07-23)
 
 
