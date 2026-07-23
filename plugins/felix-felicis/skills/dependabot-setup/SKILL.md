@@ -175,12 +175,24 @@ Enter this phase only once the Phase 3 pin gate is resolved — pins fixed (sibl
 
 - Ensure referenced labels exist: `gh label create dependencies --description "Dependency updates" --color 0366d6` for any missing one.
 
+### Optional companion — patch/minor auto-merge
+
+After the `dependabot.yml` is written, **offer** (never impose) a patch/minor auto-merge workflow from `reference/automerge-workflow.yml`. This writes `.github/workflows/dependabot-automerge.yml` — a separate file from `dependabot.yml`.
+
+**Precondition — state it, never skip it.** Auto-merge is only safe when a branch ruleset with a *required status check* gates the default branch (sibling **`branch-ruleset-setup`**) **and** a CI test job actually runs on PRs (Phase 1b). Without a required check, `gh pr merge --auto` merges the moment merge requirements are met — i.e. immediately — so CI is *not* a gate and a broken patch lands unreviewed. If the precondition isn't met, name the option and exactly what it needs (a required-check ruleset), and stop there — do not write the workflow.
+
+When the precondition holds, confirm via **AskUserQuestion** — recommend enabling for internal/low-noise repos (CI is the gate, review capacity is the constraint); recommend *against* auto-enabling for OSS/product repos where a maintainer may want eyes on every bump:
+- **Enable auto-merge (patch + minor)** — Dependabot patch/minor PRs merge once the required check passes; every major stays manual for breaking-change review.
+- **No auto-merge** — every Dependabot PR waits for a manual merge.
+
+On enable: copy `reference/automerge-workflow.yml` to `.github/workflows/dependabot-automerge.yml`, **stripping the teaching comments** (per the comment rule above — keep at most a one-line label), re-resolve the `fetch-metadata` SHA to the intended release (`gh api repos/dependabot/fetch-metadata/git/refs/tags/<tag> --jq .object.sha`), and narrow the gate only if the user asked (e.g. dev-dependencies via `contains(steps.meta.outputs.dependency-names, …)`, or an ecosystem check via `steps.meta.outputs.package-ecosystem`).
+
 ## Phase 6 — Verify
 
 - YAML parses: `python3 -c "import yaml; yaml.safe_load(open('.github/dependabot.yml'))"` (fall back to `npx --yes yaml` or careful review).
 - `CODEOWNERS` check after pushing: `gh api repos/{owner}/{repo}/codeowners/errors`.
 - Config errors and run logs surface under **Insights → Dependency graph → Dependabot** — tell the user to check there after the merge, since GitHub validates unknown keys only at run time.
-- Optional follow-up to mention (not to build unasked): with branch protection in place (sibling **`branch-ruleset-setup`**), patch/minor group PRs can be auto-merged via `dependabot/fetch-metadata` + `gh pr merge --auto`.
+- If the auto-merge companion was written (Phase 5), YAML-parse it too and confirm the `fetch-metadata` `uses:` is SHA-pinned. Remind the user auto-merge does nothing until a required-status-check ruleset is in place (**`branch-ruleset-setup`**).
 
 ## Sources
 
