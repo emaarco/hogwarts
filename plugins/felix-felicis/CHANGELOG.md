@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.14.0...felix-felicis-v0.15.0) (2026-07-23)
+
+
+### Features
+
+* **felix-felicis:** add pull-request-description skill ([#55](https://github.com/emaarco/hogwarts/issues/55)) ([a9a2a6b](https://github.com/emaarco/hogwarts/commit/a9a2a6b0ddda539e19ac2c6e0162aa035aff50e7))
+
 ## [0.14.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.13.0...felix-felicis-v0.14.0) (2026-07-09)
 
 
