@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.16.0...felix-felicis-v0.16.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* **dependabot-setup:** retry auto-merge against unstable-status race ([#60](https://github.com/emaarco/hogwarts/issues/60)) ([ccad62a](https://github.com/emaarco/hogwarts/commit/ccad62ae2d25af8d54e0554a15f62154d65baa32))
+
 ## [0.16.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.15.0...felix-felicis-v0.16.0) (2026-07-23)
 
 
