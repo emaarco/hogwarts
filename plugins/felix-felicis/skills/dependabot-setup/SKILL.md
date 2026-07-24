@@ -187,6 +187,8 @@ When the precondition holds, confirm via **AskUserQuestion** — recommend enabl
 
 On enable: copy `reference/automerge-workflow.yml` to `.github/workflows/dependabot-automerge.yml`, **stripping the teaching comments** (per the comment rule above — keep at most a one-line label), re-resolve the `fetch-metadata` SHA to the intended release (`gh api repos/dependabot/fetch-metadata/git/refs/tags/<tag> --jq .object.sha`), and narrow the gate only if the user asked (e.g. dev-dependencies via `contains(steps.meta.outputs.dependency-names, …)`, or an ecosystem check via `steps.meta.outputs.package-ecosystem`).
 
+> **Keep the merge-step retry loop.** `on: pull_request` fires while the required check is still queued and the merge state is UNSTABLE, so `enablePullRequestAutoMerge` rejects the first call with "Pull request is in unstable status" and a single-shot `gh pr merge --auto` exits 1 — auto-merge never queues. The template retries (5 attempts, 15s backoff) to ride out that race; don't collapse it back to one line when stripping comments.
+
 ## Phase 6 — Verify
 
 - YAML parses: `python3 -c "import yaml; yaml.safe_load(open('.github/dependabot.yml'))"` (fall back to `npx --yes yaml` or careful review).
