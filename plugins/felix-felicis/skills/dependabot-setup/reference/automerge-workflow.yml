@@ -40,11 +40,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Enable auto-merge for patch and minor updates
         if: steps.meta.outputs.update-type == 'version-update:semver-patch' || steps.meta.outputs.update-type == 'version-update:semver-minor'
-        # `on: pull_request` fires the instant Dependabot opens the PR, while the
-        # required check is still queued and the merge state is UNSTABLE. In that
-        # window `enablePullRequestAutoMerge` rejects with "Pull request is in
-        # unstable status" and a single-shot call exits 1 — auto-merge never
-        # queues and the PR sits open. Retry until the check registers.
         run: |
           for i in 1 2 3 4 5; do
             gh pr merge --auto --squash "$PR_URL" && exit 0
