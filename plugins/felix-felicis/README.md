@@ -76,6 +76,10 @@ Orchestrator: evidence-based release & supply-chain readiness audit with an adve
 
 Drafts a consistent pull-request / merge-request title and body, then creates or updates it via `gh` (GitHub) or `glab` (GitLab). The title defaults to a Conventional Commit but respects repo-defined types and scopes when present (commitlint, release-please packages, `amannn/action-semantic-pull-request`, or `CONTRIBUTING.md`). The body follows the repo's own PR/MR template if it has one, otherwise a bundled compact default — **Why** → **What** → **Verification**, with the issue link as the last line — plus only-when-relevant sections for breaking changes and follow-ups. Discovers the issue the change builds on (from the branch name, commits, or you) and links it with the correct closing or reference keyword. Shows the full draft for confirmation before writing anything.
 
+### `/translate-post`
+
+Translates a blog post or article into a target language **you specify** so it reads as if it were written in that language, not translated into it — no fixed repo structure required: you supply the input file and the target language. Preserves code blocks, URLs, and product/pattern names verbatim, and applies a whiteboard test to decide which technical terms stay in their original form. Then it loops a **fresh, isolated native-speaker reviewer** over the text (a new agent each round, never primed with prior findings; 5-round safety cap) — flagging source-language interference, calques, broken ellipses, wrong loanword gender, and over-localized terms — applies the fixes, and finishes with a faithfulness check against the source so meaning never drifts. Also runs the nativeness loop on its own against a file already in the target language.
+
 ## Rules
 
 The following rules are bundled as plugin commands and auto-activate when you work on matching file types.
