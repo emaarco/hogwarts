@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.16.1...felix-felicis-v0.17.0) (2026-07-28)
+
+
+### Features
+
+* **felix-felicis:** add language-agnostic translate-post skill ([#63](https://github.com/emaarco/hogwarts/issues/63)) ([e311cdc](https://github.com/emaarco/hogwarts/commit/e311cdcc5b910b2f7ea52b41c2ec1eaf860f784d))
+* **felix-felicis:** add slidev-toolkit-migration skill ([#62](https://github.com/emaarco/hogwarts/issues/62)) ([26d13d1](https://github.com/emaarco/hogwarts/commit/26d13d1cfe8b36c79d98a96754725637981262a6))
+
 ## [0.16.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.16.0...felix-felicis-v0.16.1) (2026-07-24)
 
 
