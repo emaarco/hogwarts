@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.17.0...felix-felicis-v0.17.1) (2026-08-05)
+
+
+### Bug Fixes
+
+* **felix-felicis:** warn on client-id variable name mismatch in release-please-setup ([#68](https://github.com/emaarco/hogwarts/issues/68)) ([bc19a5b](https://github.com/emaarco/hogwarts/commit/bc19a5b114cb87bbc72b7fa127337988a11ee1ba))
+
 ## [0.17.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.16.1...felix-felicis-v0.17.0) (2026-07-28)
 
 
