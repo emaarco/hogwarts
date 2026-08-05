@@ -171,7 +171,7 @@ For Form B/C, `releases_created` is a map keyed by component path — gate each 
 
 ## Phase 7 — Verify
 
-- [ ] Workflow YAML parses; actions SHA-pinned; `vars.RELEASE_PLEASE_APP_CLIENT_ID` / secret exist (`gh variable list`, `gh secret list`)
+- [ ] Workflow YAML parses; actions SHA-pinned; the `vars.` / `secrets.` names in the workflow **exactly match** the repo variable and secret (`gh variable list`, `gh secret list`) — a name mismatch makes `client-id` resolve to an empty string and `create-github-app-token` fails with *"The 'client-id' (or deprecated 'app-id') input must be set to a non-empty string"*
 - [ ] Merge a `feat:`/`fix:` commit to main → a Release PR appears with the correct version bump and CHANGELOG entry, **and CI runs on it** (the app-token proof)
 - [ ] Merge the Release PR → GitHub release + tag created; manifest updated
 - [ ] **Form A:** every `extra-files` path (including cross-package dependency pins) was bumped in the same Release PR
