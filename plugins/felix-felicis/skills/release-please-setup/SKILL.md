@@ -114,6 +114,12 @@ name: Release
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (open no PR, create no release)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -136,7 +142,10 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          dry-run: ${{ inputs.dry_run == true }}
 ```
+
+The `workflow_dispatch` + `dry-run` input is optional but cheap ergonomics: it lets a maintainer trigger the action by hand and preview what release-please *would* do (log only, no PR, no release) before trusting it on a live push — handy right after setup or after a config change. On a normal `push` to main the input is unset, so `inputs.dry_run == true` is `false` and the run behaves exactly as without it.
 
 ## Phase 5 — Conventional Commits prerequisite
 
