@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.17.1...felix-felicis-v0.18.0) (2026-08-10)
+
+
+### Features
+
+* **felix-felicis:** guard npm provenance repository field in release skills ([#70](https://github.com/emaarco/hogwarts/issues/70)) ([0ca54b3](https://github.com/emaarco/hogwarts/commit/0ca54b35a7121344c0e45798a28e45dc449f8180))
+
 ## [0.17.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.17.0...felix-felicis-v0.17.1) (2026-08-05)
 
 
