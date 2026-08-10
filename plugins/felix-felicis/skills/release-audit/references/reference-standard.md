@@ -12,6 +12,7 @@ The house reference for "what good looks like" is [Miragon/wardley-maps-modeler]
 ### Secure publishing (no long-lived tokens)
 
 - Publishing runs in a reusable workflow (`workflow_call`) with OIDC trusted publishing: `id-token: write`, `npm publish --provenance`, **no NPM_TOKEN secret**. The publish step is idempotent (skips if the version is already on the registry).
+- Every published `package.json` carries a `repository` field (`url` + monorepo `directory`) so provenance validation passes — without it, `npm publish --provenance` fails with E422 at release time (a `--dry-run` can't catch it; the validation is server-side). A missing/mismatched field is drift against this standard — `secure-publish-setup` owns the check and the fix.
 - A **GitHub App token** (`actions/create-github-app-token`) — NOT the default `GITHUB_TOKEN` — authenticates the release-please step, because PRs/commits made with `GITHUB_TOKEN` do not trigger further CI runs (the single most-overlooked release-automation gotcha).
 - Deploy targets are gated behind GitHub Environments (`environment: npm`, `environment: vscode-marketplace`). The one unavoidable long-lived secret (VS Code Marketplace PAT) lives in its protected environment.
 

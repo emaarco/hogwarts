@@ -66,7 +66,7 @@ Sets up, audits, **or** optimizes release-please. On a greenfield repo it create
 
 ### `/secure-publish-setup`
 
-Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, an idempotent skip-if-already-published step, and GitHub Environments for any unavoidable long-lived secrets.
+Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, an idempotent skip-if-already-published step, GitHub Environments for any unavoidable long-lived secrets, and a bundled one-time check that verifies each package's `repository` field at setup so provenance publishing can't fail with E422.
 
 ### `/release-audit`
 

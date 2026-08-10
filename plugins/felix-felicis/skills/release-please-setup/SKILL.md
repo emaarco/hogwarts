@@ -169,6 +169,8 @@ publish:
 
 For Form B/C, `releases_created` is a map keyed by component path — gate each module's publish job on its own key (e.g. `fromJSON(needs.release-please.outputs.releases_created)['packages/core']`) rather than the top-level output.
 
+**If publishing to npm with provenance:** each published `package.json` must carry a `repository` field (`url` + monorepo `directory`), or `npm publish --provenance` fails with E422 at release time — `secure-publish-setup` owns the pre-flight check and fix.
+
 ## Phase 7 — Verify
 
 - [ ] Workflow YAML parses; actions SHA-pinned; the `vars.` / `secrets.` names in the workflow **exactly match** the repo variable and secret (`gh variable list`, `gh secret list`) — a name mismatch makes `client-id` resolve to an empty string and `create-github-app-token` fails with *"The 'client-id' (or deprecated 'app-id') input must be set to a non-empty string"*
@@ -208,8 +210,9 @@ Each is a silent-breakage bug:
 4. **Config + manifest are strict JSON** (no leftover `//` comments/trailing commas) with matching keys.
 5. **Credentials exist** at repo **or org** scope (check both; org 403 = *unverified*, not missing).
 6. **Workflow uses the App token**, not `GITHUB_TOKEN`.
+7. **Every published `package.json` has a `repository` field** (`url` + monorepo `directory`) — *only when the repo publishes to npm with provenance* (`npm publish --provenance`). Missing it fails the publish with E422 at release time. Provenance/publishing lives in the sibling `secure-publish-setup`; flag the drift here and hand the fix there.
 
-Node repos — this one-liner covers 1–4 (walks `extra-files` + `packages`, asserts each path exists, diffs versions against the manifest; adapt filenames for Rust `Cargo.toml` / Maven `pom.xml`):
+Node repos — this one-liner covers 1–4 and 7 (walks `extra-files` + `packages`, asserts each path exists, diffs versions against the manifest, and — when a provenance publish is configured — checks each package's `repository` field; adapt filenames for Rust `Cargo.toml` / Maven `pom.xml`):
 
 ```bash
 node -e '
@@ -231,6 +234,17 @@ for (const [path, v] of Object.entries(man)) {
   if (path === ".") continue;
   const real = readVersion(`${path}/package.json`);
   if (real && real !== v) problems.push(`version drift ${path}: manifest ${v} vs package.json ${real}`);
+}
+// Defect 7 — repository field, only if a provenance publish is wired up
+const wf = fs.existsSync(".github/workflows") ? fs.readdirSync(".github/workflows").filter((f) => /\.ya?ml$/.test(f)) : [];
+const provenance = wf.some((f) => /npm publish[^\n]*--provenance(?![= ]false)/.test(fs.readFileSync(`.github/workflows/${f}`, "utf8")));
+if (provenance) for (const path of Object.keys(man)) {
+  const dir = path === "." ? "." : path;
+  let pkg; try { pkg = JSON.parse(fs.readFileSync(`${dir}/package.json`, "utf8")); } catch { continue; }
+  if (pkg.private) continue;
+  const url = typeof pkg.repository === "string" ? pkg.repository : pkg.repository?.url;
+  if (!url) problems.push(`provenance: ${dir}/package.json missing repository.url (E422 at publish)`);
+  else if (dir !== "." && pkg.repository?.directory !== dir) problems.push(`provenance: ${dir}/package.json repository.directory "${pkg.repository?.directory ?? ""}" ≠ "${dir}"`);
 }
 console.log(problems.length ? problems.map((p) => "✗ " + p).join("\n") : "✓ config/manifest consistent");
 '
