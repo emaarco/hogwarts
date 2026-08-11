@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.18.0...felix-felicis-v0.19.0) (2026-08-11)
+
+
+### Features
+
+* **felix-felicis:** add svg-to-png skill for local SVG rendering via resvg ([#72](https://github.com/emaarco/hogwarts/issues/72)) ([1ee2841](https://github.com/emaarco/hogwarts/commit/1ee2841ebfabb2fa6530817f8d75593f66faf4e3))
+
 ## [0.18.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.17.1...felix-felicis-v0.18.0) (2026-08-10)
 
 
