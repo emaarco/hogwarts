@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.19.0...felix-felicis-v0.20.0) (2026-08-12)
+
+
+### Features
+
+* **felix-felicis:** default bpmn-export to SVG ([#74](https://github.com/emaarco/hogwarts/issues/74)) ([6e51c7e](https://github.com/emaarco/hogwarts/commit/6e51c7e8a4430064a8119de054d781a6da29112e))
+
 ## [0.19.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.18.0...felix-felicis-v0.19.0) (2026-08-11)
 
 
