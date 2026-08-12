@@ -1,6 +1,6 @@
 ---
 name: bpmn-export
-description: "Export a BPMN file to an image (SVG, PNG, or PDF) using npx bpmn-to-image. Use when asked to export, render, or convert a .bpmn diagram to an image."
+description: "Export a BPMN file to an image using npx bpmn-to-image. Defaults to SVG; PNG and PDF available on request. Use when asked to export, render, or convert a .bpmn diagram to an image."
 allowed-tools: Bash, AskUserQuestion
 ---
 
@@ -12,7 +12,9 @@ Exports a BPMN file to an image using `npx bpmn-to-image`.
 
 ### 1. Identify the source file
 
-If the user has not provided a `.bpmn` file path, ask which file to export and what output format they want (`.svg`, `.png`, or `.pdf`).
+If the user has not provided a `.bpmn` file path, ask which file to export.
+
+Default the output format to **SVG** — only produce `.png` or `.pdf` if the user explicitly asks for that format. Do not ask which format they want; assume SVG unless told otherwise.
 
 ### 2. Determine output path
 
