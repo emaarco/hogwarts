@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.20.0...felix-felicis-v0.21.0) (2026-08-12)
+
+
+### Features
+
+* **felix-felicis:** add optimize-github-actions skill ([#76](https://github.com/emaarco/hogwarts/issues/76)) ([bb7c945](https://github.com/emaarco/hogwarts/commit/bb7c945c6813ae165a6c36d455fe41c8f2e3b6a1))
+
 ## [0.20.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.19.0...felix-felicis-v0.20.0) (2026-08-12)
 
 
