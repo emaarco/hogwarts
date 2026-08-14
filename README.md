@@ -1,44 +1,37 @@
 # hogwarts
 
-> Claude Code plugins by emaarco — a single marketplace, multiple sub-plugins.
+> Claude Code plugins by emaarco — one marketplace, several focused plugins.
 
-This repository is a Claude Code marketplace that bundles multiple plugins under one roof. Add the marketplace once, install the plugins you want.
+Add the marketplace once, install what you want.
 
 ## ⚡ Install
 
 ```bash
-# Add marketplace once per machine
-/plugin marketplace add emaarco/hogwarts
-
-# Install the plugins you want
-/plugin install agento-patronum@emaarco
-/plugin install felix-felicis@emaarco
-/plugin install revelio@emaarco
+/plugin marketplace add emaarco/hogwarts     # once per machine
+/plugin install <plugin>@emaarco             # e.g. agento-patronum@emaarco
 ```
 
 ## 🧰 Plugins
 
 | Plugin | What it does |
 |---|---|
-| [`agento-patronum`](./plugins/agento-patronum/) | Blocks access to sensitive files/commands **and** seals the worktree against data egress (native sandbox + PreToolUse hooks). |
-| [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — submit repos to awesome lists, draft meeting invitations, and more. |
-| [`revelio`](./plugins/revelio/) | Reveals failed tool calls, API errors, and permission denials by writing them to a per-repo JSONL log. |
+| [`agento-patronum`](./plugins/agento-patronum/) | Blocks Claude's access to sensitive files & commands (`.env`, SSH keys, credentials, `printenv`) via a PreToolUse hook. |
+| [`protego-totalum`](./plugins/protego-totalum/) | One command — `/protego-init` turns on Claude Code's native OS sandbox globally (network default-deny). Setup only. |
+| [`revelio`](./plugins/revelio/) | Logs failed tool calls, API errors, and permission denials to a per-repo JSONL log you review with `/revelio`. |
+| [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — awesome-list submissions, meeting invitations, repo setup, and more. |
 
-Each plugin has its own `README.md` and `CLAUDE.md` with full details.
+Each plugin has its own README with full details. Together: **Patronum guards, Protego seals, Revelio reveals.**
 
 ## 🗂 Structure
 
 ```
 hogwarts/
-├── .claude-plugin/marketplace.json   # Registers all plugins
-├── .github/workflows/                # Shared CI for all plugins
-└── plugins/
-    ├── agento-patronum/
-    ├── felix-felicis/
-    └── revelio/
+├── .claude-plugin/marketplace.json   # registers all plugins
+├── .github/workflows/                # shared CI
+└── plugins/<name>/                   # one self-contained plugin each
 ```
 
-To add a new plugin: drop it under `plugins/<name>/` with its own `.claude-plugin/plugin.json`, then add an entry to the root `marketplace.json`.
+To add a plugin: drop it under `plugins/<name>/` with its own `.claude-plugin/plugin.json`, then add an entry to `marketplace.json`.
 
 ## 📜 License
 
