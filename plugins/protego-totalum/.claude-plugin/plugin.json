@@ -1,7 +1,7 @@
 {
   "name": "protego-totalum",
   "description": "Adopt the 'always global' sandbox best practice: /protego-init writes a strict, network-default-deny native-sandbox baseline into ~/.claude/settings.json so every Claude Code session is OS-isolated by default. One-time setup, no runtime hooks.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "emaarco"
   },
