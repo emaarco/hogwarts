@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "deny": ["WebFetch", "WebSearch"],
+    "allowManagedPermissionRulesOnly": true
+  },
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "network": {
+      "allowedDomains": ["registry.npmjs.org", "github.com"],
+      "strictAllowlist": true,
+      "allowManagedDomainsOnly": true
+    },
+    "credentials": {
+      "files": [
+        { "path": "~/.aws/credentials", "mode": "deny" },
+        { "path": "~/.aws/config", "mode": "deny" },
+        { "path": "~/.ssh", "mode": "deny" },
+        { "path": "~/.kube/config", "mode": "deny" },
+        { "path": "~/.docker/config.json", "mode": "deny" }
+      ]
+    }
+  }
+}

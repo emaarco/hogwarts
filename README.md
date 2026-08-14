@@ -20,7 +20,7 @@ This repository is a Claude Code marketplace that bundles multiple plugins under
 
 | Plugin | What it does |
 |---|---|
-| [`agento-patronum`](./plugins/agento-patronum/) | Protects sensitive files, credentials, and commands from unintended AI access via PreToolUse hooks. |
+| [`agento-patronum`](./plugins/agento-patronum/) | Blocks access to sensitive files/commands **and** seals the worktree against data egress (native sandbox + PreToolUse hooks). |
 | [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — submit repos to awesome lists, draft meeting invitations, and more. |
 | [`revelio`](./plugins/revelio/) | Reveals failed tool calls, API errors, and permission denials by writing them to a per-repo JSONL log. |
 
