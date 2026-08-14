@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.21.0...felix-felicis-v0.22.0) (2026-08-14)
+
+
+### Features
+
+* **felix-felicis:** add guardrails-setup skill ([#78](https://github.com/emaarco/hogwarts/issues/78)) ([afd3f98](https://github.com/emaarco/hogwarts/commit/afd3f988d64faceb4b8c42b7c55fd5faeefc3ae2))
+
 ## [0.21.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.20.0...felix-felicis-v0.21.0) (2026-08-12)
 
 
