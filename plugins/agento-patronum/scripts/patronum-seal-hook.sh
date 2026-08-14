@@ -90,6 +90,13 @@ within_boundary() {
   if [[ "$abs" == "$cwd_norm" || "$abs" == "$cwd_norm/"* ]]; then
     return 0
   fi
+  # Always allow Claude Code's own internal state (plan mode + todos). These are local,
+  # Claude-owned files — never cross-project data or network egress — so the seal must
+  # not block them (blocking makes plan mode unusable in any sealed repo).
+  if [[ "$abs" == "$HOME/.claude/plans" || "$abs" == "$HOME/.claude/plans/"* \
+     || "$abs" == "$HOME/.claude/todos" || "$abs" == "$HOME/.claude/todos/"* ]]; then
+    return 0
+  fi
   local ap ap_norm
   while IFS= read -r ap; do
     [ -z "$ap" ] && continue

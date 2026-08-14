@@ -20,6 +20,8 @@
     "/tmp",
     "/private/tmp",
     "/var/folders",
-    "/var/tmp"
+    "/var/tmp",
+    "~/.claude/plans",
+    "~/.claude/todos"
   ]
 }

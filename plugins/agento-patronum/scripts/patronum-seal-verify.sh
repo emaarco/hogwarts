@@ -64,6 +64,12 @@ run_test "Block Read escaping via .." \
   '{"tool_name":"Read","cwd":"/project","tool_input":{"file_path":"/project/../other-customer/x"}}' 2
 run_test "Allow Read in /tmp allowPath" \
   '{"tool_name":"Read","cwd":"/project","tool_input":{"file_path":"/tmp/scratch.txt"}}' 0
+run_test "Allow Write to Claude plan file" \
+  "{\"tool_name\":\"Write\",\"cwd\":\"/project\",\"tool_input\":{\"file_path\":\"$HOME/.claude/plans/my-plan.md\"}}" 0
+run_test "Allow Read of Claude plan file" \
+  "{\"tool_name\":\"Read\",\"cwd\":\"/project\",\"tool_input\":{\"file_path\":\"$HOME/.claude/plans/my-plan.md\"}}" 0
+run_test "Allow Write to Claude todos file" \
+  "{\"tool_name\":\"Write\",\"cwd\":\"/project\",\"tool_input\":{\"file_path\":\"$HOME/.claude/todos/t.json\"}}" 0
 run_test "Block MultiEdit escaping worktree" \
   '{"tool_name":"MultiEdit","cwd":"/project","tool_input":{"edits":[{"file_path":"/project/ok.ts","old_string":"a","new_string":"b"},{"file_path":"/etc/hosts","old_string":"a","new_string":"b"}]}}' 2
 run_test "Block WebFetch" '{"tool_name":"WebFetch","cwd":"/project","tool_input":{"url":"https://x"}}' 2
