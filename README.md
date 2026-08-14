@@ -1,8 +1,10 @@
 # hogwarts
 
-> Claude Code plugins by emaarco — one marketplace, several focused plugins.
+> A Hogwarts for Claude Code — a spellbook of plugins that guard, reveal & automate. 🏰🪄
 
-Add the marketplace once, install what you want.
+**hogwarts** is a [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin marketplace. Instead of one big config, it bundles several small, focused plugins — each named after a spell or potion — that harden, observe, and automate your everyday agent workflows.
+
+Add the marketplace once, then install only the spells you need.
 
 ## ⚡ Install
 
