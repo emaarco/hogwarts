@@ -5,9 +5,9 @@ This file provides guidance to AI coding agents when working with code in this r
 ## Project Overview
 
 protego-totalum is a **one-command initializer** for a single best practice:
-**"if you sandbox Claude Code, do it globally."** `/protego-init` writes a strict,
-network-default-deny **native OS sandbox** baseline into `~/.claude/settings.json`
-so every session is isolated by default.
+**"if you sandbox Claude Code, do it globally."** `/protego-init` writes a strict
+**native OS sandbox** baseline into `~/.claude/settings.json` — a default-deny network
+allowlist seeded with just the GitHub ecosystem — so every session is isolated by default.
 
 It is deliberately **not** a runtime plugin: there is no PreToolUse hook, no
 per-session config, no interception of tool calls. Isolation is enforced by Claude
@@ -67,8 +67,9 @@ HOME="$(mktemp -d)" CLAUDE_PLUGIN_ROOT="$(pwd)" bash scripts/protego-init.sh
 
 - Keep this plugin thin. Its value is the *opinion* (global) and the *ergonomics*
   (one command), not features. Resist adding tiers, hooks, or config files.
-- The baseline is strict on purpose (empty `allowedDomains`, `failIfUnavailable`).
-  Widening belongs in the *consuming* repo's settings, not in this default.
+- The baseline is strict on purpose (GitHub-only `allowedDomains`, `failIfUnavailable`).
+  Anything beyond the GitHub ecosystem belongs in the *consuming* repo's settings,
+  not in this default.
 
 ## Personality
 

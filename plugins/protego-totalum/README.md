@@ -2,13 +2,13 @@
 
 > *Protego Totalum!* — one shield over everything.
 
-One opinion, one command: **if you sandbox Claude Code, do it globally.**
+A **sandbox** is an OS-level box around the agent: filesystem confined to the worktree, network on a default-deny allowlist. It caps the blast radius — a wrong command or a prompt injection can't reach other projects, your home dir, or the open network to exfiltrate.
 
-`/protego-init` writes a strict, **network-default-deny** sandbox baseline into `~/.claude/settings.json`. From your next session on, every repo you open is isolated by Claude Code's **native OS sandbox** — filesystem confined to the worktree, network denied unless a project explicitly allows a host.
+One opinion, one command: **if you sandbox Claude Code, do it globally.** `/protego-init` writes that baseline into `~/.claude/settings.json` via Claude Code's **native OS sandbox**; from your next session on, every repo you open is isolated. It's an **initializer, not a runtime plugin** — no per-call hook, no config file. It turns the sandbox on and gets out of the way.
 
-It's an **initializer, not a runtime plugin**: no per-call hook, no config file. It configures the OS sandbox and gets out of the way. That's the whole plugin — one command, one settings baseline.
-
-> Guard specific secrets instead? → [`agento-patronum`](../agento-patronum). See what got blocked? → [`revelio`](../revelio). **Patronum guards, Protego seals, Revelio reveals.**
+Related shields — **Patronum guards, Protego seals, Revelio reveals:**
+- [`agento-patronum`](../agento-patronum) — guard specific secrets (`.env`, keys, credentials)
+- [`revelio`](../revelio) — see what got blocked
 
 ## ⚡ Install & run
 
@@ -30,7 +30,7 @@ Deep-merged into `~/.claude/settings.json` (never clobbering your keys):
     "enabled": true,
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
-    "network": { "allowedDomains": [], "strictAllowlist": true }
+    "network": { "allowedDomains": ["github.com", "api.github.com", "raw.githubusercontent.com"], "strictAllowlist": true }
   },
   "permissions": { "deny": ["WebFetch", "WebSearch"] }
 }
@@ -38,7 +38,7 @@ Deep-merged into `~/.claude/settings.json` (never clobbering your keys):
 
 ## 🔓 Widening one repo
 
-Global is default-deny; widen where a project genuinely needs it — not the global default:
+The baseline only allows the GitHub ecosystem. Where a project needs more (a package registry, an internal host), widen *that* repo — not the global default:
 
 ```jsonc
 // ./.claude/settings.json
@@ -46,6 +46,20 @@ Global is default-deny; widen where a project genuinely needs it — not the glo
 ```
 
 Ask Claude to make that edit; it applies on that repo's next session.
+
+## 🔬 How the sandbox works
+
+This plugin doesn't build a sandbox — it turns on the one **Claude Code ships natively** and enforces at the OS level, so the agent can't opt out of it:
+
+- **Filesystem** — the session is confined to the current worktree. On **macOS** this uses **Seatbelt** (`sandbox-exec`); on **Linux/WSL2**, **bubblewrap** namespaces. Reads/writes outside the worktree are denied by the kernel, not by a hook.
+- **Network** — outbound traffic goes through a local proxy that only lets through hosts in `allowedDomains`. With `strictAllowlist: true` it's default-deny: anything not listed is refused (`socat` backs the proxy on Linux).
+- **The settings keys**, all under `sandbox` in `~/.claude/settings.json`:
+  - `enabled` — turn the native sandbox on.
+  - `network.allowedDomains` / `strictAllowlist` — the default-deny host allowlist.
+  - `failIfUnavailable` — if the OS sandbox can't start, refuse to run rather than fall back to unsandboxed.
+  - `allowUnsandboxedCommands` — when `false`, no command may escape the sandbox.
+
+Full reference: [Claude Code → Sandboxing](https://docs.claude.com/en/docs/claude-code/sandboxing) and [Settings](https://docs.claude.com/en/docs/claude-code/settings).
 
 ## 🤝 Contributing
 
