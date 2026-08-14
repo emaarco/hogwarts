@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/emaarco/hogwarts/compare/agento-patronum-v0.1.1...agento-patronum-v0.2.0) (2026-08-14)
+
+
+### Features
+
+* **agento-patronum:** seal the worktree against data egress ([#79](https://github.com/emaarco/hogwarts/issues/79)) ([0da378e](https://github.com/emaarco/hogwarts/commit/0da378ea9f6bffb4da67a97aee920088e383e5e6))
+
 ## [0.1.1](https://github.com/emaarco/hogwarts/compare/agento-patronum-v0.1.0...agento-patronum-v0.1.1) (2026-07-02)
 
 
