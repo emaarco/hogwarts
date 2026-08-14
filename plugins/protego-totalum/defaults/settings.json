@@ -4,7 +4,7 @@
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
     "network": {
-      "allowedDomains": [],
+      "allowedDomains": ["github.com", "api.github.com", "raw.githubusercontent.com"],
       "strictAllowlist": true
     }
   },
