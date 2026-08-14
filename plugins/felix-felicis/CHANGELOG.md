@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.22.0...felix-felicis-v0.23.0) (2026-08-14)
+
+
+### Features
+
+* **felix-felicis:** add dependency-update-shepherd skill ([#84](https://github.com/emaarco/hogwarts/issues/84)) ([2126303](https://github.com/emaarco/hogwarts/commit/2126303fd38a0e2a92c6c095145ab595b6aa6116))
+
 ## [0.22.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.21.0...felix-felicis-v0.22.0) (2026-08-14)
 
 
