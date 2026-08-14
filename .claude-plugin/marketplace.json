@@ -10,7 +10,7 @@
     {
       "name": "agento-patronum",
       "source": "./plugins/agento-patronum",
-      "description": "Protects sensitive files, credentials, and commands from unintended AI access via PreToolUse hooks."
+      "description": "Seals Claude Code sessions: blocks sensitive files/commands and isolates the worktree against data egress via the native sandbox plus PreToolUse hooks."
     },
     {
       "name": "revelio",

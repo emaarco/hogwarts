@@ -1,7 +1,7 @@
 # agento-patronum
 
 > *Expecto Patronum!* — Summon your guardian for Claude Code sessions.
-> Protect sensitive files, credentials, and commands from unintended AI access.
+> Block access to sensitive files **and** seal the worktree so nothing leaves it.
 
 **[Marketplace](https://github.com/emaarco/hogwarts)**
 
@@ -9,12 +9,31 @@
 
 ## 🛡️ What it protects you from
 
-Claude Code is powerful. That power needs boundaries.
-When Claude can read your `.env`, your SSH keys, your AWS credentials — it will.
-Not maliciously. Just helpfully. agento-patronum draws the line.
+Claude Code is powerful. That power needs boundaries — especially when your
+projects live side by side on one machine: customer A next to customer B next to
+your own internal work.
 
-It enforces file protection via **PreToolUse hooks** — the only layer Claude Code can't silently bypass.
-Settings.json deny rules are confirmed buggy. Hooks are reliable.
+agento-patronum draws two lines:
+
+- **Static protection** — Claude will read your `.env`, your SSH keys, your AWS
+  credentials if it helps. This blocks that, by file pattern and by command.
+- **The seal** — stops data from *leaving* the current worktree: no outbound
+  network, no reads or writes into a sibling project, no `WebFetch`/`WebSearch`.
+  So a session working on customer A cannot exfiltrate to the internet or leak
+  customer B's code into its context.
+
+Both are enforced through **PreToolUse hooks** — the layer Claude Code can't
+silently bypass — backed, for the seal, by Claude Code's **native OS sandbox**.
+
+## 🧱 The two layers of the seal
+
+| Layer | Mechanism | Guarantees |
+|-------|-----------|------------|
+| **1 — native sandbox** (primary) | Claude Code `sandbox.*` settings (macOS Seatbelt / Linux bubblewrap) | Filesystem writes confined to the worktree; network **default-deny**. OS-enforced. |
+| **2 — egress hook** (fallback) | `patronum-seal-hook` PreToolUse | Blocks egress commands (`curl`, `wget`, `scp`, `ssh`, `npm publish`, `git push` to non-`origin`), reads/writes outside the worktree, and `WebFetch`/`WebSearch`. Works in-session, even where the native sandbox is unavailable. |
+
+Run `/patronum-seal` to enable Layer 1. Layer 2 is active as soon as the plugin
+is installed.
 
 ## ⚡ Install in two commands
 
@@ -26,43 +45,51 @@ Settings.json deny rules are confirmed buggy. Hooks are reliable.
 /plugin install agento-patronum@emaarco
 ```
 
-Restart Claude Code once. Done. Run `/patronum-verify` to confirm.
+Restart Claude Code once. Run `/patronum-status` to see what's active, then
+`/patronum-seal user` to seal every repo by default.
 
 ## 📋 Prerequisites
 
-agento-patronum requires **jq** for JSON processing. Install it:
+Requires **jq**. The native sandbox (Layer 1) needs Claude Code's sandbox support
+(macOS, or Linux/WSL2 with `bubblewrap` + `socat`).
 
 ```bash
-# macOS
-brew install jq
-
-# Linux (Debian/Ubuntu)
-apt install jq
-
-# Linux (RHEL/CentOS)
-yum install jq
-
-# WSL / Windows
-apt install jq
+brew install jq         # macOS
+apt install jq          # Debian/Ubuntu/WSL
+yum install jq          # RHEL/CentOS
 ```
 
-The setup script will fail with a clear error if jq is missing. No other dependencies.
+The setup script fails with a clear error if jq is missing. No other dependencies.
 
 ## 🧰 Available skills
 
-agento-patronum is built with [skills](https://agentskills.io) — the open specification for agent capabilities. Invoke them as slash commands in Claude Code:
+Invoke them as slash commands in Claude Code:
 
 | Skill | Description |
 |-------|-------------|
-| `/patronum-add` | Add a pattern to the protection list |
+| `/patronum-seal` | Enable the native OS sandbox — `user`, `project`, or `managed` tier |
+| `/patronum-status` | Show every active protection layer for the current worktree |
+| `/patronum-allow` | Widen the seal — allow one outbound domain or write path |
+| `/patronum-add` | Add a sensitive-file/command pattern to the static protection list |
 | `/patronum-remove` | Remove a pattern |
 | `/patronum-list` | Show all protected patterns |
 | `/patronum-suggest` | Get stack-specific protection suggestions |
-| `/patronum-verify` | Run self-test to verify enforcement |
+| `/patronum-verify` | Self-test that enforcement is working |
 
-## 🔒 What's protected by default
+## 🔒 Sealing every repo by default
 
-Out of the box, agento-patronum blocks access to:
+The recommended setup — my sessions are sealed everywhere, opened up only where a
+project needs it:
+
+```
+/patronum-seal user        # ~/.claude/settings.json — seals all repos by default
+/patronum-allow --domain registry.npmjs.org   # per-project, when a repo needs it
+/patronum-seal managed     # optional hard lock a user can't disable (prints sudo cmd)
+```
+
+Native-sandbox changes take effect on the **next** Claude Code session.
+
+## 🛡️ Default protections (static)
 
 | Category | Patterns |
 |----------|----------|
@@ -73,31 +100,39 @@ Out of the box, agento-patronum blocks access to:
 | Docker | `~/.docker/config.json` |
 | Kubernetes | `~/.kube/config` |
 | Package tokens | `~/.npmrc`, `~/.pypirc` |
-| Shell commands | `printenv`, `env`, `set` |
+| Shell commands | `printenv` |
 
-Need more? Run `/patronum-suggest` — it analyzes your stack and recommends what to add.
+Default egress rules (seal): `curl`, `wget`, `nc`, `ncat`, `telnet`, `ssh`,
+`scp`, `sftp`, `rsync`, `npm publish` — plus `git push` to any remote other than
+`origin`. Manage both with `/patronum-add`, `/patronum-allow`, and `/patronum-suggest`.
 
 ## ⚙️ How it works
 
-agento-patronum registers a `PreToolUse` hook that intercepts every `Read`, `Write`, `Edit`, and `Bash` tool call. It checks the file path or command against patterns in `~/.claude/patronum.json`. If a pattern matches, the tool call is blocked and logged.
+Two `PreToolUse` hooks run on every relevant tool call:
 
-No cloud, no binary, no Python. Pure bash + jq.
+- `patronum-hook` — matches `Read`/`Write`/`Edit`/`MultiEdit`/`Bash` targets
+  against patterns in `~/.claude/patronum.json`. Match → blocked and logged to
+  `~/.claude/patronum.log`.
+- `patronum-seal-hook` — enforces the egress/boundary rules in
+  `~/.claude/patronum-seal.json`, logging to `~/.claude/patronum-seal.log`.
+
+Both fail **closed** (block) on an unset `HOME` or corrupt config, and fail
+**open** (allow) when their config is absent. No cloud, no binary, no Python —
+pure bash + jq. The native sandbox is configured through standard Claude Code
+`settings.json` and enforced by the OS.
 
 ## 📖 Story behind the plugin
 
-Claude Code's `permissions.deny` rules in `settings.json` should prevent access to sensitive files.
-They don't — deny rules are frequently ignored due to confirmed bugs.
-
-agento-patronum was built because the only reliable way to protect files is through PreToolUse hooks.
-The plugin makes this protection accessible via two install commands and manageable via slash commands.
-
-Read more in `docs/internals/why-hooks.md`.
+Claude Code's `permissions.deny` rules in `settings.json` should keep sensitive
+files out of reach — historically they were unreliable, so agento-patronum
+enforces protection through PreToolUse hooks instead. The seal adds the other
+half: strong, default-on isolation so a session physically cannot carry one
+project's data out to the network or into another. Read more in
+`docs/internals/why-hooks.md`.
 
 ## 🤝 Contributing
 
-Contributions welcome! You can:
-
-- **Suggest default patterns**: Know a file that should be protected? [Open an issue](https://github.com/emaarco/hogwarts/issues/new)
+- **Suggest default patterns or egress rules**: [Open an issue](https://github.com/emaarco/hogwarts/issues/new)
 - **Report bugs**: [Open a bug report](https://github.com/emaarco/hogwarts/issues/new)
 - **Improve docs**: Edit any markdown file under `plugins/agento-patronum/docs/`
 

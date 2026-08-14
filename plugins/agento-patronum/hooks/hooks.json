@@ -20,6 +20,15 @@
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/patronum-hook.sh\""
           }
         ]
+      },
+      {
+        "matcher": "Read|Write|Edit|MultiEdit|Bash|WebFetch|WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/patronum-seal-hook.sh\""
+          }
+        ]
       }
     ]
   }

@@ -1,6 +1,6 @@
 {
   "name": "agento-patronum",
-  "description": "Protects sensitive files, credentials, and commands from unintended AI access via PreToolUse hooks.",
+  "description": "Seals Claude Code sessions: blocks access to sensitive files and commands, and isolates the worktree against data egress via the native sandbox plus PreToolUse hooks.",
   "version": "0.1.1",
   "author": {
     "name": "emaarco"

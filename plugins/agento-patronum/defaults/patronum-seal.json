@@ -1,0 +1,25 @@
+{
+  "version": "1",
+  "enabled": true,
+  "blockWebFetch": true,
+  "blockWebSearch": true,
+  "boundaryEnforcement": true,
+  "commands": [
+    { "pattern": "Bash(curl)", "reason": "curl can exfiltrate data to arbitrary hosts", "source": "default" },
+    { "pattern": "Bash(wget)", "reason": "wget can send/fetch data to arbitrary hosts", "source": "default" },
+    { "pattern": "Bash(nc)", "reason": "netcat opens raw network connections", "source": "default" },
+    { "pattern": "Bash(ncat)", "reason": "ncat opens raw network connections", "source": "default" },
+    { "pattern": "Bash(telnet)", "reason": "telnet opens raw network connections", "source": "default" },
+    { "pattern": "Bash(ssh)", "reason": "ssh can tunnel data off the machine", "source": "default" },
+    { "pattern": "Bash(scp)", "reason": "scp copies files to remote hosts", "source": "default" },
+    { "pattern": "Bash(sftp)", "reason": "sftp transfers files to remote hosts", "source": "default" },
+    { "pattern": "Bash(rsync)", "reason": "rsync can mirror files to remote hosts", "source": "default" },
+    { "pattern": "Bash(npm publish)", "reason": "npm publish pushes package contents to a registry", "source": "default" }
+  ],
+  "allowPaths": [
+    "/tmp",
+    "/private/tmp",
+    "/var/folders",
+    "/var/tmp"
+  ]
+}
