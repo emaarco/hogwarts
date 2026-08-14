@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/emaarco/hogwarts/compare/agento-patronum-v0.2.0...agento-patronum-v0.2.1) (2026-08-14)
+
+
+### Bug Fixes
+
+* **agento-patronum:** allow Claude plan mode and todos through the seal ([#86](https://github.com/emaarco/hogwarts/issues/86)) ([616387c](https://github.com/emaarco/hogwarts/commit/616387cbc7526f4fcd7c9eafb4d1a0f283c04120))
+
 ## [0.2.0](https://github.com/emaarco/hogwarts/compare/agento-patronum-v0.1.1...agento-patronum-v0.2.0) (2026-08-14)
 
 

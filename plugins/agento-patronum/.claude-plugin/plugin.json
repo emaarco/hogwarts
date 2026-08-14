@@ -1,7 +1,7 @@
 {
   "name": "agento-patronum",
   "description": "Seals Claude Code sessions: blocks access to sensitive files and commands, and isolates the worktree against data egress via the native sandbox plus PreToolUse hooks.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "emaarco"
   },
