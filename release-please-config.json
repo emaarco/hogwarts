@@ -19,6 +19,17 @@
         }
       ]
     },
+    "plugins/protego-totalum": {
+      "package-name": "protego-totalum",
+      "component": "protego-totalum",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": ".claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
     "plugins/felix-felicis": {
       "package-name": "felix-felicis",
       "component": "felix-felicis",
