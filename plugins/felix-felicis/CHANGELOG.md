@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.23.0...felix-felicis-v0.23.1) (2026-08-17)
+
+
+### Bug Fixes
+
+* **felix-felicis:** ship scoped CI trigger and right-size dependabot output ([#93](https://github.com/emaarco/hogwarts/issues/93)) ([b5301e0](https://github.com/emaarco/hogwarts/commit/b5301e0262d3613000dbcf9855e0fef3bbf2fdac))
+
 ## [0.23.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.22.0...felix-felicis-v0.23.0) (2026-08-14)
 
 
