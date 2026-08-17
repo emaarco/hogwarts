@@ -1,6 +1,6 @@
 {
   "plugins/agento-patronum": "0.3.0",
   "plugins/protego-totalum": "0.3.0",
-  "plugins/felix-felicis": "0.23.0",
+  "plugins/felix-felicis": "0.23.1",
   "plugins/revelio": "0.2.1"
 }
