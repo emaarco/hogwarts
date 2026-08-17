@@ -39,7 +39,8 @@ updates:
       npm-all:
         applies-to: version-updates
         patterns: ['*']
-        update-types: ['patch', 'minor', 'major']
+        # no update-types → all of patch+minor+major ride together (the low-noise point).
+        # Don't restate them as update-types: ['patch','minor','major'] — that's a no-op.
       npm-security:
         applies-to: security-updates
         patterns: ['*']
@@ -60,7 +61,7 @@ updates:
       gradle-all:
         applies-to: version-updates
         patterns: ['*']
-        update-types: ['patch', 'minor', 'major']
+        # no update-types → all of patch+minor+major ride together (the low-noise point).
       gradle-security:
         applies-to: security-updates
         patterns: ['*']
