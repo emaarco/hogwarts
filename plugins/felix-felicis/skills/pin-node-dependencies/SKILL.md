@@ -93,12 +93,26 @@ save-exact=true
 
 Add a CI check so ranges can never reappear, and keep pins fresh.
 
-**Enforce exact pins in CI** with [`Miragon/pin-npm-dependencies`](https://github.com/Miragon/pin-npm-dependencies) — a GitHub Action that fails the build if any `package.json` uses a range, wildcard, dist-tag, or mutable git ref. Pin the action itself to a SHA (see `pin-github-actions`):
+**Enforce exact pins in CI** with [`Miragon/pin-npm-dependencies`](https://github.com/Miragon/pin-npm-dependencies) — a GitHub Action that fails the build if any `package.json` uses a range, wildcard, dist-tag, or mutable git ref. Pin the action itself to a SHA (see `pin-github-actions`). Ship it as a **dedicated workflow** with a fully-scoped `on:` block already filled in — never leave the trigger blank for the user to copy from a neighbouring workflow:
 
 ```yaml
-# .github/workflows/ci.yml
+# .github/workflows/pin-check.yml — a standalone workflow, NOT appended to an existing ci.yml
+# (the on:/concurrency below would otherwise govern every job in that file).
+on:
+  push:
+    branches: [ main ]          # post-merge backstop on the default branch only
+  pull_request:                 # PR feedback — scoped to manifest/lockfile changes
+    paths:
+      - '**/package.json'
+      - '**/package-lock.json'  # match the repo's lockfile: pnpm-lock.yaml / yarn.lock / bun.lock
+
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+
 jobs:
   pin-check:
     runs-on: ubuntu-latest
@@ -108,6 +122,8 @@ jobs:
 ```
 
 The SHAs/versions in the snippet are placeholders that drift — resolve each action's current release SHA at apply time (`gh api repos/<owner>/<repo>/commits/<latest-tag> --jq .sha`, as `pin-github-actions` Phase 3 does) instead of copying them verbatim.
+
+> **Never leave the `on:` block for the user to fill in, and never combine `push: branches: ['**']` with `pull_request`.** A blank trigger invites copying it from the nearest workflow — often a build job with `push: branches: ['**']` **and** `pull_request`, which fires the check *twice* on every PR push (once as `push` → `refs/heads/<branch>`, once as `pull_request` → `refs/pull/<n>/merge`). Because the two events resolve to different refs, a `${{ github.ref }}` concurrency group can't collapse them either. Scope `push` to the default branch (post-merge backstop) and let `pull_request` carry PR feedback, as above. See the sibling skill **`optimize-github-actions`** for the general duplicate-run audit.
 
 Useful inputs: `root-path` (scan a monorepo subdir), `files` (explicit newline-separated list), `check-peer-dependencies` (default `false`), `check-optional-dependencies` (default `true`). Recursive scan from repo root is the default.
 
