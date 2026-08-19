@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.23.1...felix-felicis-v0.24.0) (2026-08-19)
+
+
+### Features
+
+* **felix-felicis:** add automerge-setup as the single source of truth for PR auto-merge ([#95](https://github.com/emaarco/hogwarts/issues/95)) ([be62673](https://github.com/emaarco/hogwarts/commit/be626738f0f098a09779a80076d490bd2ee9b542))
+
 ## [0.23.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.23.0...felix-felicis-v0.23.1) (2026-08-17)
 
 
