@@ -1,0 +1,51 @@
+# Generic auto-merge — actor + label gated, no semver awareness.
+#
+# Use this when the PRs come from a bot OTHER than Dependabot (or a mix), so
+# `dependabot/fetch-metadata` is unavailable and the workflow CANNOT tell a
+# patch from a major. Without that signal, DO NOT auto-merge every PR from the
+# actor — scope it with an explicit label so a human (or the bot's own config)
+# decides which PRs are eligible. Majors must be kept out by whoever applies
+# the label, since this workflow can't distinguish them.
+#
+# Same hard precondition as the Dependabot variant: a branch ruleset with a
+# REQUIRED status check (sibling `branch-ruleset-setup`) AND native "Allow
+# auto-merge" enabled — otherwise `--auto` merges immediately and CI is not a
+# gate.
+#
+# Goes to `.github/workflows/automerge.yml`.
+#
+# Tune the gate:
+#   - `LABEL` — the label that marks a PR as auto-merge-eligible ('automerge').
+#   - actor list — restrict to the trusted bot(s); drop the actor check to gate
+#     on the label alone (any labeller), or keep both for defence in depth.
+#   - `--squash` matches a linear-history ruleset; drop it to inherit repo default.
+name: Auto-merge
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+
+# Least privilege: only what enabling auto-merge on a PR needs.
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    # Actor gate (trusted bot) AND an explicit eligibility label.
+    if: >-
+      github.actor == 'renovate[bot]' &&
+      contains(github.event.pull_request.labels.*.name, 'automerge')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable auto-merge
+        run: |
+          for i in 1 2 3 4 5; do
+            gh pr merge --auto --squash "$PR_URL" && exit 0
+            echo "enablePullRequestAutoMerge race (attempt $i) — retrying in 15s…"
+            sleep 15
+          done
+          exit 1
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,107 @@
+---
+name: automerge-setup
+description: "Sets up, audits, or optimizes GitHub PR auto-merge — the single source of truth for the auto-merge workflow, its safety preconditions (native 'Allow auto-merge' setting + a required-status-check ruleset), and its scope gate. Covers Dependabot (fetch-metadata, patch/minor auto), Renovate (native platformAutomerge), and generic bot PRs (actor + label). Use when asked to set up, audit, fix, or optimize auto-merge / automerge / merge Dependabot or Renovate PRs automatically."
+allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
+---
+
+# Skill: automerge-setup
+
+The one place that owns GitHub PR auto-merge. Detects what's already there, audits it against best practice, and either optimizes it or creates it — working **collaboratively**: gather evidence first, present findings and a recommendation, let the user decide via AskUserQuestion, then write. Never overwrite an existing workflow without showing what's wrong with it.
+
+Run this when asked to "set up auto-merge", audit/optimize an existing auto-merge workflow, or auto-merge Dependabot/Renovate PRs. Sibling skills own the neighbouring concerns and this skill delegates to them: **`branch-ruleset-setup`** (the required-status-check precondition), **`pin-github-actions`** (SHA-pinning the workflow's actions), **`dependabot-setup`** (the update config itself), **`dependency-update-shepherd`** (arming auto-merge on already-open PRs at runtime, one at a time).
+
+GitHub-only — the mechanism is GitHub's native auto-merge (`gh pr merge --auto` + the repo's *Allow auto-merge* setting). Precondition: `gh auth status` authenticated with **admin** rights on the target repo (needed to read/set the repo setting and rulesets).
+
+## The three strategies
+
+The gate that decides *which* PRs auto-merge follows from what opens them. Default recommendation = Dependabot. Templates ship in `reference/` next to this SKILL.md.
+
+| Strategy | Gate | semver-aware? | Template |
+|---|---|---|---|
+| **Dependabot** *(default)* | `github.actor == 'dependabot[bot]'` + `dependabot/fetch-metadata` update-type | **yes** — patch/minor auto, majors stay manual | `reference/dependabot-automerge-workflow.yml` |
+| **Renovate** | Renovate-native `automerge` + `platformAutomerge` in the Renovate config — **no workflow** | yes (Renovate's own `matchUpdateTypes`) | (config, not a template file) |
+| **Generic (actor + label)** | trusted `github.actor` **and** an eligibility label | **no** — scope must come from the label | `reference/generic-automerge-workflow.yml` |
+
+For **Renovate**, prefer its native path over a workflow: set `automerge: true` (optionally scoped, e.g. `matchUpdateTypes: ['patch','minor']`) plus `platformAutomerge: true` in `renovate.json`/`.renovaterc*`. That drives GitHub's native auto-merge directly — no second workflow to maintain, and Renovate has no `fetch-metadata` equivalent for a workflow to reuse.
+
+For the **generic** strategy, be explicit that without `fetch-metadata` the workflow **cannot tell a patch from a major**. Never auto-merge every PR from an actor blind — gate on an eligibility label so whoever applies it (a human, or the bot's own labeller) keeps majors out.
+
+## Phase 0 — Detect
+
+**a) Update bot.** `.github/dependabot.yml` → Dependabot · `renovate.json*` / `.renovaterc*` (or a `renovate`/`renovate-bot` config in `package.json`) → Renovate · neither → generic/other bot.
+
+**b) Existing auto-merge, all forms:**
+
+```bash
+# Workflow-based
+ls .github/workflows/ 2>/dev/null
+grep -rl "gh pr merge --auto\|enablePullRequestAutoMerge\|--auto-merge\|auto_merge" .github/workflows/ 2>/dev/null
+# Native repo setting (must be on for `--auto` to work at all)
+gh api repos/{owner}/{repo} --jq '{allow_auto_merge, allow_squash_merge, delete_branch_on_merge}'
+# Renovate-native
+grep -rn "automerge\|platformAutomerge" renovate.json* .renovaterc* .github/renovate.json* 2>/dev/null
+```
+
+**c) CI safety net.** Does a `pull_request`-triggered workflow with a real test job exist (`grep -rl pull_request .github/workflows/`)? Auto-merge without one merges blind.
+
+## Phase 1 — Safety preconditions (a gate, not a finding)
+
+Auto-merge is only safe — and only *works* — when all three hold. Treat them as a gate: do not write a merge workflow while any is open; name what's missing and offer to fix it (delegating), then stop.
+
+1. **Native `allow_auto_merge` enabled.** Without it, `gh pr merge --auto` fails outright. Enable via `gh api -X PATCH repos/{owner}/{repo} -f allow_auto_merge=true` (confirm with the user first).
+2. **A required-status-check ruleset gates the default branch.** Without a required check, `--auto` merges *the moment merge requirements are met* — i.e. immediately — so CI never gates and a broken bump lands unreviewed. Delegate to **`branch-ruleset-setup`**.
+3. **A CI test job actually runs on PRs** (Phase 0c). A required check that runs nothing is not a gate.
+
+If a precondition is unmet, state it plainly, offer to set it up via the sibling skill, and stop — do **not** write the workflow.
+
+## Phase 2 — Audit the existing setup (if present)
+
+Check the workflow (or Renovate config) against best practice; report each gap with file:line evidence. This is also where **drift** surfaces — a workflow generated from an older template that no longer matches:
+
+- [ ] **Least-privilege permissions** — exactly `contents: write` + `pull-requests: write`, not a broad `write-all` or the default token scope.
+- [ ] **Actor gate** — restricted to the trusted bot(s); no unscoped auto-merge of arbitrary PRs.
+- [ ] **Update-type gate (Dependabot)** — patch/minor only via `fetch-metadata`; **majors must stay manual**. A workflow that merges all update types is a finding.
+- [ ] **SHA-pinned actions** — `dependabot/fetch-metadata` (and any other `uses:`) pinned to a full 40-char commit SHA + version comment → delegate **`pin-github-actions`**.
+- [ ] **Merge-race retry loop** — `on: pull_request` fires while the required check is still queued and the merge state is UNSTABLE, so a single-shot `gh pr merge --auto` exits 1 and auto-merge never queues. The template retries (5 attempts, 15s backoff). **A single-shot `gh pr merge --auto` with no loop is the canonical drift finding** — flag it.
+- [ ] **Merge method coherence** — `--squash` matches a linear-history ruleset; if the ruleset forbids merge commits, an unqualified merge fails. Align the flag with the ruleset's `allowed_merge_methods`.
+- [ ] **Precondition coherence** — native setting on and a required check present (Phase 1); a workflow with neither is theater.
+
+## Phase 3 — Recommend & decide
+
+Post the findings **as a normal message first** — the Phase 1 gate status and the Phase 2 audit table — then confirm via **AskUserQuestion**, recommendation first and marked "(recommended)", every option stating its consequence. Ask only what the evidence can't answer:
+
+1. **Strategy** — **Dependabot** *(recommended when Dependabot is detected)* / **Renovate-native** *(recommended when Renovate is detected — configure `automerge`+`platformAutomerge`, no workflow)* / **generic actor+label** (only for other bots; state the no-semver-awareness caveat).
+2. **Scope** — **patch + minor** *(recommended)* / patch-only / label-driven; **majors always stay manual** for breaking-change review.
+3. **Enable the native `allow_auto_merge` setting** *(recommended yes)* if Phase 1 found it off.
+
+Recommend *enabling* auto-merge for internal / low-noise repos (CI is the gate, review capacity is the constraint); recommend *against* auto-enabling for OSS / product repos where a maintainer may want eyes on every bump. If the preconditions (Phase 1) aren't yet met, the honest recommendation is to set those up first and revisit.
+
+## Phase 4 — Create or optimize
+
+Enter only once the Phase 1 gate is resolved (preconditions met, or the user explicitly accepts an unsafe setup and you've said so).
+
+- **Update > replace.** Fix the specific gaps found in Phase 2; carry over deliberate customizations (extra actor gates, ecosystem/label narrowing) verbatim.
+- **Dependabot / generic:** copy the matching `reference/*.yml` to `.github/workflows/`, **stripping the teaching comments** (keep at most a one-line label, in the repo's comment style — never emit the rationale prose). Re-resolve the `fetch-metadata` SHA to the intended release rather than copying the template's verbatim:
+  ```bash
+  gh api repos/dependabot/fetch-metadata/git/refs/tags/<tag> --jq .object.sha
+  ```
+  **Keep the retry loop** (don't collapse it back to one line) and set `--squash` to match the ruleset.
+- **Renovate:** edit the Renovate config instead — `automerge: true` (scoped via `matchUpdateTypes` to hold majors out) + `platformAutomerge: true`. Don't write a workflow.
+- **Native setting:** if off and the user opted in, `gh api -X PATCH repos/{owner}/{repo} -f allow_auto_merge=true`.
+- **Delegate the neighbours:** required-check ruleset → **`branch-ruleset-setup`**; action SHA-pins → **`pin-github-actions`**; missing Dependabot/Renovate config → **`dependabot-setup`**.
+
+## Phase 5 — Verify
+
+- Workflow YAML parses: `python3 -c "import yaml; yaml.safe_load(open('.github/workflows/<file>.yml'))"` (fall back to `npx --yes yaml` or careful review).
+- `fetch-metadata` (and every `uses:`) is SHA-pinned.
+- Native setting is on: `gh api repos/{owner}/{repo} --jq .allow_auto_merge` → `true`.
+- **Remind the user auto-merge does nothing until the required-status-check ruleset is in place** (**`branch-ruleset-setup`**) — the workflow only expresses intent; the required check is the actual gate.
+- Mention GitHub's native **merge queue** as an alternative/complement for high-traffic default branches (serializes and re-tests merges), out of this skill's default scope.
+
+## Sources
+
+- Automating Dependabot with Actions (fetch-metadata, auto-merge): https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
+- `gh pr merge --auto` / native auto-merge: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/automatically-merging-a-pull-request
+- Enabling the repo *Allow auto-merge* setting: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/managing-auto-merge-for-pull-requests-in-your-repository
+- Renovate `automerge` / `platformAutomerge`: https://docs.renovatebot.com/configuration-options/#automerge
+- Repository rulesets (required status checks): https://docs.github.com/en/rest/repos/rules
