@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.24.0...felix-felicis-v0.25.0) (2026-08-21)
+
+
+### Features
+
+* **felix-felicis:** grade CI signal strength and cap automerge scope to it ([#97](https://github.com/emaarco/hogwarts/issues/97)) ([45cb7b9](https://github.com/emaarco/hogwarts/commit/45cb7b9283ecd33a0ac4f57a9a4edd82263bfe41))
+
 ## [0.24.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.23.1...felix-felicis-v0.24.0) (2026-08-19)
 
 
