@@ -1,6 +1,6 @@
 ---
 name: automerge-setup
-description: "Sets up, audits, or optimizes GitHub PR auto-merge — the single source of truth for the auto-merge workflow, its safety preconditions (native 'Allow auto-merge' setting + a required-status-check ruleset), and its scope gate. Covers Dependabot (fetch-metadata, patch/minor auto), Renovate (native platformAutomerge), and generic bot PRs (actor + label). Use when asked to set up, audit, fix, or optimize auto-merge / automerge / merge Dependabot or Renovate PRs automatically."
+description: "Sets up, audits, or optimizes GitHub PR auto-merge — the single source of truth for the auto-merge workflow, its safety preconditions (native 'Allow auto-merge' setting + a required-status-check ruleset), and its scope gate. Grades the CI signal (what a green check actually proves — lint vs build vs unit vs integration/E2E, weighed against what the repo ships) and caps the scope recommendation to it. Covers Dependabot (fetch-metadata, patch/minor auto), Renovate (native platformAutomerge), and generic bot PRs (actor + label). Use when asked to set up, audit, fix, or optimize auto-merge / automerge / merge Dependabot or Renovate PRs automatically."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 
@@ -42,7 +42,17 @@ gh api repos/{owner}/{repo} --jq '{allow_auto_merge, allow_squash_merge, delete_
 grep -rn "automerge\|platformAutomerge" renovate.json* .renovaterc* .github/renovate.json* 2>/dev/null
 ```
 
-**c) CI safety net.** Does a `pull_request`-triggered workflow with a real test job exist (`grep -rl pull_request .github/workflows/`)? Auto-merge without one merges blind.
+**c) CI signal — enumerate, don't just count.** List the checks that actually run on a PR and read what each *does*, because Phase 1b grades their strength. Don't stop at "a test job exists".
+
+```bash
+# Static: which workflows trigger on PRs (then read their job steps)
+grep -rl "pull_request" .github/workflows/ 2>/dev/null
+# Live (best signal): the checks a recent PR actually reported
+gh pr checks <recent-PR-number> 2>/dev/null   # or, for the default branch head:
+gh api repos/{owner}/{repo}/commits/{sha}/check-runs --jq '.check_runs[].name'
+```
+
+Classify what a green run proves — formatting/lint only, build/type-check, unit tests, or integration/E2E. Auto-merge without any real check merges blind; auto-merge behind a check that only lints merges nearly as blind.
 
 ## Phase 1 — Safety preconditions (a gate, not a finding)
 
@@ -50,9 +60,30 @@ Auto-merge is only safe — and only *works* — when all three hold. Treat them
 
 1. **Native `allow_auto_merge` enabled.** Without it, `gh pr merge --auto` fails outright. Enable via `gh api -X PATCH repos/{owner}/{repo} -f allow_auto_merge=true` (confirm with the user first).
 2. **A required-status-check ruleset gates the default branch.** Without a required check, `--auto` merges *the moment merge requirements are met* — i.e. immediately — so CI never gates and a broken bump lands unreviewed. Delegate to **`branch-ruleset-setup`**.
-3. **A CI test job actually runs on PRs** (Phase 0c). A required check that runs nothing is not a gate.
+3. **A CI test job actually runs on PRs** (Phase 0c). A required check that runs nothing is not a gate. This is the *presence* gate only — whether the check is a *meaningful* gate is graded next (Phase 1b) and drives the scope recommendation.
 
 If a precondition is unmet, state it plainly, offer to set it up via the sibling skill, and stop — do **not** write the workflow.
+
+## Phase 1b — Grade the CI signal (scope-aware)
+
+The presence gate (Phase 1.3) only asks *"does a check run"*. This phase asks the question that actually governs **how much** to auto-merge: *what does a green check prove for this repo?* A dependency bump is only as safe as the CI guarding it, so the Phase 3 scope recommendation follows from this grade — not from repo type alone.
+
+**Signal tiers** — read the PR workflows' steps (Phase 0c) and grade the *strongest* check that runs:
+
+| Tier | What runs | What green proves | Scope ceiling it justifies |
+|---|---|---|---|
+| **S0** | nothing, or format/lint only | style only — nothing about runtime | **no auto-merge at any scope** |
+| **S1** | build / compile / type-check | it still builds; catches API-breaking majors, not behaviour | **patch only** |
+| **S2** | unit tests | behaviour of covered units holds | **patch + minor** |
+| **S3** | integration / E2E (real deps, wired components) | cross-component behaviour holds | **patch + minor, confidently** |
+
+**Then weigh the repo's scope** — the tier sets the ceiling; blast radius can *lower* the recommendation but never raise it above what CI proves:
+
+- **What it ships & to whom** — a library others consume or a service deployed to prod raises the bar (a bad bump escapes the repo); an internal tool or dev-only dependency lowers it.
+- **Where the risk lives vs. where the tests are** — a web/UI app whose only tests are unit-level has an *untested* integration surface exactly where a runtime bump breaks. That argues for S3 before minors auto-merge: recommend adding integration/E2E (out of this skill's scope — the repo's test tooling owns it), or hold at patch-only until it exists.
+- **Dev vs. runtime dependencies** — `devDependencies` (build tools, linters) are guarded well by S1/S2; runtime deps that ship to users need behavioural coverage (S2/S3) before their minors auto-merge.
+
+State the grade plainly with evidence (e.g. *"CI runs `build` + `eslint` only → S1; no test executes a line of shipped code"*) and carry it into Phase 3 as the basis for the scope recommendation.
 
 ## Phase 2 — Audit the existing setup (if present)
 
@@ -68,13 +99,14 @@ Check the workflow (or Renovate config) against best practice; report each gap w
 
 ## Phase 3 — Recommend & decide
 
-Post the findings **as a normal message first** — the Phase 1 gate status and the Phase 2 audit table — then confirm via **AskUserQuestion**, recommendation first and marked "(recommended)", every option stating its consequence. Ask only what the evidence can't answer:
+Post the findings **as a normal message first** — the Phase 1 gate status, the **Phase 1b CI-signal grade**, and the Phase 2 audit table — then confirm via **AskUserQuestion**, recommendation first and marked "(recommended)", every option stating its consequence. Ask only what the evidence can't answer:
 
 1. **Strategy** — **Dependabot** *(recommended when Dependabot is detected)* / **Renovate-native** *(recommended when Renovate is detected — configure `automerge`+`platformAutomerge`, no workflow)* / **generic actor+label** (only for other bots; state the no-semver-awareness caveat).
-2. **Scope** — **patch + minor** *(recommended)* / patch-only / label-driven; **majors always stay manual** for breaking-change review.
+2. **Scope — capped by the Phase 1b grade, not chosen freely.** Recommend the *widest scope the CI signal justifies* and say why in the option text: S3/S2 → **patch + minor** *(recommended)*; S1 → **patch only** *(recommended)*; S0 → **don't auto-merge — strengthen CI first** *(recommended)*. Offer wider scopes as explicit options but label their risk (e.g. *"minor bumps merge on a build-only check — a runtime regression lands unseen"*). **Majors always stay manual.**
 3. **Enable the native `allow_auto_merge` setting** *(recommended yes)* if Phase 1 found it off.
+4. **If the grade is below what the repo's scope wants** (e.g. an S1 UI app), offer a **strengthen-CI-first** path as its own option: hold auto-merge at the safe scope now, and name that adding integration/E2E is the real unlock (that work is out of this skill's scope — the repo's test tooling owns it).
 
-Recommend *enabling* auto-merge for internal / low-noise repos (CI is the gate, review capacity is the constraint); recommend *against* auto-enabling for OSS / product repos where a maintainer may want eyes on every bump. If the preconditions (Phase 1) aren't yet met, the honest recommendation is to set those up first and revisit.
+The scope recommendation is **driven by the Phase 1b grade first, repo type second**: a green check that only builds cannot justify auto-merging minors no matter how internal the repo is. *Within* a grade, then lean by repo type — *enable* for internal / low-noise repos (CI is the gate, review capacity is the constraint), lean *against* auto-enabling for OSS / product repos where a maintainer may want eyes on every bump. If the Phase 1 preconditions aren't met, the honest recommendation is to set those up first and revisit.
 
 ## Phase 4 — Create or optimize
 
