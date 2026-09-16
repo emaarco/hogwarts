@@ -1,0 +1,55 @@
+# Dependabot conflict-recovery companion — recreates PRs stuck on a conflict.
+#
+# OPTIONAL companion to the auto-merge workflow. Offer it only where Dependabot
+# auto-merge is already armed: it clears the residual gap where a PR hangs on
+# `mergeable == CONFLICTING` and never advances. Dependabot's default
+# `rebase-strategy: auto` self-heals only conflicts it can fix by regenerating
+# the lockfile, and reacts asynchronously on its own cadence — manifest-level
+# conflicts (or cases where auto-rebase gives up) leave the PR stuck with no
+# further action. This finds those PRs and comments `@dependabot recreate`, so
+# Dependabot rebuilds the branch from scratch against the current default
+# branch — the conflict clears, CI re-runs, and the armed PR auto-merges as
+# before.
+#
+# Goes to `.github/workflows/dependabot-recreate-on-conflict.yml`.
+#
+# Trigger is `schedule` + `workflow_dispatch` — NOT a Dependabot-triggered run,
+# so `GITHUB_TOKEN` keeps full `pull-requests: write` (the read-only token cap
+# applies only to Dependabot-triggered workflows). No `contents: write` needed:
+# it only lists and comments.
+#
+# Token caveat: if Dependabot does not honor a `@dependabot recreate` posted by
+# `github-actions[bot]` (via GITHUB_TOKEN), swap in a fine-grained PAT with
+# `pull-requests: write`. Verify on the first real conflict or a manual
+# `workflow_dispatch` run.
+#
+# Tune per repo:
+#   - cron cadence (every 6h here) — conflict recovery is not latency-critical.
+#   - `--author 'app/dependabot'` scopes to Dependabot PRs; widen for other bots.
+name: Dependabot recreate on conflict
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+# Least privilege: list + comment only — no contents write.
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  recreate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recreate conflicting Dependabot PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr list --repo "$REPO" --author 'app/dependabot' --state open \
+            --json number,mergeable \
+            --jq '.[] | select(.mergeable=="CONFLICTING") | .number' \
+          | while read -r pr; do
+              gh pr comment "$pr" --repo "$REPO" --body "@dependabot recreate"
+            done

@@ -63,6 +63,10 @@ updates:
       interval: 'weekly'
     labels:
       - 'dependencies'
+    # standalone blocks state conflict self-healing explicitly ('auto' rebases
+    # open PRs + regenerates the lockfile when the base moves). Member blocks
+    # above CANNOT carry rebase-strategy — same restriction as schedule/cooldown.
+    rebase-strategy: 'auto'
     cooldown:
       default-days: 5
     groups:

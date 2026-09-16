@@ -21,6 +21,9 @@ updates:
       interval: 'weekly'
     labels:
       - 'dependencies'
+    # state conflict self-healing explicitly rather than relying on the default:
+    # 'auto' rebases open PRs + regenerates the lockfile when the base moves.
+    rebase-strategy: 'auto'
     open-pull-requests-limit: 15
     commit-message:
       prefix: 'chore'
@@ -61,6 +64,7 @@ updates:
       interval: 'weekly'
     labels:
       - 'dependencies'
+    rebase-strategy: 'auto'
     open-pull-requests-limit: 15
     cooldown:
       default-days: 5

@@ -29,6 +29,9 @@ updates:
       interval: 'monthly'
     labels:
       - 'dependencies'
+    # state conflict self-healing explicitly rather than relying on the default:
+    # 'auto' rebases open PRs + regenerates the lockfile when the base moves.
+    rebase-strategy: 'auto'
     commit-message:
       prefix: 'chore'
       include: 'scope'
@@ -52,6 +55,7 @@ updates:
       interval: 'monthly'
     labels:
       - 'dependencies'
+    rebase-strategy: 'auto'
     commit-message:
       prefix: 'chore'
       include: 'scope'

@@ -16,6 +16,9 @@ updates:
       interval: 'weekly'
     labels:
       - 'dependencies'
+    # state conflict self-healing explicitly rather than relying on the default:
+    # 'auto' rebases open PRs + regenerates the lockfile when the base moves.
+    rebase-strategy: 'auto'
     # majors arrive as individual PRs — leave headroom above the default of 5
     open-pull-requests-limit: 10
     commit-message:
@@ -48,6 +51,7 @@ updates:
       interval: 'weekly'
     labels:
       - 'dependencies'
+    rebase-strategy: 'auto'
     commit-message:
       prefix: 'chore'
       include: 'scope'
