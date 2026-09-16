@@ -40,6 +40,10 @@ updates:
       interval: 'weekly'
     labels:
       - 'dependencies'
+    # state conflict self-healing explicitly on the regular blocks ('auto'
+    # rebases open PRs + regenerates the lockfile when the base moves). The
+    # member blocks below CANNOT carry it — same restriction as schedule/cooldown.
+    rebase-strategy: 'auto'
     open-pull-requests-limit: 15
     cooldown:
       default-days: 5
@@ -70,6 +74,7 @@ updates:
       interval: 'weekly'
     labels:
       - 'dependencies'
+    rebase-strategy: 'auto'
     cooldown:
       default-days: 5
     ignore:

@@ -11,6 +11,8 @@
 # Syntax rules (verify against the reference before writing — this feature
 # still evolves): the schedule lives on the group, NOT on the member blocks;
 # `patterns` is REQUIRED on every block that joins a multi-ecosystem group.
+# `rebase-strategy` can't be set here either (member-block restriction) —
+# Dependabot's default 'auto' conflict self-healing still applies implicitly.
 # https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-multi-ecosystem-updates
 #
 # `schedule.interval` below is an illustrative placeholder — propose one for
