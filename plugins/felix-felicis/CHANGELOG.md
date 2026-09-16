@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.25.0...felix-felicis-v0.26.0) (2026-09-16)
+
+
+### Features
+
+* **felix-felicis:** add Dependabot conflict-recovery to automerge-setup ([#99](https://github.com/emaarco/hogwarts/issues/99)) ([488a607](https://github.com/emaarco/hogwarts/commit/488a607845fd344e1bca99361a5eafeefabcce5d))
+
 ## [0.25.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.24.0...felix-felicis-v0.25.0) (2026-08-21)
 
 
