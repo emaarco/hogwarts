@@ -130,6 +130,18 @@ Enter only once the Phase 1 gate is resolved (preconditions met, or the user exp
 - **Remind the user auto-merge does nothing until the required-status-check ruleset is in place** (**`branch-ruleset-setup`**) — the workflow only expresses intent; the required check is the actual gate.
 - Mention GitHub's native **merge queue** as an alternative/complement for high-traffic default branches (serializes and re-tests merges), out of this skill's default scope.
 
+## Phase 6 — Conflict recovery (optional companion)
+
+Armed auto-merge still stalls on one thing: a PR that goes to `mergeable == CONFLICTING`. Dependabot's default **`rebase-strategy: auto`** self-heals only conflicts it can fix by **regenerating the lockfile**, and it reacts **asynchronously on its own cadence** — it does not re-rebase every open PR the instant something lands on the default branch. **Manifest-level conflicts** (or cases where auto-rebase gives up) therefore leave a PR hanging on `CONFLICTING` with no further action — observed in real repos. That is the residual gap: the auto-merge workflow expresses intent, the required check gates the merge, but a conflicting PR never reaches either.
+
+Offer — never impose — the companion template `reference/dependabot-recreate-on-conflict.yml`. It runs on `schedule` (every 6h) + `workflow_dispatch`, lists open Dependabot PRs with `mergeable == CONFLICTING`, and comments `@dependabot recreate` so Dependabot rebuilds each branch from scratch against the current default branch — the conflict clears, CI re-runs, and the already-armed PR auto-merges as before. Offer it only where Dependabot auto-merge is already set up; it closes that one gap and nothing else.
+
+**Token caveat (mandatory to state).** The trigger is `schedule`/`workflow_dispatch`, **not** a Dependabot-triggered run, so `GITHUB_TOKEN` keeps full `pull-requests: write` — the read-only token cap applies only to Dependabot-triggered workflows, so it does not bite here. **But** if Dependabot does not honor a `@dependabot recreate` comment posted by `github-actions[bot]` (via `GITHUB_TOKEN`), swap in a **fine-grained PAT with `pull-requests: write`**. Tell the user to verify on the first real conflict or a manual `workflow_dispatch` run.
+
+When many PRs are armed in parallel, conflicts multiply as each merge invalidates the others' bases. There the scaling answer is GitHub's native **merge queue** (Phase 5) — it serializes and re-tests merges so branches don't drift into conflict in the first place; the recreate companion is the lighter-weight fix for the occasional stuck PR.
+
+Strip the template's teaching comments on write, exactly as in Phase 4 (keep at most a one-line label in the repo's comment style).
+
 ## Sources
 
 - Automating Dependabot with Actions (fetch-metadata, auto-merge): https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
@@ -137,3 +149,4 @@ Enter only once the Phase 1 gate is resolved (preconditions met, or the user exp
 - Enabling the repo *Allow auto-merge* setting: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/managing-auto-merge-for-pull-requests-in-your-repository
 - Renovate `automerge` / `platformAutomerge`: https://docs.renovatebot.com/configuration-options/#automerge
 - Repository rulesets (required status checks): https://docs.github.com/en/rest/repos/rules
+- Reference implementation (recreate-on-conflict): https://github.com/emaarco/slidev-addon-bpmn/pull/111
