@@ -1,18 +1,18 @@
 ---
 name: medium-publish
-description: "Publish a markdown blog post to Medium via GitHub Gist import (macOS). Transforms headings to bold, creates a Gist, copies its URL to the clipboard, and opens Medium's import page for you to finish manually."
-allowed-tools: AskUserQuestion, Read, Bash(gh gist create:*), Bash(gh gist delete:*), Bash(open:*), Bash(pbcopy:*), Bash(printf:*), Bash(echo:*)
+description: "Copy a markdown blog post to the clipboard as rich text for pasting straight into Medium's editor (macOS). Converts the markdown to formatted HTML, loads it onto the clipboard as rich text, and opens Medium's new-story editor so you paste it in with ⌘V."
+allowed-tools: AskUserQuestion, Read, Write, Bash(textutil:*), Bash(osascript:*), Bash(open:*), Bash(rm:*)
 ---
 
 # Skill: medium-publish
 
-Prepares a markdown blog post for Medium by creating a temporary public GitHub Gist, copying its URL to the clipboard, and opening Medium's import page so you can paste the link and finish the import manually.
+Prepares a markdown blog post for Medium by converting it to rich text, placing that rich text on the macOS clipboard, and opening Medium's new-story editor. You paste with ⌘V and the formatting — headings, bold, italic, lists, code, quotes, links — lands directly in the editor.
 
-**Why Gist?** Medium's import feature requires a publicly accessible URL. GitHub Gists are public and immediately accessible, making them ideal as a transport layer. The Gist is deleted after import.
+**Why rich-text paste?** Medium's contenteditable editor accepts pasted rich text and maps it onto its own formatting. Pasting is reliable, immediate, and stateless — no Gist to create, import, or delete.
 
-**Why heading transformation?** Medium's importer drops markdown heading syntax (`#`, `##`, etc.). Converting headings to bold (`**...**`) preserves visual hierarchy.
+**Why RTF on the clipboard?** macOS carries pasted rich text as the RTF pasteboard flavor, which the browser turns into HTML when you paste into Medium. `textutil` (built in) converts the HTML to RTF, and `osascript` loads it onto the clipboard — no external dependencies.
 
-**Why not build an import link?** Medium's import deep-links are brittle. Instead we open Medium's import page and hand you the Gist URL on the clipboard — you paste it and import manually, which is reliable and keeps you in control.
+**Why image placeholders?** Rich-text paste cannot carry local or referenced images into Medium. Each markdown image becomes a `[Bild N]` marker so you can drop the real image in at that spot manually.
 
 ## Step 1 — Collect input
 
@@ -26,87 +26,48 @@ Which markdown file should I publish to Medium?
 Please provide the full path to your .md file.
 ```
 
-## Step 2 — Transform headings
+## Step 2 — Convert markdown to HTML
 
-Read the file at `<input-path>`. For every line that starts with one or more `#` characters followed by a space, replace it with the heading text wrapped in `**...**`. Leave all other lines exactly unchanged. Hold the full transformed content in memory — do NOT write it to disk.
+Read the file at `<input-path>` and produce a full HTML fragment in memory:
 
-Example:
-- `# My Title` → `**My Title**`
-- `## Section` → `**Section**`
-- `### Sub` → `**Sub**`
-- `Normal paragraph` → `Normal paragraph` (unchanged)
+- Headings (`#`, `##`, …) → real `<h1>`, `<h2>`, … tags
+- `**bold**` → `<strong>`, `_italic_` / `*italic*` → `<em>`
+- Inline `` `code` `` → `<code>`, fenced ``` code blocks → `<pre><code>…</code></pre>`
+- `- ` / `* ` bullet lists → `<ul><li>…</li></ul>`, `1.` ordered lists → `<ol><li>…</li></ol>`
+- `> ` blockquotes → `<blockquote>`
+- `[text](url)` links → `<a href="url">text</a>`
+- Each image `![alt](src)` → `<p>[Bild N]</p>`, with N incrementing from 1 in document order
+- Normal paragraphs → `<p>…</p>`
 
-## Step 3 — Create public Gist
+Wrap the result in a minimal HTML document (`<html><body>…</body></html>`) and write it to `/tmp/medium-post.html`. This temp file is deleted in Step 3.
 
-Pipe the transformed content directly into `gh gist create` — no temp file:
+## Step 3 — Load rich text onto the clipboard
 
-```bash
-printf '%s' "<transformed-content>" | gh gist create --public --filename "post.md" -
-```
-
-The command prints the Gist URL (last line of output). Note the URL and its 32-hex-char ID from the output — shell variables do not survive between Bash calls, so substitute these literal values into every later command (written as `<gist-url>` / `<gist-id>` below).
-
-## Step 4 — Copy the Gist URL and open Medium's import page
-
-Copy the Gist URL to the clipboard and open Medium's import page:
+Convert the HTML to RTF and place it on the clipboard, then remove the temp files:
 
 ```bash
-echo "<gist-url>" | pbcopy
-open "https://medium.com/p/import"
+textutil -convert rtf -format html /tmp/medium-post.html -output /tmp/medium-post.rtf
+osascript -e 'set the clipboard to (read (POSIX file "/tmp/medium-post.rtf") as «class RTF »)'
+rm -f /tmp/medium-post.html /tmp/medium-post.rtf
 ```
 
-(`pbcopy` and `open` are macOS commands — on Linux, fall back to `xclip -selection clipboard` / `wl-copy` and `xdg-open`, which are not pre-granted.)
+## Step 4 — Open Medium and paste
+
+Open Medium's new-story editor:
+
+```bash
+open "https://medium.com/new-story"
+```
 
 Then tell the user:
 
 ```
-Gist URL copied to clipboard: <gist-url>
+Rich text is on your clipboard, and Medium's new-story editor is now open.
 
-Medium's import page is now open in your browser.
-
-To finish (manually):
+To finish:
 1. Make sure you're logged in to Medium.
-2. Paste the Gist URL (already on your clipboard) into the import field.
-3. Click "Import" and review the preview.
+2. Click into the editor and paste with ⌘V.
+3. Review the formatting.
 
-Tip: from your profile you can also reach this via your picture → Stories → "Import a story".
-```
-
-## Step 5 — Wait for import completion
-
-Ask via `AskUserQuestion`:
-
-```
-Have you finished importing in Medium?
-```
-
-Options:
-- "Yes, import done — delete the Gist"
-- "Not yet (wait)"
-- "Something went wrong — delete the Gist anyway"
-- "Copy the Gist URL to clipboard again"
-
-If "Not yet": keep asking the same question — NEVER delete the Gist without an explicit "import done" or "delete anyway" answer, since deleting before Medium has fetched it breaks the import. If the user stops responding, end the turn and tell them the Gist URL so they can ask for deletion later.
-
-If "Copy the Gist URL to clipboard again":
-
-```bash
-echo "<gist-url>" | pbcopy
-```
-
-Then loop back to the same Step 5 question so the user can signal completion or delete.
-
-## Step 6 — Delete Gist and report
-
-```bash
-gh gist delete "<gist-id>"
-```
-
-Report:
-
-```
-Done! The Gist has been deleted.
-
-Your post is now in Medium's editor as a draft. You can find it at:
-https://medium.com/me/stories/drafts
+Image placeholders [Bild 1], [Bild 2], … mark where to add each image manually.
 ```

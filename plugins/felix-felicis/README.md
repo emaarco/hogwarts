@@ -42,7 +42,7 @@ Analyzes a repo's contributor experience and creates or updates what's missing: 
 
 ### `/medium-publish`
 
-Publishes a Markdown blog post to Medium via a temporary GitHub Gist import (macOS): transforms headings to bold, creates a Gist, copies its URL to the clipboard, and opens Medium's import page for you to finish manually.
+Copies a Markdown blog post to the clipboard as rich text (macOS): converts the markdown to formatted HTML, loads it onto the clipboard as rich text, and opens Medium's new-story editor so you paste it in with ⌘V. Images become `[Bild N]` placeholders you fill in manually.
 
 ### `/bpmn-export`
 
