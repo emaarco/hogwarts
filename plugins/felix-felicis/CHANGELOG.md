@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.26.0...felix-felicis-v0.27.0) (2026-09-17)
+
+
+### Features
+
+* **felix-felicis:** rework medium-publish to copy rich text to clipboard ([#101](https://github.com/emaarco/hogwarts/issues/101)) ([04f9b1e](https://github.com/emaarco/hogwarts/commit/04f9b1ec935a2ee2820a3adb2ee50aa91c4bfd8f))
+
 ## [0.26.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.25.0...felix-felicis-v0.26.0) (2026-09-16)
 
 
