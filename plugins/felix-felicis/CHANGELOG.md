@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.27.0...felix-felicis-v0.27.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* **felix-felicis:** fix emoji encoding and code blocks in medium-publish RTF path ([#103](https://github.com/emaarco/hogwarts/issues/103)) ([1506df2](https://github.com/emaarco/hogwarts/commit/1506df2fc4c87eef99ac83e2e141481225271dde))
+
 ## [0.27.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.26.0...felix-felicis-v0.27.0) (2026-09-17)
 
 
