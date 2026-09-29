@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.28.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.27.1...felix-felicis-v0.28.0) (2026-09-29)
+
+
+### Features
+
+* **felix-felicis:** add clockify skill for time entries via official REST API ([#105](https://github.com/emaarco/hogwarts/issues/105)) ([47a9910](https://github.com/emaarco/hogwarts/commit/47a99107531c3d2cfd59170de031fc79ac52dbf9))
+
 ## [0.27.1](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.27.0...felix-felicis-v0.27.1) (2026-09-18)
 
 
