@@ -1,0 +1,48 @@
+{
+  "skill_name": "clockify",
+  "note": "Run against a test workspace, or only with --dry-run. Never confirm writes against the production workspace.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Was habe ich letzte Woche gebucht? Summe pro Projekt.",
+      "expected_output": "Runs `summary --last-week` (Monday–Sunday of the previous week) and shows the total and per-project hours as a table. No write command is run.",
+      "assertions": ["uses summary with --last-week or explicit --from/--to of last week", "shows hours per project", "no create/update/delete call"]
+    },
+    {
+      "id": 2,
+      "prompt": "Trag mir heute 9:00–11:30 auf Projekt 'Intern' ein, Beschreibung 'Weekly Planning'.",
+      "expected_output": "Runs `create --date <today> --start 09:00 --end 11:30 --project Intern --desc 'Weekly Planning' --dry-run`, shows a preview table (date, start, end, 2.5 h, project, task, description), and waits for an explicit 'ja' before running with --yes.",
+      "assertions": ["dry-run before write", "preview table shows 2.5 hours", "asks for confirmation", "does not pass --yes before the user says ja"]
+    },
+    {
+      "id": 3,
+      "prompt": "Ändere die Beschreibung meines letzten Eintrags auf 'Kundencall Müller'.",
+      "expected_output": "Finds the latest entry via week/last-week, runs `update <id> --desc 'Kundencall Müller' --dry-run`, shows before/after, and waits for 'ja'. Only the description changes.",
+      "assertions": ["identifies the latest entry by date+start", "update uses only --desc", "dry-run preview before --yes"]
+    },
+    {
+      "id": 4,
+      "prompt": "Starte einen Timer für Projekt X — und danach: stopp den Timer.",
+      "expected_output": "Runs `start --project X --dry-run`, confirms, then `--yes`. For stopping, runs `stop --dry-run`, confirms, then `stop --yes`, and shows the entry read back with its end time.",
+      "assertions": ["start via dry-run then --yes", "stop via dry-run then --yes", "shows the read-back entry"]
+    },
+    {
+      "id": 5,
+      "prompt": "Zeig mir meine Buchungen von heute. (Setup: CLOCKIFY_API_KEY unset)",
+      "expected_output": "The script exits with 2 and names CLOCKIFY_API_KEY plus how to set it. Claude relays that message without crashing, does not ask for the key in chat, and does not suggest a plaintext config file.",
+      "assertions": ["exit code 2 surfaced", "names CLOCKIFY_API_KEY", "does not request the key in chat"]
+    },
+    {
+      "id": 6,
+      "prompt": "Buch mir 1h auf Projekt 'Kunde' für heute 14:00–15:00. (Setup: projects 'Kunde X' and 'Kunde XY' exist)",
+      "expected_output": "The script exits with 3 and lists both candidates. Claude asks the user which project is meant (AskUserQuestion) and does not book anything.",
+      "assertions": ["exit code 3 surfaced", "asks which project", "no write performed"]
+    },
+    {
+      "id": 7,
+      "prompt": "Trag mir heute 10:00–11:00 auf 'Intern' ein. (Setup: an entry from 10:30–12:00 already exists today)",
+      "expected_output": "The dry-run prints an 'Überschneidung' warning naming the existing entry. Claude points out the overlap in the preview before asking for confirmation.",
+      "assertions": ["overlap warning shown to user", "warning appears before confirmation request"]
+    }
+  ]
+}
