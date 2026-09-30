@@ -30,7 +30,7 @@ Deep-merged into `~/.claude/settings.json` (never clobbering your keys):
     "enabled": true,
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
-    "network": { "allowedDomains": ["github.com", "api.github.com", "raw.githubusercontent.com", "gitlab.com"], "strictAllowlist": true }
+    "network": { "strictAllowlist": true }
   },
   "permissions": { "deny": ["WebFetch", "WebSearch"] }
 }
@@ -38,14 +38,21 @@ Deep-merged into `~/.claude/settings.json` (never clobbering your keys):
 
 ## 🔓 Widening one repo
 
-The baseline only allows GitHub and gitlab.com. Where a project needs more (a package registry, an internal host), widen *that* repo — not the global default:
+The baseline allows no hosts at all. Where a project needs more (a package registry, an internal host), widen *that* repo — not the global default:
 
 ```jsonc
 // ./.claude/settings.json
 { "sandbox": { "network": { "allowedDomains": ["registry.npmjs.org"] } } }
 ```
 
-Ask Claude to make that edit; it applies on that repo's next session.
+Or let the skill do it — Claude recommends it when a command hits a blocked host:
+
+```bash
+/protego-allow registry.npmjs.org            # this repo
+/protego-allow gitlab.example.com --global   # every repo
+```
+
+It applies on that repo's next session.
 
 ## 🔬 How the sandbox works
 
