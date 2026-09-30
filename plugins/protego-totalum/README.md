@@ -30,9 +30,21 @@ This opens the sandbox panel:
 
 The panel saves to `.claude/settings.local.json`, so the shield only covers **that one project**.
 
-## 🌍 Our recommendation: shield every castle
+## 🌍 Claude's recommendation: shield every castle
 
-If you sandbox, do it **globally**. Put the baseline in `~/.claude/settings.json` so every repo you open is sealed from day one:
+To sandbox every project instead of just one, the Claude Code docs recommend setting `sandbox.enabled` in your user settings at `~/.claude/settings.json`:
+
+```json
+{
+  "sandbox": { "enabled": true }
+}
+```
+
+This is the everyday shield. Writes stay inside the working directory, and the first time a command needs a new host, Claude Code asks you before letting it through. A command that fails in the sandbox may retry unsandboxed, but only through the normal permission prompt.
+
+## 🏯 Protego Maxima: the very strict shield
+
+If you want the shield locked tight, add the hardening keys the docs use for enforced org setups:
 
 ```json
 {
@@ -45,12 +57,13 @@ If you sandbox, do it **globally**. Put the baseline in `~/.claude/settings.json
 }
 ```
 
-- `enabled` — raise the shield everywhere.
-- `failIfUnavailable` — if the sandbox can't start, refuse to run. The default only warns and then runs **unsandboxed**.
-- `allowUnsandboxedCommands: false` — nothing gets to slip past the shield.
-- `network.strictAllowlist` — default-deny: a host that isn't listed gets refused.
+- `failIfUnavailable` — if the sandbox can't start, Claude Code refuses to run. Without it, Claude Code only warns and runs **unsandboxed**.
+- `allowUnsandboxedCommands: false` — no unsandboxed retries, so every command has to run inside the shield. `/sandbox` shows this as **Strict sandbox mode**.
+- `network.strictAllowlist` — hosts that aren't on the allowlist are refused without asking. This only works in user settings, managed settings or `--settings`, not in a repo's settings.
 
-Want to try it before you commit? Start one sealed session:
+Expect more friction: every registry or API a repo needs has to be allowlisted first.
+
+Want to try the strict shield before you commit? Start one sealed session:
 
 ```bash
 claude --settings '{"sandbox": {"enabled": true, "allowUnsandboxedCommands": false}}'
