@@ -13,8 +13,8 @@ It relies on a PreToolUse hook because settings.json deny rules were historicall
 unreliable.
 
 Whole-worktree isolation (network default-deny, no cross-project leakage, native
-OS sandbox) is a **separate** concern owned by the sibling plugin
-**protego-totalum** — do not add sealing/sandbox logic here.
+OS sandbox) is a **separate** concern handled by Claude Code's built-in `/sandbox`
+(see `plugins/protego-totalum/README.md`) — do not add sealing/sandbox logic here.
 
 Install via Claude Code marketplace:
 ```bash

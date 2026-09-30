@@ -1,28 +1,38 @@
-# protego-totalum
+# 🛡️ Protego Totalum — sealing Claude Code with `/sandbox`
 
-> *Protego Totalum!* — one shield over everything.
+> *Protego Totalum!* — the shield Hermione casts around the whole camp. Nothing gets in, nothing slips out.
 
-A **sandbox** is an OS-level box around the agent: filesystem confined to the worktree, network on a default-deny allowlist. It caps the blast radius — a wrong command or a prompt injection can't reach other projects, your home dir, or the open network to exfiltrate.
+This isn't a plugin. You don't need one: Claude Code already knows the spell. It's called **`/sandbox`**, and this page is our recommendation for how to cast it.
 
-One opinion, one command: **if you sandbox Claude Code, do it globally.** `/protego-init` writes that baseline into `~/.claude/settings.json` via Claude Code's **native OS sandbox**; from your next session on, every repo you open is isolated. It's an **initializer, not a runtime plugin** — no per-call hook, no config file. It turns the sandbox on and gets out of the way.
+## 🏰 Why raise the shield
 
-Related shields — **Patronum guards, Protego seals, Revelio reveals:**
-- [`agento-patronum`](../agento-patronum) — guard specific secrets (`.env`, keys, credentials)
-- [`revelio`](../revelio) — see what got blocked
+A sandbox is an OS-level box around every shell command Claude runs:
 
-## ⚡ Install & run
+- **Filesystem** — writes are confined to your working directory (plus a temp dir and any `--add-dir` paths). Other projects and your home dir stay out of reach.
+- **Network** — outbound traffic goes through a local proxy that only lets allowed hosts through.
 
-```bash
-/plugin marketplace add emaarco/hogwarts
-/plugin install protego-totalum@emaarco
-/protego-init
+It caps the blast radius. A wrong command or a prompt injection can't wander into other repos or send your secrets off to some unknown host. And since the kernel enforces it, not a hook, Claude can't argue its way out.
+
+## 🪄 Cast it
+
+In any Claude Code session:
+
+```text
+/sandbox
 ```
 
-The sandbox applies on your **next** session. Requires [`jq`](https://jqlang.github.io/jq/) and native-sandbox support: **macOS** (Seatbelt), or Linux/WSL2 with `bubblewrap` + `socat`. `failIfUnavailable` is set — if the sandbox can't start, Claude Code refuses to run unsandboxed rather than leak.
+This opens the sandbox panel:
 
-## 🧩 What `/protego-init` merges
+- **Mode** — *auto-allow* (sandboxed commands run without prompting) or *regular permissions* (you still approve every command).
+- **Overrides** — whether a command that fails inside the sandbox may fall back to running unsandboxed (`allowUnsandboxedCommands`).
+- **Config** — the settings that are actually in effect.
+- **Dependencies** — shown on Linux/WSL2 when something's missing.
 
-Deep-merged into `~/.claude/settings.json` (never clobbering your keys):
+The panel saves to `.claude/settings.local.json`, so the shield only covers **that one project**.
+
+## 🌍 Our recommendation: shield every castle
+
+If you sandbox, do it **globally**. Put the baseline in `~/.claude/settings.json` so every repo you open is sealed from day one:
 
 ```json
 {
@@ -31,48 +41,43 @@ Deep-merged into `~/.claude/settings.json` (never clobbering your keys):
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
     "network": { "strictAllowlist": true }
-  },
-  "permissions": { "deny": ["WebFetch", "WebSearch"] }
+  }
 }
 ```
 
-## 🔓 Widening one repo
+- `enabled` — raise the shield everywhere.
+- `failIfUnavailable` — if the sandbox can't start, refuse to run. The default only warns and then runs **unsandboxed**.
+- `allowUnsandboxedCommands: false` — nothing gets to slip past the shield.
+- `network.strictAllowlist` — default-deny: a host that isn't listed gets refused.
 
-The baseline allows no hosts at all. Where a project needs more (a package registry, an internal host), widen *that* repo — not the global default:
+Want to try it before you commit? Start one sealed session:
+
+```bash
+claude --settings '{"sandbox": {"enabled": true, "allowUnsandboxedCommands": false}}'
+```
+
+## 🔓 Letting a trusted owl through
+
+Some repos need a package registry or an internal host. Widen **that repo**, not the global default:
 
 ```jsonc
 // ./.claude/settings.json
 { "sandbox": { "network": { "allowedDomains": ["registry.npmjs.org"] } } }
 ```
 
-Or let the skill do it — Claude recommends it when a command hits a blocked host:
+If build tools need to write their caches, add those paths to `sandbox.filesystem.allowWrite` (e.g. `~/.gradle`, `~/.m2`, `~/.npm`).
 
-```bash
-/protego-allow registry.npmjs.org            # this repo
-/protego-allow gitlab.example.com --global   # every repo
-```
+## 🔬 How the magic works
 
-It applies on that repo's next session.
+- **macOS** — uses the built-in **Seatbelt** framework. Nothing to install.
+- **Linux / WSL2** — needs `bubblewrap` (filesystem isolation) and `socat` (network proxy relay): `sudo apt-get install bubblewrap socat`. On Ubuntu 24.04+ you may also need an AppArmor profile for `bwrap`.
+- **Native Windows** — not supported. Use WSL2 instead.
 
-## 🔬 How the sandbox works
+Full spellbook: [Claude Code → Sandboxing](https://code.claude.com/docs/en/sandboxing) · [Settings reference](https://code.claude.com/docs/en/settings-reference).
 
-This plugin doesn't build a sandbox — it turns on the one **Claude Code ships natively** and enforces at the OS level, so the agent can't opt out of it:
+## 🤝 Related spells
 
-- **Filesystem** — the session is confined to the current worktree. On **macOS** this uses **Seatbelt** (`sandbox-exec`); on **Linux/WSL2**, **bubblewrap** namespaces. Reads/writes outside the worktree are denied by the kernel, not by a hook. Build-tool caches (`~/.gradle`, `~/.m2`, `~/.npm`) stay writable so Gradle, Maven and npm work out of the box.
-- **Network** — outbound traffic goes through a local proxy that only lets through hosts in `allowedDomains`. With `strictAllowlist: true` it's default-deny: anything not listed is refused (`socat` backs the proxy on Linux).
-- **The settings keys**, all under `sandbox` in `~/.claude/settings.json`:
-  - `enabled` — turn the native sandbox on.
-  - `filesystem.allowWrite` — extra writable paths outside the worktree (build-tool caches).
-  - `network.allowedDomains` / `strictAllowlist` — the default-deny host allowlist.
-  - `failIfUnavailable` — if the OS sandbox can't start, refuse to run rather than fall back to unsandboxed.
-  - `allowUnsandboxedCommands` — when `false`, no command may escape the sandbox.
+**Patronum guards, Protego seals, Revelio reveals.**
 
-Full reference: [Claude Code → Sandboxing](https://docs.claude.com/en/docs/claude-code/sandboxing) and [Settings](https://docs.claude.com/en/docs/claude-code/settings).
-
-## 🤝 Contributing
-
-[Open an issue](https://github.com/emaarco/hogwarts/issues/new) for ideas or bugs.
-
----
-
-*Created with ♥ by [Marco Schaeck](https://www.linkedin.com/in/schaeckm) · [LinkedIn](https://www.linkedin.com/in/schaeckm) · [Medium](https://medium.com/@emaarco)*
+- [`agento-patronum`](../agento-patronum) — guards specific secrets (`.env`, keys, credentials), sandbox or not.
+- [`revelio`](../revelio) — shows what got blocked.
