@@ -7,7 +7,6 @@
       "allowWrite": ["~/.gradle", "~/.m2", "~/.npm"]
     },
     "network": {
-      "allowedDomains": ["github.com", "api.github.com", "raw.githubusercontent.com"],
       "strictAllowlist": true
     }
   },

@@ -30,7 +30,7 @@ Deep-merged into `~/.claude/settings.json` (never clobbering your keys):
     "enabled": true,
     "failIfUnavailable": true,
     "allowUnsandboxedCommands": false,
-    "network": { "allowedDomains": ["github.com", "api.github.com", "raw.githubusercontent.com"], "strictAllowlist": true }
+    "network": { "strictAllowlist": true }
   },
   "permissions": { "deny": ["WebFetch", "WebSearch"] }
 }
@@ -38,7 +38,7 @@ Deep-merged into `~/.claude/settings.json` (never clobbering your keys):
 
 ## 🔓 Widening one repo
 
-The baseline only allows the GitHub ecosystem. Where a project needs more (a package registry, an internal host), widen *that* repo — not the global default:
+The baseline allows no hosts at all. Where a project needs more (a package registry, an internal host), widen *that* repo — not the global default:
 
 ```jsonc
 // ./.claude/settings.json
