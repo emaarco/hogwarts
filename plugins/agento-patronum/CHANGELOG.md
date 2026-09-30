@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/emaarco/hogwarts/compare/agento-patronum-v0.3.0...agento-patronum-v1.0.0) (2026-09-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **protego-totalum:** the protego-totalum plugin and its /protego-init and /protego-allow skills are removed; use Claude Code's built-in /sandbox instead.
+
+### Features
+
+* **protego-totalum:** replace plugin with a /sandbox docs page ([#110](https://github.com/emaarco/hogwarts/issues/110)) ([7f79fcb](https://github.com/emaarco/hogwarts/commit/7f79fcbb9849d55c69f36cdfb6e3cbb9ea67777f))
+
 ## [0.3.0](https://github.com/emaarco/hogwarts/compare/agento-patronum-v0.2.1...agento-patronum-v0.3.0) (2026-08-14)
 
 
