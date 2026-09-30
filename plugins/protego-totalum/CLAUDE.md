@@ -31,7 +31,7 @@ Install via Claude Code marketplace:
 ### Plugin Structure
 - `.claude-plugin/plugin.json` — marketplace manifest
 - `scripts/protego-init.sh` — the only script: deep-merges the sandbox baseline into `~/.claude/settings.json`
-- `defaults/settings.json` — the strict global sandbox baseline
+- `defaults/settings.json` — the strict global sandbox baseline (plus writable build-tool caches: `~/.gradle`, `~/.m2`, `~/.npm`)
 - `skills/protego-init/SKILL.md` — the `/protego-init` skill
 
 There is intentionally **no** `hooks/` directory.

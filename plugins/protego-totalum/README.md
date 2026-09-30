@@ -51,10 +51,11 @@ Ask Claude to make that edit; it applies on that repo's next session.
 
 This plugin doesn't build a sandbox — it turns on the one **Claude Code ships natively** and enforces at the OS level, so the agent can't opt out of it:
 
-- **Filesystem** — the session is confined to the current worktree. On **macOS** this uses **Seatbelt** (`sandbox-exec`); on **Linux/WSL2**, **bubblewrap** namespaces. Reads/writes outside the worktree are denied by the kernel, not by a hook.
+- **Filesystem** — the session is confined to the current worktree. On **macOS** this uses **Seatbelt** (`sandbox-exec`); on **Linux/WSL2**, **bubblewrap** namespaces. Reads/writes outside the worktree are denied by the kernel, not by a hook. Build-tool caches (`~/.gradle`, `~/.m2`, `~/.npm`) stay writable so Gradle, Maven and npm work out of the box.
 - **Network** — outbound traffic goes through a local proxy that only lets through hosts in `allowedDomains`. With `strictAllowlist: true` it's default-deny: anything not listed is refused (`socat` backs the proxy on Linux).
 - **The settings keys**, all under `sandbox` in `~/.claude/settings.json`:
   - `enabled` — turn the native sandbox on.
+  - `filesystem.allowWrite` — extra writable paths outside the worktree (build-tool caches).
   - `network.allowedDomains` / `strictAllowlist` — the default-deny host allowlist.
   - `failIfUnavailable` — if the OS sandbox can't start, refuse to run rather than fall back to unsandboxed.
   - `allowUnsandboxedCommands` — when `false`, no command may escape the sandbox.
