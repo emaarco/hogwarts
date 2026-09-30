@@ -18,11 +18,16 @@ Add the marketplace once, then install only the spells you need.
 | Plugin | What it does |
 |---|---|
 | [`agento-patronum`](./plugins/agento-patronum/) | Blocks Claude's access to sensitive files & commands (`.env`, SSH keys, credentials, `printenv`) via a PreToolUse hook. |
-| [`protego-totalum`](./plugins/protego-totalum/) | One command — `/protego-init` turns on Claude Code's native OS sandbox globally (network default-deny). Setup only. |
 | [`revelio`](./plugins/revelio/) | Logs failed tool calls, API errors, and permission denials to a per-repo JSONL log you review with `/revelio`. |
 | [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — awesome-list submissions, meeting invitations, repo setup, and more. |
 
-Each plugin has its own README with full details. Together: **Patronum guards, Protego seals, Revelio reveals.**
+Each plugin has its own README with full details.
+
+## 📚 Spellbook docs
+
+- [Protego Totalum](./plugins/protego-totalum/) — no plugin needed: how to seal Claude Code with the built-in `/sandbox` command.
+
+Together: **Patronum guards, Protego seals, Revelio reveals.**
 
 ## 🗂 Structure
 

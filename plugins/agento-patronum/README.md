@@ -4,7 +4,7 @@
 
 Claude Code will read your `.env`, SSH keys, or AWS credentials if it helps the task — or run `printenv` to dump your environment. agento-patronum blocks those, by file pattern and by command, through a **PreToolUse hook** Claude can't silently bypass: every matching `Read`/`Write`/`Edit`/`Bash` call is blocked and logged *before* it runs.
 
-> Sandbox the whole session instead (no network, no cross-project leakage)? → [`protego-totalum`](../protego-totalum). See what got blocked? → [`revelio`](../revelio). **Patronum guards, Protego seals, Revelio reveals.**
+> Sandbox the whole session instead (no network, no cross-project leakage)? → Claude Code's built-in `/sandbox` ([Protego Totalum](../protego-totalum/)). See what got blocked? → [`revelio`](../revelio). **Patronum guards, Protego seals, Revelio reveals.**
 
 ## ⚡ Install
 

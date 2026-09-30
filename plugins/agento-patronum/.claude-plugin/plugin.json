@@ -1,6 +1,6 @@
 {
   "name": "agento-patronum",
-  "description": "Blocks Claude Code's access to sensitive files, credentials, and commands (.env, SSH keys, AWS/kube configs, printenv) via a PreToolUse hook. For whole-worktree isolation/sandboxing, see the sibling plugin protego-totalum.",
+  "description": "Blocks Claude Code's access to sensitive files, credentials, and commands (.env, SSH keys, AWS/kube configs, printenv) via a PreToolUse hook. For whole-worktree isolation/sandboxing, use Claude Code's built-in /sandbox.",
   "version": "0.3.0",
   "author": {
     "name": "emaarco"

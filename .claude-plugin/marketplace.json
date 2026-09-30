@@ -13,11 +13,6 @@
       "description": "Blocks Claude Code's access to sensitive files, credentials, and commands (.env, SSH keys, AWS/kube configs, printenv) via a PreToolUse hook."
     },
     {
-      "name": "protego-totalum",
-      "source": "./plugins/protego-totalum",
-      "description": "One-command best practice: /protego-init turns on Claude Code's native OS sandbox globally (network default-deny, writes confined to the worktree) via ~/.claude/settings.json. Setup only, no runtime hooks."
-    },
-    {
       "name": "revelio",
       "source": "./plugins/revelio",
       "description": "Reveals failed tool calls, API errors, and permission denials via per-repo JSONL log."
