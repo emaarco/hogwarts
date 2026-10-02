@@ -1,6 +1,6 @@
 ---
 name: slidev-toolkit-migration
-description: "Migrate an existing Slidev presentation onto the Miragon slidev-toolkit template (@miragon/slidev-toolkit): clone and read the template, scaffold one deck per topic, build a source→toolkit mapping table, enumerate slides with @slidev/parser (never regex), then migrate slide-by-slide by hand behind verify gates (npm run build + npm run verify green per chapter). Use when asked to migrate/port/rebuild a slide deck onto the Miragon template or toolkit, modernise an old Slidev deck, or move slides to the corporate design system."
+description: "Migrates an existing Slidev presentation onto the Miragon slidev-toolkit template (@miragon/slidev-toolkit), slide by slide behind build and verify gates. Use when asked to migrate/port/rebuild a slide deck onto the Miragon template or toolkit, modernise an old Slidev deck, or move slides to the corporate design system."
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob, WebFetch, AskUserQuestion
 ---
 

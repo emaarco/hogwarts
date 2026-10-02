@@ -1,6 +1,6 @@
 ---
 name: contributor-setup
-description: "Analyzes a repo's contributor experience and creates or updates what's missing: GitHub issue-form templates (bug/feature/refactor), an open-source target-group-focused README, CONTRIBUTING.md, and the remaining community-health files (PR template, CODE_OF_CONDUCT, SECURITY, LICENSE, CODEOWNERS). Use when asked to make a repo contributor-friendly, open-source ready, or to set up issue templates / README / CONTRIBUTING."
+description: "Creates or updates what a repo is missing for contributors: issue-form templates, README, CONTRIBUTING.md, and the other community-health files (PR template, CODE_OF_CONDUCT, SECURITY, LICENSE, CODEOWNERS). Use when asked to make a repo contributor-friendly, open-source ready, or to set up issue templates / README / CONTRIBUTING."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 

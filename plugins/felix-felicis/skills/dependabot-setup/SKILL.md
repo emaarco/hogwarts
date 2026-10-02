@@ -1,6 +1,6 @@
 ---
 name: dependabot-setup
-description: "Audits and sets up .github/dependabot.yml: recommends a grouping mode (low-noise, balanced, fine-grained) from the repo's use-case, gates setup on pinned dependency versions, wires CODEOWNERS over the deprecated reviewers key, groups security updates. Use when asked to set up, review, fix, or audit Dependabot / automated dependency updates / dependency grouping."
+description: "Audits and sets up .github/dependabot.yml with a grouping mode (low-noise, balanced, fine-grained) recommended from the repo's use-case, gated on pinned dependency versions. Use when asked to set up, review, fix, or audit Dependabot / automated dependency updates / dependency grouping."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 

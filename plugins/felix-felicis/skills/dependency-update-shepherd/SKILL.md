@@ -1,7 +1,7 @@
 ---
 name: dependency-update-shepherd
 allowed-tools: Bash, Read, Grep, Glob, Edit, Write
-description: "Shepherds open dependency-update branches/MRs (Renovate, Dependabot, manual) to a mergeable state: finds the first causal CI failure, fixes it autonomously without asking — a small code adaptation, else holding the offending bump back at the target branch's version (never ignore rules or forced resolutions) — verifies, pushes, watches the new pipeline, documents what it did in an MR comment, and merges or arms auto-merge only when the invocation requests it, never for majors. Use when dependency-update PRs/MRs are red, stuck, or piling up, or when asked to fix / rebase / merge dependency updates."
+description: "Shepherds open dependency-update branches/MRs (Renovate, Dependabot, manual) to a mergeable state without asking: fixes the first causal CI failure or holds the offending bump back, and merges only when the invocation requests it. Use when dependency-update PRs/MRs are red, stuck, or piling up, or when asked to fix / rebase / merge dependency updates."
 ---
 
 # Skill: dependency-update-shepherd

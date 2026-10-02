@@ -1,6 +1,6 @@
 ---
 name: portless-dev-setup
-description: "Adopt portless for stable, git-worktree-aware .localhost dev URLs following its documented best practices (pinned devDependency + portless.json + dev/dev:app script split — never a hand-rolled slug or sh -c wrapper), then wire it into Conductor via .conductor/settings.toml. Detects the stack first, wraps ONLY the JS/TS frontend dev server, and researches per-workspace isolation for backends/DB/Docker that portless can't cover. Use when asked to set up portless, fix stable dev URLs across worktrees, or make a repo Conductor-friendly for parallel agents."
+description: "Adopts portless for stable, git-worktree-aware .localhost dev URLs on the JS/TS frontend dev server and wires it into Conductor via .conductor/settings.toml. Use when asked to set up portless, fix stable dev URLs across worktrees, or make a repo Conductor-friendly for parallel agents."
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob, WebFetch, AskUserQuestion
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: clockify
-description: "Read and book Clockify time entries via the official REST API (curl + jq only). ALWAYS use this skill for anything about time tracking, timesheets, booked hours, or Clockify — e.g. 'what did I book this week', 'log 2h on project X', 'start/stop a timer', 'check or fix my hours'. Deutsch: IMMER verwenden bei Zeit buchen, Stunden eintragen, Zeiterfassung, Timesheet, Clockify, 'was habe ich diese Woche gebucht', 'trag mir 2h auf Projekt X ein', Timer starten/stoppen, Stunden prüfen oder korrigieren."
+description: "Read and book Clockify time entries via the official REST API. ALWAYS use this skill for anything about time tracking, timesheets, booked hours, or Clockify — e.g. 'what did I book this week', 'log 2h on project X', 'start/stop a timer'. Deutsch: IMMER verwenden bei Zeit buchen, Stunden eintragen, Zeiterfassung, 'was habe ich diese Woche gebucht', 'trag mir 2h auf Projekt X ein', Timer starten/stoppen, Eintrag ändern, Stunden prüfen oder korrigieren."
 allowed-tools: Bash, AskUserQuestion
 ---
 

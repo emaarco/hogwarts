@@ -1,7 +1,7 @@
 ---
 name: create-github-ticket
 allowed-tools: Bash(gh *), WebSearch, WebFetch
-description: Create or update GitHub issues for bug reports, feature requests, and refactor tasks using the gh CLI. Use when the user wants to file a ticket, create an issue, report a bug, request a feature, plan a refactor, or update an existing GitHub issue. Also triggers for new issue, open a ticket, file a bug, feature request, create task, or mentions wanting to track work in GitHub Issues.
+description: Create or update GitHub issues (bug reports, feature requests, refactor tasks) using the gh CLI. Use when the user wants to file a ticket, create or update an issue, report a bug, request a feature, plan a refactor, create a task, or track work in GitHub Issues.
 ---
 
 # Skill: create-ticket

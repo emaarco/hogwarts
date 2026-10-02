@@ -1,6 +1,6 @@
 ---
 name: translate-post
-description: "Translate a blog post or article into a target language so it reads as if it were written in that language, not translated into it — translate (keeping technical terms in the form native speakers actually use), then loop a fresh, isolated native-speaker reviewer over the text until no source-language interference, calques, or unnatural phrasing remain. Also works on a file already in the target language to only run the nativeness loop. You tell it the source file and the target language — there is no fixed repo structure. Use when asked to translate a post, translate an article to a language, make a translation sound native, or check text for anglicisms / translationese."
+description: "Translates a blog post or article into a target language so it reads as if written in it, looping a fresh native-speaker reviewer agent until no translationese remains; also polishes a file already in the target language. Use when asked to translate a post or article, make a translation sound native, or check text for anglicisms / translationese."
 allowed-tools: Agent, Read, Glob, Grep, Bash, Edit, Write, AskUserQuestion
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: pin-node-dependencies
-description: "Supply-chain audit for Node.js (js/ts) repos: verifies every package.json dependency is pinned to an exact version (no ^ ~ >= * latest or mutable git refs), checks the lockfile is committed, reports drift with evidence, optionally rewrites to exact pins, and wires up the Miragon/pin-npm-dependencies CI guardrail + save-exact."
+description: "Supply-chain audit for Node.js (js/ts) repos: verifies every package.json dependency is pinned to an exact version and the lockfile is committed, optionally rewrites to exact pins, and wires up a CI guardrail + save-exact."
 allowed-tools: Bash, Read, Edit, Grep, Glob, WebFetch
 ---
 
