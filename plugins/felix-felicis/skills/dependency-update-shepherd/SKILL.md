@@ -1,30 +1,31 @@
 ---
 name: dependency-update-shepherd
-allowed-tools: Bash, Read, Grep, Glob, Edit, Write, AskUserQuestion
-description: "Shepherds open dependency-update branches/MRs (Renovate, Dependabot, manual) to a mergeable state: finds the first causal CI failure, reproduces and fixes it locally, verifies, pushes, watches the new pipeline, and only then — with explicit opt-in, never for majors — merges or arms auto-merge. Use when dependency-update PRs/MRs are red, stuck, or piling up, or when asked to fix / rebase / merge dependency updates."
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write
+description: "Shepherds open dependency-update branches/MRs (Renovate, Dependabot, manual) to a mergeable state: finds the first causal CI failure, fixes it autonomously without asking — a small code adaptation, else holding the offending bump back at the target branch's version (never ignore rules or forced resolutions) — verifies, pushes, watches the new pipeline, documents what it did in an MR comment, and merges or arms auto-merge only when the invocation requests it, never for majors. Use when dependency-update PRs/MRs are red, stuck, or piling up, or when asked to fix / rebase / merge dependency updates."
 ---
 
 # Skill: dependency-update-shepherd
 
-Take one open dependency-update branch at a time from red/stale to merged — evidence-based, bot-aware, with hard stop rules. Repo config, CI logs, and MR state are authoritative; never guess.
+Take one open dependency-update branch at a time from red/stale to mergeable — autonomously, evidence-based, bot-aware, with hard stop rules. Repo config, CI logs, and MR state are authoritative; never guess. **Never ask the user mid-run**: every decision below has a default, and whatever cannot be decided safely ends in *stop, comment, report*.
 
 ## IMPORTANT — safety rules (apply throughout)
 
-- GitHub → `gh`, GitLab → `glab`; never call forge APIs directly except where a CLI gap is noted below. Missing CLI → stop, ask the user to install it.
+- GitHub → `gh`, GitLab → `glab`; never call forge APIs directly except where a CLI gap is noted below. Missing CLI → stop and report it.
 - **Never commit to or push the target branch** (`main`/`master`/…). Work only on the dependency-update branch.
 - Rewritten history is pushed only with `git push --force-with-lease=<branch>:<sha-your-work-is-based-on>` — never `--force` — and re-check the remote head right before pushing: the bot may have pushed meanwhile.
-- **Never hide a failure**: no disabling/skipping tests, linting, or checks; no loosening version pins to make CI pass.
+- **Never hide a failure**: no disabling/skipping tests, linting, or checks; no loosening version pins to make CI pass. Holding a bump back (Phase 3) is not hiding: it is announced on the MR and the bot proposes the bump again on its next run.
+- **Never persist a suppression.** Forbidden as fixes: `ignore` entries in `.github/dependabot.yml`, Renovate `ignoreDeps`/`packageRules`, `@dependabot ignore …` comments (they store the same ignore state server-side), closing the MR (the bot then skips that version), Gradle `resolutionStrategy`/`force`/constraints, Maven exclusions or `dependencyManagement` overrides, npm `overrides` / yarn `resolutions`, and widened version ranges. The update config and the resolution rules stay untouched.
 - **Iteration cap:** each push (or CI-verified hypothesis) that ends in a red pipeline consumes 1 of 3 iterations; after the 3rd red, stop and report. Rebase pushes and job reruns don't count but are logged.
 - **One flaky rerun per MR, total.** A test failure that turns green on rerun is still reported as "flaky, unverified" — never silently treated as a pass.
-- Conflict resolution is a semantic decision, not a textual one. Unclear → stop and ask.
-- Any MR-visible write (comment, description edit) and auto-merge require the Phase-0 opt-in; agent-authored code fixes additionally require the fresh per-MR diff confirmation in the merge gate.
+- Conflict resolution is a semantic decision, not a textual one. Unclear → stop, comment, report.
+- MR comments and description edits are always allowed. Merging and arming auto-merge happen only when the invocation requests it (Phase 0.4).
 
 ## Phase 0 — Scope & policy
 
 1. Detect forge (`git remote -v`), target branch (`gh repo view --json defaultBranchRef` / `glab repo view`), and update bot: `renovate.json*`/`.renovaterc*` → Renovate, `.github/dependabot.yml` → Dependabot, else manual branches.
-2. List open candidate PRs/MRs (`gh pr list --json number,title,author,headRefName,mergeable,statusCheckRollup` / `glab mr list`) and **authenticate** them: the author must be the verified bot identity (`app/dependabot`, `renovate[bot]`, or the bot account the repo's config names). Anything else — including every "manual" branch — needs explicit per-MR user confirmation; a branch merely *named* `renovate/…` is not trusted. Confirm the diff touches manifests/lockfiles.
-3. Classify semver impact per bumped package from the diff. **Major-equivalent** (never auto-merged unless the user names it explicitly): any major bump, any `0.x` minor bump, any grouped MR containing one, and any un-classifiable ref (git SHA, Docker tag/digest, Action pin).
-4. Ask via AskUserQuestion, once: which MR(s) to process (single / all one-by-one, major-equivalents last), whether the skill may write to MRs (comments, description edits), and whether it may merge / arm auto-merge at the end (default: no — leave the MR ready and report).
+2. List open candidate PRs/MRs (`gh pr list --json number,title,author,headRefName,mergeable,statusCheckRollup` / `glab mr list`) and **authenticate** them: the author must be the verified bot identity (`app/dependabot`, `renovate[bot]`, or the bot account the repo's config names). Anything else — including every "manual" branch — is processed only if the invocation names that MR explicitly; otherwise skip it and list it in the report. A branch merely *named* `renovate/…` is not trusted. Confirm the diff touches manifests/lockfiles.
+3. Classify semver impact per bumped package from the diff. **Major-equivalent** (never merged unless the invocation names that MR explicitly): any major bump, any `0.x` minor bump, any grouped MR containing one, and any un-classifiable ref (git SHA, Docker tag/digest, Action pin).
+4. Take scope and policy from the invocation — do not ask. MR(s): those named in the arguments, else the MR of the current branch, else all red or stale authenticated bot MRs one by one, major-equivalents last. Merge: only if the arguments request it (e.g. `123 merge`); default is to leave the MR green and ready.
 5. Read the repo's rules once: CONTRIBUTING, CI workflows + required checks, protection/approval policy, merge method, and the local verify commands (`package.json` scripts, `Makefile`, CI steps). These define what "green" and "verified" mean below.
 
 ## Phase 1 — Freshness first (bot-aware)
@@ -40,7 +41,7 @@ Errors on a stale base are noise — make the branch current before touching any
 4. Manual-rebase conflict rules:
    - **Lockfile**: never hand-edit. Take the target branch's lockfile, re-apply only the intended bump with the ecosystem's conservative command (e.g. `npm install --package-lock-only <pkg>@<version>`), then diff against the bot's original lockfile: any changed package, version, `resolved` URL, or `integrity` hash beyond the declared bump(s) → stop and report (supply-chain risk).
    - **Manifest**: if the target branch already bumped the same package (grouped/security-update race), keep the higher intended version — or abort and let the bot recreate the MR. Otherwise keep the bump, take everything else from the target.
-   - **Business logic**: stop, ask.
+   - **Business logic**: stop, comment, report.
 5. After a manual rebase: verify and push per Phase 4, then continue at Phase 2.
 
 ## Phase 2 — Identify the first causal failure
@@ -53,12 +54,15 @@ Errors on a stale base are noise — make the branch current before touching any
 6. Missing secret / permissions / infra outage → not fixable from here. Stop and report exactly what's missing.
 7. No identifiable cause in the logs → no blind changes, no blind pushes. Name the missing context, stop.
 
-## Phase 3 — Reproduce & fix locally
+## Phase 3 — Reproduce & fix locally (fix ladder)
 
 1. Re-run the failing command locally, matching CI as closely as possible (same tool versions, flags, clean install). If it can't run locally (CI-only secrets/services), fall back to hypothesis → minimal fix → let CI verify (a red result consumes an iteration).
-2. Trace the error to its concrete cause; read the bumped version's changelog/release notes instead of guessing breaking changes.
-3. Apply the **minimal** fix that adapts the code to the new version. No drive-by refactoring, nothing unrelated — the diff must stay reviewable as "dependency update + necessary adaptation".
-4. If the update itself is incompatible (upstream bug, unsupported platform): don't force it. Document the incompatibility on the MR (if Phase-0 allows writes, else in the final report), suggest the latest compatible version or the needed migration, and stop.
+2. Trace the error to its concrete cause and to the bump that triggers it; read the bumped version's changelog/release notes instead of guessing breaking changes. In a grouped MR with an unclear culprit, reset candidate bumps locally one at a time and re-run the failing command until it passes. Still not attributable → stop, comment, report.
+3. Climb the ladder and take the first rung that applies — without asking:
+   1. **Small code fix.** Adapt only the call sites the new version broke (renamed API, changed signature, moved import). Out of budget: changing test assertions or expectations, disabling rules, touching more than a handful of files, or anything that needs a design decision. No drive-by refactoring — the diff must stay reviewable as "dependency update + necessary adaptation".
+   2. **Hold the bump back.** Use it when the code fix is out of budget, when a pushed code fix came back red, or when the blocker is another third-party library that does not support the new version yet (e.g. an architecture-test framework lagging behind a new Kotlin release). Reset the offending version entry — in the file the bot changed, e.g. `gradle/libs.versions.toml`, `package.json`, `pom.xml` — to exactly the target branch's value, together with entries that must move in lockstep (e.g. KSP with Kotlin). Regenerate a lockfile with the conservative rule from Phase 1.4. Afterwards `git diff origin/<target>...HEAD` must no longer mention the held-back dependency. Commit as `build(deps): hold back <pkg> at <kept-version>`.
+4. A hold-back that would leave the MR without any remaining bump (single-dependency MR): push nothing. Comment the blocker and leave the MR open and red — closing it would make the bot skip that version.
+5. Do not upgrade the blocking library yourself to make the bump fit; the bot proposes that update on its own.
 
 ## Phase 4 — Verify locally, then push
 
@@ -79,10 +83,14 @@ Errors on a stale base are noise — make the branch current before touching any
 - [ ] Forge reports mergeable, no conflicts.
 - [ ] Latest pipeline on the latest commit fully green. (GitLab merge trains: the train pipeline can still fail — arming ≠ merged.)
 - [ ] Required approvals & policies satisfied — the skill never approves anything; a missing approval is a blocker to report, not to work around.
-- [ ] Phase-0 merge opt-in given, and this is not an unapproved major-equivalent (Phase 0.3).
-- [ ] If the skill authored code changes beyond manifest/lockfile: show the final diff via AskUserQuestion and get a fresh yes — the Phase-0 opt-in predates this code and does not cover it.
+- [ ] Merge requested in the invocation (Phase 0.4), and this is not an unnamed major-equivalent (Phase 0.3).
+- [ ] The skill authored no code changes beyond manifest/lockfile. Otherwise leave the MR green and ready for a human merge, with the diff summarised in the MR comment.
 
 Any box open → stop and report the blocker.
+
+## MR comment
+
+Whenever the skill pushed, held a bump back, or stopped on a blocker, write **one** comment per MR and edit it on later iterations instead of stacking new ones (`gh pr comment <n> --edit-last` / `glab mr note`). It states: the failing job and command, the cause, what was done (code fix, or "held back `<pkg>` at `<kept-version>` because `<blocker>` does not support `<new-version>` yet"), which bumps the MR still contains, that the bot will propose the held-back bump again on its next run, and that the branch is no longer bot-maintained. After a hold-back, also strike the held-back entry in the MR description (`~~…~~ — held back, see comment`) so a squash commit does not claim a bump that was not made.
 
 ## Phase 6 — Merge & confirm
 
@@ -92,7 +100,7 @@ Any box open → stop and report the blocker.
 
 ## Stop state
 
-Whenever stopping with pushed-but-unfinished work (cap reached, blocker hit): state on the MR — or in the report, if writes weren't allowed — that the branch was taken over, is partially fixed, and is no longer bot-maintained; or revert your commits. Never leave this implicit.
+Whenever stopping with pushed-but-unfinished work (cap reached, blocker hit): revert your commits that did not lead to a green pipeline, and state in the MR comment that the branch was taken over, what remains broken, and that it is no longer bot-maintained. Never leave this implicit.
 
 ## Final report (per MR)
 
@@ -103,8 +111,11 @@ Whenever stopping with pushed-but-unfinished work (cap reached, blocker hit): st
 | Rebase | needed? by bot or takeover? conflicts resolved (which, how) |
 | CI failure | first causal job + command, classification, reruns used |
 | Root cause & fix | … |
+| Held back | pkg, kept version, blocker — or none |
 | Verification | local commands run · remote run URL + result |
 | Merge | merged / auto-merge armed / left ready — confirmed how? |
 | Blockers / not verified | everything the skill stopped on or could not check |
+
+Close the run with the list of skipped MRs (unauthenticated author, not named in the invocation).
 
 State plainly what was **not** verified — an honest "stopped: approval missing" beats an optimistic "done".
