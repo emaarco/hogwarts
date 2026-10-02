@@ -1,6 +1,6 @@
 ---
 name: guardrails-setup
-description: "Introduces and maintains machine-checkable guardrails (fitness functions) so AI agents can work safely in a repo: architecture & pattern gates, ratchet metrics (raise-only coverage/mutation, shrink-only debt lists), a self-protecting ratchet diff gate, behavior gates (contract snapshots, error paths, anti-erosion), and a single verify command — right-sized to the repo, phased, one PR per phase, every gate negative-tested. Use when asked to set up guardrails or fitness functions, make a repo safe for AI agents, stop quality erosion, protect coverage thresholds, or audit existing guardrails. For release automation, publishing, or supply-chain audits use release-audit; for a whole-repo health check use maturity-analysis."
+description: "Introduces and maintains machine-checkable guardrails (fitness functions) so AI agents can work safely in a repo: architecture gates, raise-only coverage, shrink-only debt lists, and a single verify command, right-sized to the repo. Use when asked to set up guardrails or fitness functions, make a repo safe for AI agents, stop quality erosion, protect coverage thresholds, or audit existing guardrails. For release or supply-chain audits use release-audit; for a whole-repo health check use maturity-analysis."
 allowed-tools: Agent, Bash, Read, Grep, Glob, Write, Edit, WebFetch, WebSearch, AskUserQuestion
 ---
 

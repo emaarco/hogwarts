@@ -1,7 +1,7 @@
 ---
 name: pull-request-description
 allowed-tools: Bash(git *), Bash(gh *), Bash(glab *), Read, Grep, Glob, AskUserQuestion
-description: "Draft a consistent pull-request / merge-request title and body — a Conventional-Commit title (respecting repo-defined types & scopes) and a structured, compact body that links its issue — then create or update the PR/MR. Use when opening a PR or MR, writing a PR description or body, or asked to make PR titles and descriptions consistent."
+description: "Draft a consistent pull-request / merge-request title (Conventional Commit, respecting repo-defined types & scopes) and a compact body that links its issue, then create or update the PR/MR. Use when opening a PR or MR, writing a PR description or body, or asked to make PR titles and descriptions consistent."
 ---
 
 # Skill: pull-request-description

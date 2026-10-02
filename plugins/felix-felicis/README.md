@@ -4,49 +4,51 @@ A Claude Code plugin for everyday automation tasks.
 
 ## Skills
 
+Each skill's full behaviour is documented in its [`skills/<name>/SKILL.md`](./skills).
+
 ### `/maturity-analysis`
 
-Performs an end-to-end analysis of the current repository and delivers a structured Markdown report covering: project overview (problem, users, data flow, core abstractions), most important files, maturity assessment across six dimensions (documentation, dev tooling, tests, clean code, agent-skills, pipelines) using parallel expert subagents that benchmark against reference projects, and a prioritized issues list.
+Analyzes the current repo end to end and reports a project overview, the key files, a maturity assessment across six dimensions, and a prioritized issue list.
 
 ### `/pin-github-actions`
 
-Supply-chain audit of GitHub Actions: verifies every `uses:` reference is pinned to a full commit SHA (not a mutable `@v4` tag or `@main` branch), reports unpinned references with `file:line` evidence and severity, optionally rewrites them to SHA + version comment, and recommends Dependabot/Scorecard enforcement.
+Checks that every GitHub Actions `uses:` reference is pinned to a full commit SHA, reports the unpinned ones, and optionally rewrites them to SHA + version comment.
 
 ### `/pin-node-dependencies`
 
-Supply-chain audit of Node.js (js/ts) dependencies: verifies every `package.json` spec is pinned to an exact version (no `^`/`~`/`>=`/`*`/`latest`/mutable git refs), checks the lockfile is committed, optionally rewrites ranges to exact pins with `save-exact`, and wires up the `Miragon/pin-npm-dependencies` CI guardrail plus Dependabot cooldown.
+Checks that every `package.json` dependency is pinned to an exact version and the lockfile is committed, optionally rewrites ranges to exact pins, and adds a CI guardrail.
 
 ### `/portless-dev-setup`
 
-Adopts [portless](https://portless.sh) for stable, git-worktree-aware `.localhost` dev URLs following its documented best practices — pinned devDependency, explicit `portless.json`, and a `dev`/`dev:app` script split (never a hand-rolled slug or `sh -c` wrapper) — then wires it into Conductor via `.conductor/settings.toml`. Detects the stack first, wraps only the JS/TS frontend dev server, and researches per-workspace isolation (`CONDUCTOR_PORT`, `COMPOSE_PROJECT_NAME`, `portless alias`, …) for the backends, databases, and Docker stacks portless can't cover. Stages edits and shows the diff without committing.
+Sets up [portless](https://portless.sh) for stable, worktree-aware `.localhost` dev URLs on the JS/TS frontend dev server and wires it into Conductor.
 
 ### `/conductor-setup`
 
-Sets up a repo's full Conductor workspace lifecycle in `.conductor/settings.toml` (or the personal, gitignored `settings.local.toml`): a **setup** script for installs, a menu of selectable, icon-labelled **run** targets with autostart off (instead of one auto-starting script), and an **archive** script to tear down external resources — Docker containers, cloud sandboxes, reserved ports — before a workspace is removed. Discovers real commands from `package.json`/`Makefile`/README, confirms every choice interactively, and never overwrites an existing script without asking.
+Writes a repo's `.conductor/settings.toml`: a setup script, a menu of selectable run targets instead of one auto-starting script, and an archive script for cleanup.
 
 ### `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`
 
-Analyzes a GitHub repository and adds it to an awesome list by submitting a PR or issue. Researches the repo, identifies the best-fit category, drafts the entry and submission body, confirms with you, then opens the PR or issue automatically.
+Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm.
 
 ### `/outlook-invitation`
 
-Creates a professional German Outlook meeting invitation with context, goals, agenda, and emojis — ready to copy-paste or auto-fill into a new calendar event (macOS auto-fill requires Terminal accessibility permission).
+Creates a German Outlook meeting invitation with context, goals, and agenda, ready to copy-paste. On macOS it can also auto-fill a new Outlook event.
 
 ### `/create-github-ticket`
 
-Creates or updates a GitHub issue — feature request, bug report, or refactor task — using the `gh` CLI. Detects create vs. update mode from your input, optionally researches unfamiliar libraries or APIs with WebSearch/WebFetch, discovers the repo's `.github/ISSUE_TEMPLATE/` forms (in the current or a referenced repo) and falls back to bundled default templates, drafts the title and body, confirms with you before writing, then creates or edits the issue and reports the final state with its URL.
+Creates or updates a GitHub issue (bug, feature, or refactor) via `gh`, using the repo's issue templates and confirming the draft with you before writing.
 
 ### `/contributor-setup`
 
-Analyzes a repo's contributor experience and creates or updates what's missing: GitHub issue-form templates (bug / feature / refactor), an open-source, target-group-focused README, `CONTRIBUTING.md`, and the remaining community-health files (PR template, `CODE_OF_CONDUCT`, `SECURITY`, `LICENSE`, `CODEOWNERS`).
+Creates or updates what a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
 
 ### `/medium-publish`
 
-Copies a Markdown blog post to the clipboard as rich text (macOS): converts the markdown to formatted HTML, loads it onto the clipboard as rich text, and opens Medium's new-story editor so you paste it in with ⌘V. Images become `[Bild N]` placeholders you fill in manually.
+Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V (macOS). Images become placeholders.
 
 ### `/bpmn-export`
 
-Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`, with output placed under the module's `assets/` directory.
+Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 
 ## Beta Skills
 
@@ -54,59 +56,59 @@ New skills that are not yet battle-tested on real repos — expect rough edges a
 
 ### `/optimize-github-actions`
 
-CI run-efficiency audit for GitHub Actions: detects duplicate PR runs from the `push` + `pull_request` double-trigger (which concurrency groups can't dedupe — the two events run under different refs), job explosion via matrix expansion, missing or miswired `concurrency`, noisy `pull_request` types, and merge-gate traps (`paths:`-filtered required checks that stay pending forever). Gathers live evidence via `gh` (duplicate check names, run events, rulesets) with a static-only fallback, reports findings with severity and a concrete minutes-savings estimate, and only then fixes trigger scoping — gated on verifying that every required status check is still produced afterwards (merge queues and `merge_group` included), never touching tag-only push triggers, `pull_request_target`, or deploy-workflow cancellation.
+Finds wasted CI runs in GitHub Actions — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
 
 ### `/dependabot-setup`
 
-Collaborative Dependabot audit & setup with three grouping modes — **low-noise** (one PR per ecosystem, or one repo-wide PR via multi-ecosystem groups; for templates and internal tooling), **balanced** (minor+patch grouped, one PR per major; for open-source and production repos), and **fine-grained** (family groups for large or conflict-prone dependency trees and monorepos) — plus a **stack-groups** variant that bundles ecosystems that move together (e.g. backend deps + the docker/compose images they run on) into one PR per stack. Recommends a mode from the repo's use-case — open-source vs internal, what it ships and to whom, CI safety net, dependency count — with past Dependabot PR history used only to fine-tune cadence and cooldown, confirms decisions interactively, cleans dead config (removed `reviewers` key, redundant `target-branch`, duplicate blocks, nonexistent labels), prefers CODEOWNERS over `assignees` for small teams, groups security updates, enforces cooldown, and gates setup on pinned dependency versions — delegating fixes to `/pin-github-actions` and `/pin-node-dependencies` before any config is written.
+Audits or sets up `.github/dependabot.yml` with a grouping mode (low-noise, balanced, or fine-grained) recommended from the repo's use-case. Flags unpinned versions first and offers to pin them.
 
 ### `/branch-ruleset-setup`
 
-Sets up an idempotent GitHub branch ruleset on the default branch via `gh api`: no deletion, no force-push, linear history, signed commits, PR-only changes, and a required CI status check whose `integration_id` is resolved dynamically instead of hardcoded.
+Creates or updates a GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
 
 ### `/automerge-setup`
 
-The single source of truth for GitHub PR auto-merge — detects, audits, and optimizes an existing setup or creates one from scratch, across three strategies: **Dependabot** (the default — a `dependabot/fetch-metadata` workflow that auto-merges patch/minor and leaves every major manual), **Renovate** (its native `automerge` + `platformAutomerge`, no second workflow to maintain), and **generic bot** (actor + eligibility label, with the caveat that without `fetch-metadata` it can't tell a patch from a major). Treats the two safety preconditions as a gate, not a suggestion: the native *Allow auto-merge* repo setting must be on (or `gh pr merge --auto` just fails) and a required-status-check ruleset must gate the default branch (or "auto" means "immediately" and CI never holds the PR) — delegating the ruleset to `/branch-ruleset-setup`. Beyond *whether* a check runs, it grades *what a green check actually proves* — lint-only vs build vs unit vs integration/E2E, weighed against what the repo ships — and caps the scope recommendation to that grade (a build-only check can't justify auto-merging minors, however internal the repo), surfacing the grade in the `AskUserQuestion` so the decision is informed rather than blind. Audits catch drift, most notably a single-shot `gh pr merge --auto` missing the retry loop that rides out the UNSTABLE merge-state race. Owns the auto-merge workflow templates that `/dependabot-setup` previously carried and delegates SHA-pinning to `/pin-github-actions` and runtime merging of already-open PRs to `/dependency-update-shepherd`.
+Sets up or audits GitHub PR auto-merge for Dependabot, Renovate, or other bot PRs, and limits what gets auto-merged to what the repo's CI actually proves.
 
 ### `/release-please-setup`
 
-Sets up, audits, **or** optimizes release-please. On a greenfield repo it creates the config + manifest + workflow (GitHub App token auth, never the default `GITHUB_TOKEN`), scoped to one of three release forms chosen interactively — single release, per-module dependency-aware, or per-module self-contained — each with a ready-to-copy template and reference repos. On a repo that already has release-please it audits instead: mainly judging whether the setup still makes sense (is the release form still right for today's topology? does PR-title validation match the merge strategy? is publishing wired? is auth still best-practice?), and along the way catching mechanical drift (`extra-files` paths that no longer resolve — the silent version-stranding bug — forgotten packages, versions out of sync with the manifest). Changes are resolved through `AskUserQuestion`, never a silent rewrite, with deliberate conventions left alone.
+Sets up release-please as a single or per-module release, audits an existing setup, or switches release forms without breaking tag and changelog history.
 
 ### `/secure-publish-setup`
 
-Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, an idempotent skip-if-already-published step, GitHub Environments for any unavoidable long-lived secrets, and a bundled one-time check that verifies each package's `repository` field at setup so provenance publishing can't fail with E422.
+Sets up tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, and a publish step that is safe to re-run.
 
 ### `/release-audit`
 
-Orchestrator: evidence-based release & supply-chain readiness audit with an adversarial review subagent. Grades versioning, secure publishing, CI, PR validation, and supply-chain hardening against a gold-standard reference and delegates fixes to the matching setup skills.
+Audits release and supply-chain readiness against a gold-standard reference and returns a prioritized action plan, with fixes delegated to the matching setup skills.
 
 ### `/svg-to-png`
 
-Renders an SVG to a PNG **locally** with the [`resvg`](https://github.com/linebender/resvg) CLI — no uploading the file to a web converter and downloading the result. Checks the precondition (`resvg --version`, installable via `brew install resvg`), derives the output path from the source basename, and reaches for scaling (`-z`), exact dimensions (`-w`/`-h`), print DPI (`--dpi`), a solid `--background` for transparency, tight-bounds crop (`--export-area-drawing`), or single-element export (`--export-id`) as the request calls for — with a font-loading fallback (`--use-font-file` / `--use-fonts-dir`) when SVG text renders wrong. resvg writes PNG only, so for a JPG/TIFF/GIF target it converts the rendered PNG with the macOS built-in `sips` (or `cwebp` for WebP); it does **not** trace raster back into SVG.
+Renders an SVG to a PNG locally with the [`resvg`](https://github.com/linebender/resvg) CLI, with optional scaling, DPI, background, or crop. Other raster formats go through a PNG intermediate.
 
 ### `/pull-request-description`
 
-Drafts a consistent pull-request / merge-request title and body, then creates or updates it via `gh` (GitHub) or `glab` (GitLab). The title defaults to a Conventional Commit but respects repo-defined types and scopes when present (commitlint, release-please packages, `amannn/action-semantic-pull-request`, or `CONTRIBUTING.md`). The body follows the repo's own PR/MR template if it has one, otherwise a bundled compact default — **Why** → **What** → **Verification**, with the issue link as the last line — plus only-when-relevant sections for breaking changes and follow-ups. Discovers the issue the change builds on (from the branch name, commits, or you) and links it with the correct closing or reference keyword. Shows the full draft for confirmation before writing anything.
+Drafts a Conventional-Commit title and a compact body that links its issue, following the repo's own conventions and template, then creates or updates the PR/MR via `gh` or `glab`.
 
 ### `/translate-post`
 
-Translates a blog post or article into a target language **you specify** so it reads as if it were written in that language, not translated into it — no fixed repo structure required: you supply the input file and the target language. Preserves code blocks, URLs, and product/pattern names verbatim, and applies a whiteboard test to decide which technical terms stay in their original form. Then it loops a **fresh, isolated native-speaker reviewer** over the text (a new agent each round, never primed with prior findings; 5-round safety cap) — flagging source-language interference, calques, broken ellipses, wrong loanword gender, and over-localized terms — applies the fixes, and finishes with a faithfulness check against the source so meaning never drifts. Also runs the nativeness loop on its own against a file already in the target language.
+Translates a blog post into a language you choose, then loops a fresh reviewer agent over it until it reads as if written in that language. Can also polish an existing translation.
 
 ### `/guardrails-setup`
 
-Introduces and maintains machine-checkable guardrails (fitness functions) so AI agents can work safely in a repo — grounded in Robert C. Martin's ("Uncle Bob") position that humans should manage AI-written code through measurements, not line-by-line review: every important architecture or quality rule needs an automated gate, or the honest admission that it is not binding. Three modes: **`audit`** (read-only gap report against the repo's tier — existing gates with evidence, bypassable gates with the cheapest bypass named, higher-tier gates listed as "not recommended, and why"), **`setup`** (Phase 0 baseline → the plan is challenged by three persona subagents — a skeptical staff engineer, an AI agent hunting the cheapest bypass, a maintainer six months later — then approved per phase, one PR per phase), and **`phase <n>`** (implement one phase from the committed plan in `docs/guardrails/baseline.md`). Right-sized via a T1–T4 tier matrix so a 2-person tool doesn't get the 14-gate program; all ratchet state lives in one `guardrails/ratchets.json` watched by a self-protecting diff gate (raise-only thresholds, shrink-only debt/exclusion lists, grow-only tested surfaces, guardrail-path edits gated); exactly one exception path — a human-applied PR label, CI-checked, CODEOWNERS-backed via `/branch-ruleset-setup`. Every gate is negative-tested with the red output documented in the PR. The bundled playbook covers phases 0–5 (architecture & pattern gates, ratchets, mutation testing, dead code, fitness report, contract snapshots, error-path/anti-erosion/flakiness gates, tiered `verify`/`verify:full`), starting thresholds, a tool map for TS/Java-Kotlin/Python/Go, and eight known pitfalls.
+Adds automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo, so AI agents can change code safely. Can also audit existing gates.
 
 ### `/slidev-toolkit-migration`
 
-Migrates an existing [Slidev](https://sli.dev) presentation onto the [Miragon slidev-toolkit template](https://github.com/Miragon/slidev-deck-template) (`@miragon/slidev-toolkit`). The target is fixed and the skill knows it; the source deck varies (its own theme/components, or plain markdown) and is detected in Phase 0. Deterministic where mechanical, hand-done where semantic: **scripts** clone and read the template, scaffold one deck per topic (toolkit pinned from npm, never vendored), enumerate slides with `@slidev/parser` (never regex), move assets into `resources/`, and report leftover raw-HTML / old components; the **per-slide translation** (component→component, raw HTML out, prose→bullets, overflow-split) is deliberate handwork guided by a source→toolkit **mapping table** — no auto-transform that produces garbage. Migrates a pilot sub-chapter first to validate the pipeline, then works chapter by chapter (each fully verified before the next), gated on `npm run build` + `npm run verify` green per chapter; the PR strategy — one PR per topic or the whole migration in a single PR — is chosen up front, and the old design system is deleted only at the end. A visualisation decision tree keeps diagrams in the design system (live BPMN/DMN addon → Excalidraw redraw, or a brand-styled Mermaid fence for standard text-generated graphs → raster-image fallback, never Cards), and the five hard build/overflow lessons from a real eight-topic migration (overflow is element-count not text-length, the ≥16px fit threshold, `<`+letter breaks the production build, big decks verify in halves) are baked in as pre-emptive rules. Ships six repo-agnostic scripts in `reference/`, adapted from a real migration: a deck scaffolder (`new-topic-deck.sh`), an old-side slide enumerator and a new-side leftover-report (grounded in `@slidev/parser` / the template's own rules), an Excalidraw-exporter bootstrap, an inline-SVG rasteriser, and a slide screenshot + overflow probe — plus the mapping-table template and the build/overflow lessons.
+Migrates an existing [Slidev](https://sli.dev) deck onto the [Miragon slidev-toolkit template](https://github.com/Miragon/slidev-deck-template), slide by slide, with each chapter built and verified before the next.
 
 ### `/dependency-update-shepherd`
 
-Shepherds open dependency-update branches/MRs (Renovate, Dependabot, or manual) from red/stale to merged — one MR at a time, evidence-based, with hard stop rules. Freshness first: prefers the bot's own rebase (`@dependabot rebase`, Renovate's checkbox) and treats a manual push as a deliberate takeover that permanently ends bot maintenance — after which bot rebase is forbidden (it would wipe the fix commits). Then finds the **first causal** CI failure (GitHub via `gh`, GitLab via MR pipelines — `glab ci get --merge-request`), classifies it (code incompatibility, test, lint, infra, missing secret, transient — with one flaky rerun per MR, total), and fixes it **without asking** along a fix ladder: a small code adaptation of the broken call sites, else **holding the offending bump back** — resetting its version entry (e.g. in `libs.versions.toml`) to the target branch's value so the rest of the MR can go green and the bot simply proposes the bump again next run. It never persists a suppression: no `ignore` in `dependabot.yml`, no `@dependabot ignore`, no closed MRs, no `resolutionStrategy`/`overrides`. It then verifies, pushes with `--force-with-lease` pinned to the base SHA, and watches the pipeline of **its own** push. Guardrails throughout: candidates are authenticated by verified bot identity (a branch merely *named* `renovate/…` is not trusted), lockfiles are regenerated conservatively and diffed against the bot's original (any extra package/`resolved`/`integrity` change stops the run), a 3-iteration cap, and a merge gate re-checked fresh — scope and merge permission come from the invocation instead of a question (e.g. `/dependency-update-shepherd 123 merge`), MRs carrying agent-authored code are left green for a human merge, and major-equivalents (majors, `0.x` minors, SHA/digest pins) are never merged unless named. Every intervention is documented in a single MR comment, and the run ends with a per-MR report that states plainly what was held back and what was **not** verified.
+Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
 
 ### `/clockify`
 
-Reads and books your [Clockify](https://clockify.me) time entries ("was habe ich diese Woche gebucht?", "trag mir 2h auf Projekt X ein", start/stop a timer) using only the official REST API: `curl` and `jq`, no third-party packages or MCP servers. Credentials come from `CLOCKIFY_API_KEY`, `CLOCKIFY_BASE`, `CLOCKIFY_WORKSPACE` and `CLOCKIFY_USER_ID`, and the key is passed to curl via stdin so it never appears in argv, URLs or logs. You enter times in local Europe/Berlin time and the skill converts them to UTC, including DST. Project and task names resolve case-insensitively, and if a name matches more than one project or task, the skill asks instead of guessing. Every write starts with a `--dry-run` preview and waits for your explicit "ja". The preview also warns about overlaps or duplicates on the same day, and the entry is read back after the write. Deletes need the entry ID repeated as `--confirm` and handle one entry at a time.
+Reads and books [Clockify](https://clockify.me) time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars; times are Europe/Berlin.
 
 ## Rules
 

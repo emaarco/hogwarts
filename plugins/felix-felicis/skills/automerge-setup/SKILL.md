@@ -1,6 +1,6 @@
 ---
 name: automerge-setup
-description: "Sets up, audits, or optimizes GitHub PR auto-merge — the single source of truth for the auto-merge workflow, its safety preconditions (native 'Allow auto-merge' setting + a required-status-check ruleset), and its scope gate. Grades the CI signal (what a green check actually proves — lint vs build vs unit vs integration/E2E, weighed against what the repo ships) and caps the scope recommendation to it. Covers Dependabot (fetch-metadata, patch/minor auto), Renovate (native platformAutomerge), and generic bot PRs (actor + label). Use when asked to set up, audit, fix, or optimize auto-merge / automerge / merge Dependabot or Renovate PRs automatically."
+description: "Sets up, audits, or optimizes GitHub PR auto-merge for Dependabot, Renovate, and generic bot PRs, limiting what is auto-merged to what the repo's CI actually proves. Use when asked to set up, audit, fix, or optimize auto-merge / automerge / merge Dependabot or Renovate PRs automatically."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 
