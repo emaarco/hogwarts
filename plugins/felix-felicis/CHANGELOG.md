@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.28.0...felix-felicis-v0.29.0) (2026-10-02)
+
+
+### Features
+
+* **felix-felicis:** make dependency-update-shepherd autonomous with hold-back fixes ([#111](https://github.com/emaarco/hogwarts/issues/111)) ([8a9256f](https://github.com/emaarco/hogwarts/commit/8a9256fe35fe2ff8a4aade6d0b3cb8503236be5e))
+
 ## [0.28.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.27.1...felix-felicis-v0.28.0) (2026-09-29)
 
 
