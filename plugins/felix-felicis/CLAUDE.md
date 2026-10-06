@@ -15,7 +15,6 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 - **contributor-setup** — Creates or updates what a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
 - **make-me-awesome** — Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm.
 - **medium-publish** — Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V (macOS). Images become placeholders.
-- **outlook-invitation** — Creates a German Outlook meeting invitation with context, goals, and agenda, ready to copy-paste. On macOS it can also auto-fill a new Outlook event.
 - **bpmn-export** — Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 - **portless-dev-setup** — Sets up portless for stable, worktree-aware `.localhost` dev URLs on the JS/TS frontend dev server and wires it into Conductor.
 - **conductor-setup** — Writes a repo's `.conductor/settings.toml`: a setup script, a menu of selectable run targets instead of one auto-starting script, and an archive script for cleanup.

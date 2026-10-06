@@ -130,7 +130,6 @@ For running many agents side by side.
 General workflow tools, not code-specific.
 
 - **[clockify](./skills/clockify/SKILL.md)** `beta`: Reads and books [Clockify](https://clockify.me) time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars; times are Europe/Berlin.
-- **[outlook-invitation](./skills/outlook-invitation/SKILL.md)**: Creates a German Outlook meeting invitation with context, goals, and agenda, ready to copy-paste. On macOS it can also auto-fill a new Outlook event.
 - **[bpmn-export](./skills/bpmn-export/SKILL.md)**: Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 - **[svg-to-png](./skills/svg-to-png/SKILL.md)** `beta`: Renders an SVG to a PNG locally with the [`resvg`](https://github.com/linebender/resvg) CLI, with optional scaling, DPI, background, or crop.
 
