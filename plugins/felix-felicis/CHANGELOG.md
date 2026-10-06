@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.29.0...felix-felicis-v1.0.0) (2026-10-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **felix-felicis:** the outlook-invitation skill is no longer shipped with felix-felicis.
+
+### Features
+
+* **felix-felicis:** remove outlook-invitation skill ([#116](https://github.com/emaarco/hogwarts/issues/116)) ([c871440](https://github.com/emaarco/hogwarts/commit/c87144028a13f629088337211037e6827e0df77d))
+
 ## [0.29.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.28.0...felix-felicis-v0.29.0) (2026-10-02)
 
 
