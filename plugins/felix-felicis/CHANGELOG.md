@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v1.0.0...felix-felicis-v1.1.0) (2026-10-06)
+
+
+### Features
+
+* **felix-felicis:** configure the trusted publisher via npm trust in secure-publish-setup ([#119](https://github.com/emaarco/hogwarts/issues/119)) ([e40ae4c](https://github.com/emaarco/hogwarts/commit/e40ae4c21505ee606d8939ce1b4305542fe95391)), closes [#118](https://github.com/emaarco/hogwarts/issues/118)
+
 ## [1.0.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v0.29.0...felix-felicis-v1.0.0) (2026-10-06)
 
 
