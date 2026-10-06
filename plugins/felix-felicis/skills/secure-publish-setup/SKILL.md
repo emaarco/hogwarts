@@ -15,7 +15,7 @@ Run this when asked to set up secure/tokenless npm publishing, or as the publish
 - [ ] npm CLI **≥ 11.5.1** and Node **≥ 22.14** in the publish job (`actions/setup-node` with `node-version: 24` covers both)
 - [ ] **GitHub-hosted runners** — self-hosted runners are not supported for trusted publishing
 - [ ] Provenance requires a **public repo** — for private repos, trusted publishing still works but publish with `--provenance=false`
-- [ ] The package already exists on npm, or do the very first publish manually (a trusted publisher is configured per existing package)
+- [ ] The package already exists on npm (`npm view <package> name` succeeds) — a trusted publisher is configured per existing package, and OIDC cannot perform a package's first publish ([npm/cli#8544](https://github.com/npm/cli/issues/8544)). For a new name, follow the **brand-new package** path below
 - [ ] **Every publishable `package.json` has a `repository` field** whose `url` points at the GitHub repo — and, for monorepo workspaces, a `directory` field pointing at the package's subpath. Provenance embeds the source repo and npm validates it against each package's `repository.url`; a missing/empty field fails the publish with **`npm error code E422 … Failed to validate repository information: package.json: "repository.url" is ""`**. This is the single most common first-release surprise — check it before you ever run the workflow.
 
 Run the bundled guard against the target repo to catch every package missing the field — it walks the `workspaces` globs (or the root package if there are none), honours `private`, and checks each `repository.url` matches this repo:
@@ -36,14 +36,46 @@ If any of these fail, report it and agree on a fallback with the user (e.g. gran
 }
 ```
 
-## Phase 2 — Configure the trusted publisher on npmjs.com
+### Brand-new package
 
-Manual step for the user (no API for this): package page → **Settings → Trusted publisher** → GitHub Actions, then enter organization/user, repository, and the **workflow filename**.
+A name that is not on the registry yet needs a placeholder version before a trusted publisher can be attached:
 
-⚠️ Two gotchas to state explicitly:
+1. Publish a placeholder by hand from a scratch directory — a `package.json` with only `name`, `version` and a description is enough, no third-party bootstrap tool needed:
 
-- The filename must match **exactly** (case-sensitive, including `.yml`).
+   ```bash
+   mkdir placeholder && cd placeholder
+   echo '{ "name": "<package>", "version": "0.0.0", "description": "Placeholder, real release follows" }' > package.json
+   npm publish --access public
+   ```
+
+2. Configure the trusted publisher (Phase 2).
+3. Let the workflow publish the first real version (Phase 3).
+4. Deprecate the placeholder: `npm deprecate <package>@0.0.0 "Placeholder, use a later version"`.
+
+## Phase 2 — Configure the trusted publisher
+
+Step for the user, run from their own terminal — it needs their npm login and a one-time password:
+
+```bash
+npm trust github <package> --repo <owner>/<repo> --file <caller-workflow>.yml --env <environment> --allow-publish
+npm trust list <package>
+```
+
+Requirements for `npm trust`:
+
+- npm **≥ 11.15.0** on the user's machine (newer than the 11.5.1 the publish job needs)
+- **Account-level 2FA** enabled — the command asks for a one-time password
+- The package **already exists** on the registry (Phase 1)
+- `--env` matches the `environment:` of the publish job (`npm` in Phase 3); drop the flag if the job uses no environment
+- The registry holds **one** configuration per package — to change an existing one, look up its id with `npm trust list <package>` and remove it with `npm trust revoke <package> --id=<trust-id>` first
+
+Fallback without the CLI: on npmjs.com, package page → **Settings → Trusted publisher** → GitHub Actions, then enter organization/user, repository, workflow filename and environment.
+
+⚠️ Three gotchas to state explicitly:
+
+- The filename passed to `--file` must match **exactly** (case-sensitive, including `.yml`).
 - With reusable workflows, npm validates the **calling** workflow's filename, not the called one — register the caller (e.g. `release-please.yml`), not `publish-npm-package.yml`.
+- A newly created configuration must complete its **first successful publish within 2 days**. Run `npm trust` shortly before the first release — once the publish workflow (Phase 3) is merged — not days ahead.
 
 ## Phase 3 — Publish workflow
 
@@ -98,11 +130,14 @@ Some targets still require a long-lived token (e.g. the VS Code Marketplace `VSC
 - [ ] Publish job succeeds with **no** registry token in `gh secret list`
 - [ ] `npm view <pkg> --json | jq .dist.attestations` shows attestations; the npm package page shows the provenance badge
 - [ ] Re-running the workflow on the same version skips instead of failing
-- [ ] Caller workflow filename matches the trusted-publisher config on npmjs.com
+- [ ] `npm trust list <package>` shows the caller workflow filename, repository and environment the publish job actually uses
+- [ ] For a brand-new package, the placeholder version is deprecated
 
 ## Sources
 
-- npm trusted publishers (requirements, reusable-workflow caveat): https://docs.npmjs.com/trusted-publishers/
+- npm trusted publishers (requirements, reusable-workflow caveat, 2-day first-publish window): https://docs.npmjs.com/trusted-publishers/
+- `npm trust` (create, list, revoke trusted-publisher configurations): https://docs.npmjs.com/cli/v11/commands/npm-trust
+- First publish via OIDC not supported yet: https://github.com/npm/cli/issues/8544
 - GA announcement (2025-07-31): https://github.blog/changelog/2025-07-31-npm-trusted-publishing-with-oidc-is-generally-available/
 - npm provenance: https://docs.npmjs.com/generating-provenance-statements/
 - GitHub Environments: https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment
