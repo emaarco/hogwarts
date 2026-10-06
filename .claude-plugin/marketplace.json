@@ -20,7 +20,7 @@
     {
       "name": "felix-felicis",
       "source": "./plugins/felix-felicis",
-      "description": "Everyday automation skills — submit repos to awesome lists, draft meeting invitations, and more."
+      "description": "Everyday automation skills — submit repos to awesome lists and more."
     }
   ]
 }
