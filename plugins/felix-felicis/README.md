@@ -1,130 +1,146 @@
 # felix-felicis
 
-A Claude Code plugin for everyday automation tasks.
+Liquid luck for the boring parts of running a repo.
 
-## Skills
+These are the skills I use to get a repository into a state where agents — and humans — can ship safely: pinned dependencies, a protected default branch, releases that cut themselves, dependency updates that merge without me. Plus a handful of everyday chores I got tired of doing by hand.
 
-Each skill's full behaviour is documented in its [`skills/<name>/SKILL.md`](./skills).
+Each skill is small and does one thing. Most of them audit first, show you the evidence, and only then change anything. None of them need a build step, a hook, or a runtime dependency — they are plain `SKILL.md` files driving tools you already have (`gh`, `glab`, `npx`, `curl`).
 
-### `/maturity-analysis`
+## Installation
 
-Analyzes the current repo end to end and reports a project overview, the key files, a maturity assessment across six dimensions, and a prioritized issue list.
+```bash
+/plugin marketplace add emaarco/hogwarts     # once per machine
+/plugin install felix-felicis@emaarco
+```
 
-### `/pin-github-actions`
+That's it. Every skill below is now available as a slash command, and Claude reaches for them on its own when a task matches.
 
-Checks that every GitHub Actions `uses:` reference is pinned to a full commit SHA, reports the unpinned ones, and optionally rewrites them to SHA + version comment.
+Not sure where to start? Run [`/maturity-analysis`](./skills/maturity-analysis/SKILL.md) on a repo. It tells you what's missing, and most of what it finds maps to one of the skills below.
 
-### `/pin-node-dependencies`
+## Why These Skills Exist
 
-Checks that every `package.json` dependency is pinned to an exact version and the lockfile is committed, optionally rewrites ranges to exact pins, and adds a CI guardrail.
+Every one of these started as a problem I hit more than twice.
 
-### `/portless-dev-setup`
+### #1: A Green Build Doesn't Mean What You Think
 
-Sets up [portless](https://portless.sh) for stable, worktree-aware `.localhost` dev URLs on the JS/TS frontend dev server and wires it into Conductor.
+**The Problem.** `actions/checkout@v4` and `"react": "^19.0.0"` look pinned, but tags move and ranges float — and a long-lived `NPM_TOKEN` is one leak away from someone else publishing your package.
 
-### `/conductor-setup`
+**The Fix** is immutable references and short-lived credentials:
 
-Writes a repo's `.conductor/settings.toml`: a setup script, a menu of selectable run targets instead of one auto-starting script, and an archive script for cleanup.
+- [`/pin-github-actions`](./skills/pin-github-actions/SKILL.md) — for workflow actions
+- [`/pin-node-dependencies`](./skills/pin-node-dependencies/SKILL.md) — for npm dependencies
+- [`/secure-publish-setup`](./skills/secure-publish-setup/SKILL.md) — for publishing
+- [`/release-audit`](./skills/release-audit/SKILL.md) — to check all of it at once
 
-### `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`
+### #2: Dependency Updates Pile Up
 
-Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm.
+**The Problem.** Pinned dependencies mean a steady stream of update PRs, and one red PR blocks the green ones behind it.
 
-### `/outlook-invitation`
+**The Fix** is less noise and fewer manual merges:
 
-Creates a German Outlook meeting invitation with context, goals, and agenda, ready to copy-paste. On macOS it can also auto-fill a new Outlook event.
+- [`/dependabot-setup`](./skills/dependabot-setup/SKILL.md) — to group the updates
+- [`/automerge-setup`](./skills/automerge-setup/SKILL.md) — to merge the green ones
+- [`/dependency-update-shepherd`](./skills/dependency-update-shepherd/SKILL.md) — to rescue the red ones
 
-### `/create-github-ticket`
+### #3: Agents Erode Quality Quietly
 
-Creates or updates a GitHub issue (bug, feature, or refactor) via `gh`, using the repo's issue templates and confirming the draft with you before writing.
+**The Problem.** An agent that can't make a test pass will lower the threshold, skip the test, or route around the rule.
 
-### `/contributor-setup`
+**The Fix** is standards a machine can enforce:
 
-Creates or updates what a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
+- [`/guardrails-setup`](./skills/guardrails-setup/SKILL.md) — for gates in the codebase
+- [`/branch-ruleset-setup`](./skills/branch-ruleset-setup/SKILL.md) — for the default branch
+- [`/optimize-github-actions`](./skills/optimize-github-actions/SKILL.md) — to keep CI fast enough to keep the gates
 
-### `/medium-publish`
+### #4: Releasing Is A Ritual
 
-Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V (macOS). Images become placeholders.
+**The Problem.** Bump, changelog, tag, publish — it works until the one person who knows the steps is on holiday.
 
-### `/bpmn-export`
+**The Fix** is to derive releases from the commit history:
 
-Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
+- [`/release-please-setup`](./skills/release-please-setup/SKILL.md) — for versions, changelogs, and releases
+- [`/pull-request-description`](./skills/pull-request-description/SKILL.md) — for the commit titles it depends on
 
-## Beta Skills
+### #5: Parallel Agents Fight Over `localhost:3000`
 
-New skills that are not yet battle-tested on real repos — expect rough edges and review their output more carefully.
+**The Problem.** Two agents in two worktrees start a dev server, and you no longer know which tab belongs to which branch.
 
-### `/optimize-github-actions`
+**The Fix** is a stable URL per worktree:
 
-Finds wasted CI runs in GitHub Actions — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
+- [`/portless-dev-setup`](./skills/portless-dev-setup/SKILL.md) — for the dev server URLs
+- [`/conductor-setup`](./skills/conductor-setup/SKILL.md) — for the workspace scripts
 
-### `/dependabot-setup`
+### Summary
 
-Audits or sets up `.github/dependabot.yml` with a grouping mode (low-noise, balanced, or fine-grained) recommended from the repo's use-case. Flags unpinned versions first and offers to pin them.
+Pin it, protect it, automate it — then an agent can do real work in the repo without supervision.
 
-### `/branch-ruleset-setup`
+## Reference
 
-Creates or updates a GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
+Skills marked `beta` are new and not yet battle-tested on real repos — expect rough edges and review their output more carefully.
 
-### `/automerge-setup`
+### Repo Health
 
-Sets up or audits GitHub PR auto-merge for Dependabot, Renovate, or other bot PRs, and limits what gets auto-merged to what the repo's CI actually proves.
+Find out where a repo stands, then keep it there.
 
-### `/release-please-setup`
+- **[maturity-analysis](./skills/maturity-analysis/SKILL.md)**: Project overview, key files, a maturity assessment across six dimensions, and a prioritized issue list.
+- **[guardrails-setup](./skills/guardrails-setup/SKILL.md)** `beta`: Automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo. Can also audit existing gates.
+- **[branch-ruleset-setup](./skills/branch-ruleset-setup/SKILL.md)** `beta`: A GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
+- **[contributor-setup](./skills/contributor-setup/SKILL.md)**: Whatever a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
 
-Sets up release-please as a single or per-module release, audits an existing setup, or switches release forms without breaking tag and changelog history.
+### Supply Chain & Releases
 
-### `/secure-publish-setup`
+Immutable inputs, tokenless outputs.
 
-Sets up tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, and a publish step that is safe to re-run.
+- **[pin-github-actions](./skills/pin-github-actions/SKILL.md)**: Checks every GitHub Actions `uses:` reference is pinned to a full commit SHA, and optionally rewrites the unpinned ones to SHA + version comment.
+- **[pin-node-dependencies](./skills/pin-node-dependencies/SKILL.md)**: Checks every `package.json` dependency is pinned to an exact version and the lockfile is committed, optionally rewrites ranges, and adds a CI guardrail.
+- **[release-please-setup](./skills/release-please-setup/SKILL.md)** `beta`: Sets up release-please as a single or per-module release, audits an existing setup, or switches release forms without breaking tag and changelog history.
+- **[secure-publish-setup](./skills/secure-publish-setup/SKILL.md)** `beta`: Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, and a publish step that is safe to re-run.
+- **[release-audit](./skills/release-audit/SKILL.md)** `beta`: Audits release and supply-chain readiness against a gold-standard reference and returns a prioritized action plan, with fixes delegated to the matching setup skills.
 
-### `/release-audit`
+### CI & Dependency Updates
 
-Audits release and supply-chain readiness against a gold-standard reference and returns a prioritized action plan, with fixes delegated to the matching setup skills.
+Less noise, fewer red PRs.
 
-### `/svg-to-png`
+- **[dependabot-setup](./skills/dependabot-setup/SKILL.md)** `beta`: Audits or sets up `.github/dependabot.yml` with a grouping mode (low-noise, balanced, or fine-grained) recommended from the repo's use-case.
+- **[automerge-setup](./skills/automerge-setup/SKILL.md)** `beta`: Sets up or audits PR auto-merge for Dependabot, Renovate, or other bot PRs, limited to what the repo's CI actually proves.
+- **[dependency-update-shepherd](./skills/dependency-update-shepherd/SKILL.md)** `beta`: Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
+- **[optimize-github-actions](./skills/optimize-github-actions/SKILL.md)** `beta`: Finds wasted CI runs — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
 
-Renders an SVG to a PNG locally with the [`resvg`](https://github.com/linebender/resvg) CLI, with optional scaling, DPI, background, or crop. Other raster formats go through a PNG intermediate.
+### Dev Environment
 
-### `/pull-request-description`
+For running many agents side by side.
 
-Drafts a Conventional-Commit title and a compact body that links its issue, following the repo's own conventions and template, then creates or updates the PR/MR via `gh` or `glab`.
+- **[portless-dev-setup](./skills/portless-dev-setup/SKILL.md)**: Sets up [portless](https://portless.sh) for stable, worktree-aware `.localhost` dev URLs on the JS/TS frontend dev server and wires it into Conductor.
+- **[conductor-setup](./skills/conductor-setup/SKILL.md)**: Writes a repo's `.conductor/settings.toml`: a setup script, a menu of selectable run targets instead of one auto-starting script, and an archive script for cleanup.
 
-### `/translate-post`
+### Tickets & Pull Requests
 
-Translates a blog post into a language you choose, then loops a fresh reviewer agent over it until it reads as if written in that language. Can also polish an existing translation.
+- **[create-github-ticket](./skills/create-github-ticket/SKILL.md)**: Creates or updates a GitHub issue (bug, feature, or refactor) via `gh`, using the repo's issue templates and confirming the draft with you first.
+- **[pull-request-description](./skills/pull-request-description/SKILL.md)** `beta`: Drafts a Conventional-Commit title and a compact body that links its issue, then creates or updates the PR/MR via `gh` or `glab`.
+- **[make-me-awesome](./skills/make-me-awesome/SKILL.md)**: Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm. Usage: `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`.
 
-### `/guardrails-setup`
+### Writing & Slides
 
-Adds automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo, so AI agents can change code safely. Can also audit existing gates.
+- **[translate-post](./skills/translate-post/SKILL.md)** `beta`: Translates a blog post, then loops a fresh reviewer agent over it until it reads as if written in the target language. Can also polish an existing translation.
+- **[medium-publish](./skills/medium-publish/SKILL.md)**: Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V (macOS). Images become placeholders.
+- **[slidev-toolkit-migration](./skills/slidev-toolkit-migration/SKILL.md)** `beta`: Migrates an existing [Slidev](https://sli.dev) deck onto the [Miragon slidev-toolkit template](https://github.com/Miragon/slidev-deck-template), slide by slide, each chapter built and verified before the next.
 
-### `/slidev-toolkit-migration`
+### Everyday Chores
 
-Migrates an existing [Slidev](https://sli.dev) deck onto the [Miragon slidev-toolkit template](https://github.com/Miragon/slidev-deck-template), slide by slide, with each chapter built and verified before the next.
+General workflow tools, not code-specific.
 
-### `/dependency-update-shepherd`
+- **[clockify](./skills/clockify/SKILL.md)** `beta`: Reads and books [Clockify](https://clockify.me) time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars; times are Europe/Berlin.
+- **[outlook-invitation](./skills/outlook-invitation/SKILL.md)**: Creates a German Outlook meeting invitation with context, goals, and agenda, ready to copy-paste. On macOS it can also auto-fill a new Outlook event.
+- **[bpmn-export](./skills/bpmn-export/SKILL.md)**: Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
+- **[svg-to-png](./skills/svg-to-png/SKILL.md)** `beta`: Renders an SVG to a PNG locally with the [`resvg`](https://github.com/linebender/resvg) CLI, with optional scaling, DPI, background, or crop.
 
-Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
+### Rules
 
-### `/clockify`
+Not skills — path-scoped rules that activate on their own when you touch a matching file.
 
-Reads and books [Clockify](https://clockify.me) time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars; times are Europe/Berlin.
-
-## Rules
-
-The following rules are bundled as plugin commands and auto-activate when you work on matching file types.
-
-### Kotlin Code Style (`**/*.kt`)
-
-Enforces collection literal formatting (one element per line when multi-line) and prefers function-body style over expression-body style for multi-line functions.
-
-### TypeScript Code Style (`**/*.ts`, `**/*.tsx`)
-
-Enforces descriptive variable naming conventions (no abbreviations).
-
-### package.json Version Pinning (`**/package.json`)
-
-Enforces exact/fixed dependency versions — no `^`, `~`, or other ranges.
+- **[kotlin-style](./commands/kotlin-style.md)** (`**/*.kt`): One element per line in multi-line collection literals; function bodies over expression bodies for multi-line functions.
+- **[typescript-style](./commands/typescript-style.md)** (`**/*.ts`, `**/*.tsx`): Descriptive variable names, no abbreviations.
+- **[package-json-style](./commands/package-json-style.md)** (`**/package.json`): Exact dependency versions — no `^`, `~`, or other ranges.
 
 ## License
 
