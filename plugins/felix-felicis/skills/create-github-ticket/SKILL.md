@@ -73,6 +73,8 @@ When repo templates are found (YAML format), extract the `title` prefix, `labels
 Compose the issue title and body following the discovered or default template structure.
 Apply appropriate labels based on issue type.
 
+**No manual line breaks inside a sentence or list item** — write each paragraph and list item as one continuous line and let GitHub soft-wrap it. Break only where Markdown needs it: between blocks, between list items, in tables, and inside code blocks. A hard-wrapped line that starts with `#123` or `-` can render as a heading or list item, and the wrapped source is awkward to edit.
+
 ### Step 6 – Show and confirm
 
 Present the full draft (create) or the current state + proposed changes (update) and use
