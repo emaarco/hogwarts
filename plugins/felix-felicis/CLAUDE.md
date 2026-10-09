@@ -39,6 +39,12 @@ New and not yet battle-tested on real repos — see [Skill Status](#skill-status
 - **dependency-update-shepherd** — Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
 - **clockify** — Reads and books Clockify time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars; times are Europe/Berlin.
 
+### Unlisted Skills
+
+Beta skills that are still an idea being tried out — deliberately absent from `README.md`. See [Skill Status](#skill-status).
+
+- **claude-ci-setup** — Guided setup for running Claude unattended in GitHub Actions: checks the Claude GitHub App, a default-branch-restricted environment and the subscription token, then adds a workflow per use case (first: repairing red Dependabot PRs).
+
 ## Rules
 
 Path-scoped rules in `commands/` are flat `.md` files with `paths:` frontmatter. Claude Code auto-activates them when matching file types are in scope — no hook or installation step required.
@@ -53,6 +59,8 @@ Skills under **Beta Skills** are new and not yet battle-tested on real repos —
 
 1. This file — beta skills go in the separate **Beta Skills** list, stable skills in the main list.
 2. `README.md` — skills are grouped by theme under **Reference**; beta skills carry a `beta` marker after their name.
+
+Skills under **Unlisted Skills** are beta skills whose approach is still unproven. They appear only in this file — do not add them to `README.md`. Once proven on a real repo, an unlisted skill moves to **Beta Skills** and gets its `beta` entry in `README.md`.
 
 A skill graduates (move it to the main list here and drop its `beta` marker in `README.md`) once it has been run successfully against at least a couple of real repos. Main list means stable.
 
