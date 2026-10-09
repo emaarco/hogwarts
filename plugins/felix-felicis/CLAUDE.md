@@ -39,6 +39,12 @@ New and not yet battle-tested on real repos — see [Skill Status](#skill-status
 - **dependency-update-shepherd** — Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
 - **clockify** — Reads and books Clockify time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars; times are Europe/Berlin.
 
+### Beta Ideas
+
+Early ideas that are checked in but not listed in `README.md` — try them, but do not advertise them yet.
+
+- **create-promo-clip** — Creates a short, silent promo clip for a developer tool as an HTML/CSS animation and renders it to MP4 and looping GIF with Playwright and ffmpeg.
+
 ## Rules
 
 Path-scoped rules in `commands/` are flat `.md` files with `paths:` frontmatter. Claude Code auto-activates them when matching file types are in scope — no hook or installation step required.
@@ -53,6 +59,8 @@ Skills under **Beta Skills** are new and not yet battle-tested on real repos —
 
 1. This file — beta skills go in the separate **Beta Skills** list, stable skills in the main list.
 2. `README.md` — skills are grouped by theme under **Reference**; beta skills carry a `beta` marker after their name.
+
+Skills under **Beta Ideas** are the exception: they appear only in this file until they move up to **Beta Skills**.
 
 A skill graduates (move it to the main list here and drop its `beta` marker in `README.md`) once it has been run successfully against at least a couple of real repos. Main list means stable.
 

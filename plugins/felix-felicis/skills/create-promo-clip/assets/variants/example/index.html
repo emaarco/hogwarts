@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Example clip</title>
+  <link rel="stylesheet" href="../../shared/base.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="canvas">
+
+  <section class="hook" id="hook">
+    <h1>Still copying<br>names into<br>your code <em>by hand</em>?</h1>
+  </section>
+
+  <section class="card" id="card">
+    <h1>Source changed.<br><em>Code didn't.</em></h1>
+    <p>There's a better way: <em class="brand">your-tool</em>.</p>
+  </section>
+
+  <section class="view" id="code">
+    <div class="view-tab">Worker.kt</div>
+<pre><span class="tok-k">fun</span> handle() {
+  subscribe(<span class="swap"><span id="by-hand" class="tok-s">"orders.created"</span><span id="generated"><span class="tok-t">Topics</span>.<mark>ORDERS_CREATED</mark></span></span>)
+}</pre>
+    <div class="console" id="console">
+      <code class="command">$ your-tool generate</code>
+      <code class="output ok">Topics.kt written</code>
+    </div>
+    <p class="status neutral"></p>
+    <p class="status neutral" id="status-problem">Your topic is a string in the code …</p>
+    <p class="status ok" id="status-solution">… or a constant your tool generates.</p>
+  </section>
+
+</main>
+<script type="module" src="timeline.js"></script>
+</body>
+</html>

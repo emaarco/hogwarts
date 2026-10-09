@@ -1,0 +1,116 @@
+:root {
+  --blue: #335DE5;
+  --blue-text: #2B50D4;
+  --blue-soft: #E6EAFA;
+  --navy: #1D1D1D;
+  --night: #080A20;
+  --green: #00E676;
+  --good: #0B7A55;
+  --good-soft: #E2EFEB;
+  --red: #C92A2A;
+  --red-soft: #F9E5E5;
+  --fg-muted: #6B6666;
+  --fg-subtle: #8F8A8A;
+  --border: #E6E2E2;
+  --bg-soft: #F9F7F7;
+  --tok-k: #2B50D4;
+  --tok-t: #1D1D1D;
+  --tok-s: #0B7A55;
+  --tok-c: #8F8A8A;
+  --tok-a: #6B6666;
+  --sans: system-ui, sans-serif;
+  --mono: ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #FFFFFF; }
+
+.canvas {
+  position: relative;
+  width: 1080px;
+  height: 1080px;
+  overflow: hidden;
+  font-family: var(--sans);
+  color: var(--navy);
+  background: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+}
+.canvas code, .canvas pre { font-family: var(--mono); }
+
+.tok-k { color: var(--tok-k); }
+.tok-t { color: var(--tok-t); }
+.tok-s { color: var(--tok-s); }
+.tok-c { color: var(--tok-c); }
+.tok-a { color: var(--tok-a); }
+
+.swap { position: relative; display: inline-block; }
+.swap > :not(:first-child) { position: absolute; left: 0; top: 0; white-space: pre; }
+
+.hook { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; justify-content: center; padding: 0 76px; background: #FFFFFF; }
+.hook p { margin-top: 40px; font-size: 44px; font-weight: 400; color: var(--fg-muted); }
+.hook p strong { font-weight: 600; color: var(--navy); }
+.hook h1 { font-size: 96px; font-weight: 700; line-height: 1.08; letter-spacing: -0.03em; }
+.hook .year { display: block; margin-bottom: 18px; font-size: 150px; letter-spacing: -0.04em; }
+.hook em { font-style: normal; color: var(--blue); }
+
+.view {
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  width: 1000px;
+  height: 1000px;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+.view-tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 30px;
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--fg-muted);
+  background: var(--bg-soft);
+  border-bottom: 2px solid var(--border);
+}
+.view pre { position: absolute; left: 0; top: 64px; padding: 26px 30px 0; font-weight: 400; color: var(--navy); }
+.view pre .line { display: block; }
+.view mark { padding: 2px 4px; border-radius: 6px; color: inherit; background: var(--good-soft); }
+.status {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 132px;
+  display: grid;
+  place-items: center;
+  padding: 0 30px;
+  text-align: center;
+  font-size: 37px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.status.neutral { color: var(--navy); background: var(--bg-soft); border-top: 2px solid var(--border); }
+.status.info { color: var(--blue-text); background: var(--blue-soft); }
+.status.bad { color: var(--red); background: var(--red-soft); }
+.status.ok { color: var(--good); background: var(--good-soft); }
+
+.card { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; justify-content: center; padding: 0 76px; background: #FFFFFF; }
+.card h1 { font-size: 96px; font-weight: 700; line-height: 1.08; letter-spacing: -0.03em; }
+.card p { margin-top: 34px; max-width: 880px; text-wrap: balance; font-size: 46px; font-weight: 400; line-height: 1.25; color: var(--fg-muted); }
+.card em { font-style: normal; color: var(--red); }
+.card em.brand { color: var(--blue); white-space: nowrap; }
+
+.view pre { font-size: 30px; }
+.unresolved { text-decoration: underline wavy transparent 2.5px; text-underline-offset: 9px; }
+
+.console { position: absolute; left: 0; right: 0; bottom: 132px; height: 172px; padding: 18px 30px 0; font-family: var(--mono); background: var(--night); }
+.console code { display: block; white-space: nowrap; }
+.console .command { font-size: 30px; font-weight: 500; line-height: 44px; color: var(--green); }
+.console .output { position: absolute; left: 30px; top: 70px; font-size: 26px; font-weight: 500; line-height: 38px; color: #FF9B9B; }
+.console .output.ok { color: var(--green); }
