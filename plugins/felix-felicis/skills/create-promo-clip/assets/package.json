@@ -1,0 +1,14 @@
+{
+  "name": "promo-clips",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs",
+    "check": "node render.mjs --check",
+    "gif": "node render.mjs --gif"
+  },
+  "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "1.1.0",
+    "playwright": "1.64.0"
+  }
+}
