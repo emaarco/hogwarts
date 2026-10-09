@@ -1,0 +1,73 @@
+# TEMPLATE — strip these teaching comments on write; replace every <PLACEHOLDER>.
+# Unproven: this workflow has not completed a real repair run yet.
+name: Dependency repair
+
+# workflow_run only fires from the default branch, so this workflow does nothing until it is merged.
+on:
+  workflow_run:
+    # The exact `name:` of the workflow(s) that run the PR checks.
+    workflows:
+      - "<CI_WORKFLOW_NAME>"
+    types: [completed]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    name: Repair the pull request
+    # Loop guard: Claude's pushes re-run the checks under the app's actor, not dependabot[bot],
+    # so a repair never restarts itself. `pull_requests[0]` is empty for fork PRs → same-repo only.
+    if: >-
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.actor.login == 'dependabot[bot]' &&
+      github.event.workflow_run.pull_requests[0]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # The token lives in this environment; its branch policy keeps PR branches away from it.
+    environment: <ENVIRONMENT>
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+      id-token: write
+    steps:
+      # An API key outranks the subscription token and is billed per token.
+      # Drop this step only when the user deliberately chose API-key billing.
+      - name: Refuse to run with a pay-per-token credential
+        env:
+          API_CREDENTIAL_PRESENT: ${{ secrets.ANTHROPIC_API_KEY != '' || secrets.ANTHROPIC_AUTH_TOKEN != '' }}
+        run: test "$API_CREDENTIAL_PRESENT" = "false"
+
+      # persist-credentials: false keeps GITHUB_TOKEN out of git, so the push goes out
+      # with the Claude app's token — pushes made with GITHUB_TOKEN do not start CI.
+      - name: Checkout the pull request branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      # <TOOLCHAIN_STEPS> — copy the setup steps (Node, JDK, Gradle, …) from the repo's CI workflow,
+      # so Claude can run the same verify commands locally.
+
+      # A repaired pull request waits for a human; this workflow never merges.
+      - name: Switch auto-merge off
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.workflow_run.pull_requests[0].number }}
+        run: |
+          if [[ "$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json autoMergeRequest --jq '.autoMergeRequest != null')" == "true" ]]; then
+            gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --disable-auto
+          fi
+
+      # allowed_bots: the action rejects bot actors unless allow-listed.
+      - name: Repair with Claude
+        uses: anthropics/claude-code-action@6c690188da61cf16ee7debb28383ba67f02abb4c # v1.0.242
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "dependabot[bot]"
+          plugin_marketplaces: "https://github.com/emaarco/hogwarts.git"
+          plugins: "felix-felicis@emaarco"
+          prompt: "/felix-felicis:dependency-update-shepherd ${{ github.event.workflow_run.pull_requests[0].number }}"
