@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v1.1.0...felix-felicis-v1.2.0) (2026-10-09)
+
+
+### Features
+
+* **felix-felicis:** add unlisted claude-ci-setup skill for Claude in GitHub Actions ([#125](https://github.com/emaarco/hogwarts/issues/125)) ([fa407bc](https://github.com/emaarco/hogwarts/commit/fa407bca52f5d42db551229bed1f191aba5aa551)), closes [#114](https://github.com/emaarco/hogwarts/issues/114)
+
+
+### Bug Fixes
+
+* **felix-felicis:** stop create-github-ticket from hard-wrapping issue bodies ([#122](https://github.com/emaarco/hogwarts/issues/122)) ([56ae1e9](https://github.com/emaarco/hogwarts/commit/56ae1e9e72de8fd58284dd6c85e962bc98f18cc7)), closes [#121](https://github.com/emaarco/hogwarts/issues/121)
+
 ## [1.1.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v1.0.0...felix-felicis-v1.1.0) (2026-10-06)
 
 
