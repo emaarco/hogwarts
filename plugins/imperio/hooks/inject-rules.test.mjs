@@ -4,7 +4,8 @@ import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-const script = fileURLToPath(new URL('./remind-rules.js', import.meta.url));
+const script = fileURLToPath(new URL('./inject-rules.js', import.meta.url));
+const resetScript = fileURLToPath(new URL('./reset-injected-rules.js', import.meta.url));
 const projectDirectory = '/workdir';
 
 function runHook(payload) {
@@ -28,7 +29,7 @@ function toolCall(toolName, filePath, sessionId, agentId) {
   };
 }
 
-test('adds the matching rule as context when a file is read', () => {
+test('injects the matching rule as context when a file is read', () => {
   const output = runHook(toolCall('Read', '/workdir/src/Main.kt', randomUUID()));
 
   assert.equal(output.hookEventName, 'PreToolUse');
@@ -38,7 +39,7 @@ test('adds the matching rule as context when a file is read', () => {
   assert.doesNotMatch(output.additionalContext, /paths:/);
 });
 
-test('denies the first write to a file whose rule was not reminded yet', () => {
+test('denies the first write to a file whose rule was not injected yet', () => {
   const output = runHook(toolCall('Write', '/workdir/src/Main.kt', randomUUID()));
 
   assert.equal(output.permissionDecision, 'deny');
@@ -46,7 +47,7 @@ test('denies the first write to a file whose rule was not reminded yet', () => {
   assert.match(output.permissionDecisionReason, /# Kotlin Code Style/);
 });
 
-test('stays silent once a rule was reminded in the session', () => {
+test('stays silent once a rule was injected in the session', () => {
   const sessionId = randomUUID();
   runHook(toolCall('Read', '/workdir/src/Main.kt', sessionId));
 
@@ -54,7 +55,7 @@ test('stays silent once a rule was reminded in the session', () => {
   assert.equal(runHook(toolCall('Write', '/workdir/src/Other.kt', sessionId)), null);
 });
 
-test('reminds a subagent separately from the main conversation', () => {
+test('injects rules for a subagent separately from the main conversation', () => {
   const sessionId = randomUUID();
   runHook(toolCall('Read', '/workdir/src/Main.kt', sessionId));
 
@@ -63,7 +64,7 @@ test('reminds a subagent separately from the main conversation', () => {
   assert.equal(output.permissionDecision, 'deny');
 });
 
-test('reminds of a second rule when another file type is touched', () => {
+test('injects a second rule when another file type is touched', () => {
   const sessionId = randomUUID();
   runHook(toolCall('Read', '/workdir/src/Main.kt', sessionId));
 
@@ -71,6 +72,22 @@ test('reminds of a second rule when another file type is touched', () => {
 
   assert.match(output.additionalContext, /# TypeScript Code Style/);
   assert.doesNotMatch(output.additionalContext, /# Kotlin Code Style/);
+});
+
+test('injects rules again after the session was reset', () => {
+  const sessionId = randomUUID();
+  runHook(toolCall('Read', '/workdir/src/Main.kt', sessionId));
+  spawnSync('node', [resetScript], { input: JSON.stringify({ session_id: sessionId }), encoding: 'utf8' });
+
+  const output = runHook(toolCall('Read', '/workdir/src/Main.kt', sessionId));
+
+  assert.match(output.additionalContext, /# Kotlin Code Style/);
+});
+
+test('matches a rule by one of several paths', () => {
+  const output = runHook(toolCall('Read', '/workdir/web/src/api.ts', randomUUID()));
+
+  assert.match(output.additionalContext, /# TypeScript Code Style/);
 });
 
 test('matches files outside the project directory', () => {

@@ -25,7 +25,7 @@
     {
       "name": "imperio",
       "source": "./plugins/imperio",
-      "description": "Reminds Claude of path-scoped code style rules via a PreToolUse hook, so the rules for a file are in context before it is changed."
+      "description": "Beta: injects path-scoped code style rules into Claude's context via a PreToolUse hook, so the rules for a file are in context before it is changed."
     }
   ]
 }

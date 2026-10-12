@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/remind-rules.js\"",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/inject-rules.js\"",
             "timeout": 5
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/forget-reminders.js\"",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/reset-injected-rules.js\"",
             "timeout": 5
           }
         ]

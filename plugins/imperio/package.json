@@ -1,7 +1,7 @@
 {
   "name": "imperio",
   "version": "0.0.0",
-  "description": "Reminds Claude of path-scoped rules through a PreToolUse hook.",
+  "description": "Injects path-scoped rules into Claude's context through a PreToolUse hook.",
   "type": "module",
   "private": true,
   "license": "MIT",
