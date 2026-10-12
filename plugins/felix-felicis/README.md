@@ -132,14 +132,6 @@ General workflow tools, not code-specific.
 - **[bpmn-export](./skills/bpmn-export/SKILL.md)**: Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 - **[svg-to-png](./skills/svg-to-png/SKILL.md)** `beta`: Renders an SVG to a PNG locally with the [`resvg`](https://github.com/linebender/resvg) CLI, with optional scaling, DPI, background, or crop.
 
-### Rules
-
-Not skills — path-scoped rules that activate on their own when you touch a matching file.
-
-- **[kotlin-style](./commands/kotlin-style.md)** (`**/*.kt`): One element per line in multi-line collection literals; function bodies over expression bodies for multi-line functions.
-- **[typescript-style](./commands/typescript-style.md)** (`**/*.ts`, `**/*.tsx`): Descriptive variable names, no abbreviations.
-- **[package-json-style](./commands/package-json-style.md)** (`**/package.json`): Exact dependency versions — no `^`, `~`, or other ranges.
-
 ## License
 
 MIT

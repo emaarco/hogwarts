@@ -20,6 +20,7 @@ Add the marketplace once, then install only the spells you need.
 | [`agento-patronum`](./plugins/agento-patronum/) | Blocks Claude's access to sensitive files & commands (`.env`, SSH keys, credentials, `printenv`) via a PreToolUse hook. |
 | [`revelio`](./plugins/revelio/) | Logs failed tool calls, API errors, and permission denials to a per-repo JSONL log you review with `/revelio`. |
 | [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — awesome-list submissions, repo setup, and more. |
+| [`imperio`](./plugins/imperio/) | Reminds Claude of path-scoped code style rules (Kotlin, TypeScript, `package.json`) via a PreToolUse hook, before a matching file is changed. |
 
 Each plugin has its own README with full details.
 
