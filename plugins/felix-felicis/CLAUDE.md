@@ -18,7 +18,6 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 - **bpmn-export** — Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 - **portless-dev-setup** — Sets up portless for stable, worktree-aware `.localhost` dev URLs on the JS/TS frontend dev server and wires it into Conductor.
 - **conductor-setup** — Writes a repo's `.conductor/settings.toml`: a setup script, a menu of selectable run targets instead of one auto-starting script, and an archive script for cleanup.
-- **create-github-ticket** — Creates or updates a GitHub issue (bug, feature, or refactor) via `gh`, using the repo's issue templates and confirming the draft with you before writing.
 
 ### Beta Skills
 
