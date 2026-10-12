@@ -115,7 +115,6 @@ For running many agents side by side.
 
 ### Tickets & Pull Requests
 
-- **[create-github-ticket](./skills/create-github-ticket/SKILL.md)**: Creates or updates a GitHub issue (bug, feature, or refactor) via `gh`, using the repo's issue templates and confirming the draft with you first.
 - **[pull-request-description](./skills/pull-request-description/SKILL.md)** `beta`: Drafts a Conventional-Commit title and a compact body that links its issue, then creates or updates the PR/MR via `gh` or `glab`.
 - **[make-me-awesome](./skills/make-me-awesome/SKILL.md)**: Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm. Usage: `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`.
 
