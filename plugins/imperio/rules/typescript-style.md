@@ -1,10 +1,7 @@
 ---
-name: typescript-style
-description: "TypeScript code style guidance — auto-activated when working with .ts and .tsx files."
 paths:
   - "**/*.ts"
   - "**/*.tsx"
-user-invocable: false
 ---
 
 # TypeScript Code Style

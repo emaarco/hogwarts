@@ -1,0 +1,10 @@
+{
+  "name": "imperio",
+  "description": "Beta: injects path-scoped rules into Claude's context through a PreToolUse hook — the rules for a file reach the context before that file is changed.",
+  "version": "0.0.0",
+  "author": {
+    "name": "emaarco"
+  },
+  "repository": "https://github.com/emaarco/hogwarts",
+  "license": "MIT"
+}

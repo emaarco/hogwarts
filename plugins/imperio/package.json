@@ -1,0 +1,11 @@
+{
+  "name": "imperio",
+  "version": "0.0.0",
+  "description": "Injects path-scoped rules into Claude's context through a PreToolUse hook.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test \"hooks/**/*.test.mjs\""
+  }
+}
