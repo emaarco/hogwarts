@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v1.2.0...felix-felicis-v2.0.0) (2026-10-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* **felix-felicis:** felix-felicis no longer ships create-github-ticket; install miragon-github to keep using it.
+
+### Features
+
+* **felix-felicis:** remove create-github-ticket skill ([#126](https://github.com/emaarco/hogwarts/issues/126)) ([890071e](https://github.com/emaarco/hogwarts/commit/890071e7244964feec4ac4ecf126a89da028cc32))
+
 ## [1.2.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v1.1.0...felix-felicis-v1.2.0) (2026-10-09)
 
 
