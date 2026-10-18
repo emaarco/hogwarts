@@ -30,6 +30,22 @@
         }
       ]
     },
+    "plugins/imperio": {
+      "package-name": "imperio",
+      "component": "imperio",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": ".claude-plugin/plugin.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "package.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
     "plugins/revelio": {
       "package-name": "revelio",
       "component": "revelio",

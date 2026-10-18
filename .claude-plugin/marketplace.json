@@ -21,6 +21,11 @@
       "name": "felix-felicis",
       "source": "./plugins/felix-felicis",
       "description": "Everyday automation skills — submit repos to awesome lists and more."
+    },
+    {
+      "name": "imperio",
+      "source": "./plugins/imperio",
+      "description": "Beta: injects path-scoped code style rules into Claude's context via a PreToolUse hook, so the rules for a file are in context before it is changed."
     }
   ]
 }

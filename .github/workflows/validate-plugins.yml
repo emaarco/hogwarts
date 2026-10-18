@@ -135,11 +135,34 @@ jobs:
             echo "$f: frontmatter OK"
           done
 
-      - name: Validate command file frontmatter
+  validate-imperio:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugins/imperio
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '20'
+
+      - name: Validate JSON files
         run: |
-          for f in commands/*.md; do
-            head -10 "$f" | grep -q "^name:" || { echo "$f: missing name"; exit 1; }
-            head -10 "$f" | grep -q "^description:" || { echo "$f: missing description"; exit 1; }
+          node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/plugin.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('hooks/hooks.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('package.json','utf8'))"
+
+      - name: Validate rule frontmatter
+        run: |
+          for f in rules/*.md; do
             head -10 "$f" | grep -q "^paths:" || { echo "$f: missing paths"; exit 1; }
             echo "$f: frontmatter OK"
           done
+
+      - name: Run tests
+        shell: bash
+        run: |
+          shopt -s globstar
+          node --test hooks/**/*.test.mjs

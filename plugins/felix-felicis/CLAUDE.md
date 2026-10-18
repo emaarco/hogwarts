@@ -5,7 +5,7 @@ Claude Code plugin for everyday automation tasks.
 ## Architecture
 
 Pure skill-based plugin — no hooks, no build step, no runtime dependencies.
-Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `commands/<name>.md`.
+Skills live in `skills/<skill-name>/SKILL.md`.
 
 ## Skills
 
@@ -43,14 +43,6 @@ New and not yet battle-tested on real repos — see [Skill Status](#skill-status
 Beta skills that are still an idea being tried out — deliberately absent from `README.md`. See [Skill Status](#skill-status).
 
 - **claude-ci-setup** — Guided setup for running Claude unattended in GitHub Actions: checks the Claude GitHub App, a default-branch-restricted environment and the subscription token, then adds a workflow per use case (first: repairing red Dependabot PRs).
-
-## Rules
-
-Path-scoped rules in `commands/` are flat `.md` files with `paths:` frontmatter. Claude Code auto-activates them when matching file types are in scope — no hook or installation step required.
-
-- **kotlin-style** (`**/*.kt`) — Collection literal and function-body style conventions.
-- **typescript-style** (`**/*.ts`, `**/*.tsx`) — Descriptive variable naming conventions (no abbreviations).
-- **package-json-style** (`**/package.json`) — Enforce exact/fixed dependency versions; no `^`, `~`, or other ranges.
 
 ## Skill Status
 

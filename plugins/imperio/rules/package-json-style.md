@@ -1,9 +1,6 @@
 ---
-name: package-json-style
-description: "package.json version pinning guidance — auto-activated when working with package.json files."
 paths:
   - "**/package.json"
-user-invocable: false
 ---
 
 # package.json Style
