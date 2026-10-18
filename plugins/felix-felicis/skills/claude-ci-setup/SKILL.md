@@ -1,6 +1,6 @@
 ---
 name: claude-ci-setup
-description: "Guided setup for running Claude unattended in GitHub Actions: checks the Claude GitHub App, a default-branch-restricted environment, the subscription token, and the absence of pay-per-token credentials, then adds the workflow for each chosen use case. Use when asked to set up or audit Claude / claude-code-action in CI, or to let Claude repair red Dependabot PRs."
+description: "Guided setup for running Claude unattended in GitHub Actions: checks the Claude GitHub App, a default-branch-restricted environment, the subscription token, the absence of pay-per-token credentials, and a default branch closed to direct commits, then adds the workflow for each chosen use case. Use when asked to set up or audit Claude / claude-code-action in CI, or to let Claude repair red Dependabot PRs."
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, AskUserQuestion
 ---
 
@@ -40,6 +40,7 @@ One step at a time. Run the check; act only if it fails; re-run the check before
 | 2 | Environment restricted to the default branch | `gh api "repos/$REPO/environments/$ENV/deployment-branch-policies" --jq '.branch_policies[].name'` | Create it (commands below) |
 | 3 | Token stored as an **environment** secret | `gh secret list --env "$ENV" --repo "$REPO" --json name --jq '.[].name'` | Print the commands for the user, wait, re-check |
 | 4 | No pay-per-token credential in reach | `gh secret list --repo "$REPO" --json name --jq '.[].name'` and `gh api "repos/$REPO/actions/organization-secrets" --jq '.secrets[].name'` | Warn and ask how to proceed |
+| 5 | Default branch closed to direct commits | `gh api "repos/$REPO/rules/branches/$DEFAULT_BRANCH" --jq '.[].type'` contains `pull_request`, and the bypass check below is empty | Report as a finding; delegate to **`branch-ruleset-setup`** |
 
 **Step 1.** The check needs org-owner rights and fails on user-owned repos; on a 403/404 ask the user instead of guessing. `repository_selection: selected` does not prove this repo is included — ask then too. Why it matters: pushes made with `GITHUB_TOKEN` do not start CI, so a repair pushed without the app is never verified.
 
@@ -64,6 +65,18 @@ gh secret set CLAUDE_CODE_OAUTH_TOKEN --env "$ENV" --repo "$REPO"
 The same token as a repo-level secret is a finding: recommend deleting it there (`gh secret delete CLAUDE_CODE_OAUTH_TOKEN --repo "$REPO"`), after confirmation.
 
 **Step 4.** With subscription billing, an `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` secret at repo, environment, or org level silently outranks the subscription token and bills per token. If one exists, ask: delete it (recommended, if nothing else uses it — grep the workflows first) / keep it and rely on the workflow's guard step, which then fails every run until the secret is gone. Skip this step when the user chose API-key billing.
+
+**Step 5.** The repair commits through the action's `commit_files` tool, which GitHub signs — no signing key to set up, and the commits pass a `required_signatures` rule. The tool targets the branch in `CLAUDE_BRANCH`; should that ever resolve to the default branch, only a pull-request rule without a Claude bypass stops the commit. Bypass check:
+
+```bash
+CLAUDE_APP_ID=$(gh api apps/claude --jq .id)
+for RULESET_ID in $(gh api "repos/$REPO/rules/branches/$DEFAULT_BRANCH" --jq '[.[].ruleset_id] | unique[]'); do
+  gh api "repos/$REPO/rulesets/$RULESET_ID?includes_parents=true" \
+    --jq ".bypass_actors[] | select(.actor_type == \"Integration\" and .actor_id == $CLAUDE_APP_ID) | .bypass_mode"
+done
+```
+
+Any output means the Claude app may commit to the default branch: show it and ask before removing the bypass.
 
 ## Phase 2 — Use cases
 
@@ -93,6 +106,7 @@ Keep these properties, and check them when auditing an existing workflow:
 - **`persist-credentials: false`** on checkout, so the push uses the app's token and starts CI.
 - **Auto-merge switched off before the repair**, and no merge step anywhere.
 - **`environment:`** set, and the token read from nowhere else.
+- **Signed commits** — `use_commit_signing: true`; `CLAUDE_BRANCH` set to the PR's head branch (undocumented — without it the tool targets the default branch); `git push`, `git commit`, and `git rebase` disallowed, so nothing unsigned reaches the branch; and the final step that fails on unverified PR commits. No SSH signing key: a long-lived key in the job is readable by Claude, and a prompt injected through a PR could leak it.
 
 ## Phase 3 — Hand-over
 
@@ -104,6 +118,7 @@ Keep these properties, and check them when auditing an existing workflow:
    - `plugins: "felix-felicis@emaarco"` resolves from the marketplace.
    - The job token is allowed to switch auto-merge off.
    - The run shows subscription usage, not API billing.
+   - The repair commit shows as verified on the PR.
 
 ## Sources
 
