@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v2.0.0...felix-felicis-v2.1.0) (2026-10-18)
+
+
+### Features
+
+* **felix-felicis:** pick a signing-aware commit mode in dependency-update-shepherd ([#130](https://github.com/emaarco/hogwarts/issues/130)) ([b4c8146](https://github.com/emaarco/hogwarts/commit/b4c81462a035cb60075a90bb5e9a3e3e7eeca8a7))
+* **felix-felicis:** sign claude-ci-setup repair commits via the GitHub API ([#131](https://github.com/emaarco/hogwarts/issues/131)) ([eab973c](https://github.com/emaarco/hogwarts/commit/eab973cda7fa22143043f9c749b5f76b27ec7af8))
+
 ## [2.0.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v1.2.0...felix-felicis-v2.0.0) (2026-10-12)
 
 
