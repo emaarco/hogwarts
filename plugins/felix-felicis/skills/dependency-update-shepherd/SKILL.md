@@ -1,6 +1,6 @@
 ---
 name: dependency-update-shepherd
-allowed-tools: Bash, Read, Grep, Glob, Edit, Write
+allowed-tools: Bash, Read, Grep, Glob, Edit, Write, mcp__github_file_ops__commit_files, mcp__github_file_ops__delete_files
 description: "Shepherds open dependency-update branches/MRs (Renovate, Dependabot, manual) to a mergeable state without asking: fixes the first causal CI failure or holds the offending bump back, and merges only when the invocation requests it. Use when dependency-update PRs/MRs are red, stuck, or piling up, or when asked to fix / rebase / merge dependency updates."
 ---
 
@@ -12,6 +12,7 @@ Take one open dependency-update branch at a time from red/stale to mergeable —
 
 - GitHub → `gh`, GitLab → `glab`; never call forge APIs directly except where a CLI gap is noted below. Missing CLI → stop and report it.
 - **Never commit to or push the target branch** (`main`/`master`/…). Work only on the dependency-update branch.
+- **Push only through the commit mode from Phase 0.6.** Every "push" below means that mode's push.
 - Rewritten history is pushed only with `git push --force-with-lease=<branch>:<sha-your-work-is-based-on>` — never `--force` — and re-check the remote head right before pushing: the bot may have pushed meanwhile.
 - **Never hide a failure**: no disabling/skipping tests, linting, or checks; no loosening version pins to make CI pass. Holding a bump back (Phase 3) is not hiding: it is announced on the MR and the bot proposes the bump again on its next run.
 - **Never persist a suppression.** Forbidden as fixes: `ignore` entries in `.github/dependabot.yml`, Renovate `ignoreDeps`/`packageRules`, `@dependabot ignore …` comments (they store the same ignore state server-side), closing the MR (the bot then skips that version), Gradle `resolutionStrategy`/`force`/constraints, Maven exclusions or `dependencyManagement` overrides, npm `overrides` / yarn `resolutions`, and widened version ranges. The update config and the resolution rules stay untouched.
@@ -27,6 +28,17 @@ Take one open dependency-update branch at a time from red/stale to mergeable —
 3. Classify semver impact per bumped package from the diff. **Major-equivalent** (never merged unless the invocation names that MR explicitly): any major bump, any `0.x` minor bump, any grouped MR containing one, and any un-classifiable ref (git SHA, Docker tag/digest, Action pin).
 4. Take scope and policy from the invocation — do not ask. MR(s): those named in the arguments, else the MR of the current branch, else all red or stale authenticated bot MRs one by one, major-equivalents last. Merge: only if the arguments request it (e.g. `123 merge`); default is to leave the MR green and ready.
 5. Read the repo's rules once: CONTRIBUTING, CI workflows + required checks, protection/approval policy, merge method, and the local verify commands (`package.json` scripts, `Makefile`, CI steps). These define what "green" and "verified" mean below.
+6. Pick the **commit mode** — the first row that applies wins:
+
+   | Mode | Detected by | Push | Rebase |
+   |---|---|---|---|
+   | **git** | git signs commits (`git config --get commit.gpgsign` → `true`; in CI the action's `ssh_signing_key` sets this), or the target does not require signatures | `git commit` + `git push` | local, per Phase 1 |
+   | **api** | `mcp__github_file_ops__commit_files` is among your tools (the action's `use_commit_signing`) | that tool; never `git push` | `gh pr update-branch <n>` only; a conflict → stop, comment, report |
+   | **comment-only** | none of the above | nothing — the verified fix goes into the MR comment as a diff, then stop | local only, never pushed |
+
+   Signatures required on the target: GitHub → `gh api repos/{owner}/{repo}/rules/branches/<target> --jq 'any(.[]; .type == "required_signatures")'`, plus `gh api repos/{owner}/{repo}/branches/<target>/protection/required_signatures --jq .enabled` for classic protection (404 = off); GitLab → `glab api projects/:id/push_rule --jq .reject_unsigned_commits`. Unreadable (403) counts as required — one unsigned commit blocks the MR, even for squash merges.
+
+   **api** guard: the tool commits to the branch the action resolved, `${CLAUDE_BRANCH:-${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}}`. For `workflow_run` triggers that is the default branch, so if it differs from the MR's head branch, fall back to **comment-only** and name the missing `CLAUDE_BRANCH` in the report.
 
 ## Phase 1 — Freshness first (bot-aware)
 
@@ -37,7 +49,8 @@ Errors on a stale base are noise — make the branch current before touching any
    - Dependabot: `gh pr comment <n> --body "@dependabot rebase"`.
    - Renovate: fetch the MR body, flip `- [ ]` → `- [x]` on the rebase/retry checkbox line **only**, write it back (`gh pr edit <n> --body-file` / `glab mr update <iid> --description`).
    - Poll `gh pr view <n> --json headRefOid` (GitLab: `glab mr view <iid>` sha) every ~30 s, max ~10 min — self-hosted Renovate may only act on its next scheduled run. No new push → take over manually.
-3. **Once you have pushed anything to the branch, bot rebase is permanently forbidden for this MR** — both bots force-push and would wipe your commits; rebase manually from then on. A takeover also ends bot maintenance (Dependabot stops updating the branch, Renovate marks it edited) — record this in the report.
+   - **api**: no bot reaction → `gh pr update-branch <n>` (GitHub writes a signed merge commit), then `git fetch origin && git reset --hard origin/<branch>`. Refused for conflicts → stop, comment, report. **comment-only**: rebase locally for verification, never push.
+3. **Once you have pushed anything to the branch, bot rebase is permanently forbidden for this MR** — both bots force-push and would wipe your commits; rebase manually from then on (**api**: `gh pr update-branch <n>`). A takeover also ends bot maintenance (Dependabot stops updating the branch, Renovate marks it edited) — record this in the report.
 4. Manual-rebase conflict rules:
    - **Lockfile**: never hand-edit. Take the target branch's lockfile, re-apply only the intended bump with the ecosystem's conservative command (e.g. `npm install --package-lock-only <pkg>@<version>`), then diff against the bot's original lockfile: any changed package, version, `resolved` URL, or `integrity` hash beyond the declared bump(s) → stop and report (supply-chain risk).
    - **Manifest**: if the target branch already bumped the same package (grouped/security-update race), keep the higher intended version — or abort and let the bot recreate the MR. Otherwise keep the bump, take everything else from the target.
@@ -68,7 +81,12 @@ Errors on a stale base are noise — make the branch current before touching any
 
 - The originally failing command now passes; affected tests pass; the repo's full verify command (Phase 0.5) passes if one exists.
 - `git diff origin/<target>...HEAD` contains **only** the dependency update plus documented fixes.
-- Push — applying the force-with-lease rule from the safety block if history was rewritten.
+  **api** and **comment-only** have no local commit: diff the working tree with `git diff $(git merge-base origin/<target> HEAD)` instead.
+- Push in the commit mode from Phase 0.6:
+  - **git**: applying the force-with-lease rule from the safety block if history was rewritten.
+  - **api**: re-check the remote head first, then `mcp__github_file_ops__commit_files` with every changed path and the commit message (`mcp__github_file_ops__delete_files` for removals), then `git fetch origin && git reset --hard origin/<branch>`.
+  - **comment-only**: write the MR comment with the diff, then stop.
+- **Check the signature after every push** — yours, a bot rebase, or `gh pr update-branch`: `gh api repos/{owner}/{repo}/commits/<sha> --jq .commit.verification.verified` / `glab api projects/:id/repository/commits/<sha>/signature` (404 = unsigned). Unsigned or unverified while the target requires signatures → push nothing more; go to the Stop state.
 
 ## Phase 5 — Watch the run you triggered
 
@@ -90,7 +108,7 @@ Any box open → stop and report the blocker.
 
 ## MR comment
 
-Whenever the skill pushed, held a bump back, or stopped on a blocker, write **one** comment per MR and edit it on later iterations instead of stacking new ones (`gh pr comment <n> --edit-last` / `glab mr note`). It states: the failing job and command, the cause, what was done (code fix, or "held back `<pkg>` at `<kept-version>` because `<blocker>` does not support `<new-version>` yet"), which bumps the MR still contains, that the bot will propose the held-back bump again on its next run, and that the branch is no longer bot-maintained. After a hold-back, also strike the held-back entry in the MR description (`~~…~~ — held back, see comment`) so a squash commit does not claim a bump that was not made.
+Whenever the skill pushed, held a bump back, prepared a fix in **comment-only** mode, or stopped on a blocker, write **one** comment per MR and edit it on later iterations instead of stacking new ones (`gh pr comment <n> --edit-last` / `glab mr note`). It states: the failing job and command, the cause, what was done (code fix, or "held back `<pkg>` at `<kept-version>` because `<blocker>` does not support `<new-version>` yet"), which bumps the MR still contains, that the bot will propose the held-back bump again on its next run, and that the branch is no longer bot-maintained. In **comment-only** mode it carries the verified fix as a `diff` block instead, and why it was not pushed (no signing available, target requires signatures). After a hold-back, also strike the held-back entry in the MR description (`~~…~~ — held back, see comment`) so a squash commit does not claim a bump that was not made.
 
 ## Phase 6 — Merge & confirm
 
@@ -100,13 +118,14 @@ Whenever the skill pushed, held a bump back, or stopped on a blocker, write **on
 
 ## Stop state
 
-Whenever stopping with pushed-but-unfinished work (cap reached, blocker hit): revert your commits that did not lead to a green pipeline, and state in the MR comment that the branch was taken over, what remains broken, and that it is no longer bot-maintained. Never leave this implicit.
+Whenever stopping with pushed-but-unfinished work (cap reached, blocker hit): revert your commits that did not lead to a green pipeline (through the same commit mode; an unverified commit is never reverted with another unsigned one — name it instead), and state in the MR comment that the branch was taken over, what remains broken, and that it is no longer bot-maintained. Never leave this implicit.
 
 ## Final report (per MR)
 
 | | |
 |---|---|
 | Repo / MR / branch | … |
+| Commit mode | git / api / comment-only, and why (Phase 0.6) · signature check per pushed SHA |
 | Dependency update(s) | pkg old → new, semver classification (Phase 0.3) |
 | Rebase | needed? by bot or takeover? conflicts resolved (which, how) |
 | CI failure | first causal job + command, classification, reruns used |
