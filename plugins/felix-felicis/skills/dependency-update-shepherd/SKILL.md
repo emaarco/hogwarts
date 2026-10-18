@@ -32,8 +32,8 @@ Take one open dependency-update branch at a time from red/stale to mergeable —
 
    | Mode | Detected by | Push | Rebase |
    |---|---|---|---|
-   | **git** | git signs commits (`git config --get commit.gpgsign` → `true`; in CI the action's `ssh_signing_key` sets this), or the target does not require signatures | `git commit` + `git push` | local, per Phase 1 |
-   | **api** | `mcp__github_file_ops__commit_files` is among your tools (the action's `use_commit_signing`) | that tool; never `git push` | `gh pr update-branch <n>` only; a conflict → stop, comment, report |
+   | **api** | `mcp__github_file_ops__commit_files` is among your tools (CI with the action's `use_commit_signing`) | that tool; never `git push` | `gh pr update-branch <n>` only; a conflict → stop, comment, report |
+   | **git** | git signs commits (`git config --get commit.gpgsign` → `true`, e.g. a local SSH signing key), or the target does not require signatures | `git commit` + `git push` | local, per Phase 1 |
    | **comment-only** | none of the above | nothing — the verified fix goes into the MR comment as a diff, then stop | local only, never pushed |
 
    Signatures required on the target: GitHub → `gh api repos/{owner}/{repo}/rules/branches/<target> --jq 'any(.[]; .type == "required_signatures")'`, plus `gh api repos/{owner}/{repo}/branches/<target>/protection/required_signatures --jq .enabled` for classic protection (404 = off); GitLab → `glab api projects/:id/push_rule --jq .reject_unsigned_commits`. Unreadable (403) counts as required — one unsigned commit blocks the MR, even for squash merges.
