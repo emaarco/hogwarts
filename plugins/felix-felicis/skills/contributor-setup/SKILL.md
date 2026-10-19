@@ -1,13 +1,13 @@
 ---
 name: contributor-setup
-description: "Retired: moved to miragon-implementation in Miragon/skills. Creates or updates what a repo is missing for contributors: issue-form templates, README, CONTRIBUTING.md, and the other community-health files (PR template, CODE_OF_CONDUCT, SECURITY, LICENSE, CODEOWNERS). Use when asked to make a repo contributor-friendly, open-source ready, or to set up issue templates / README / CONTRIBUTING."
+description: "Retired: moved to miragon-github in Miragon/skills. Creates or updates what a repo is missing for contributors: issue-form templates, README, CONTRIBUTING.md, and the other community-health files (PR template, CODE_OF_CONDUCT, SECURITY, LICENSE, CODEOWNERS). Use when asked to make a repo contributor-friendly, open-source ready, or to set up issue templates / README / CONTRIBUTING."
 disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 
 # Skill: contributor-setup
 
-> **Retired.** This skill is maintained in [`miragon-implementation`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/contributor-setup) at [Miragon/skills](https://github.com/Miragon/skills) — install `miragon-implementation@miragon-agent-skills`. This copy is frozen.
+> **Retired.** This skill is maintained in [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/contributor-setup) at [Miragon/skills](https://github.com/Miragon/skills) — install `miragon-github@miragon-agent-skills`. This copy is frozen.
 
 Audits everything a first-time visitor or contributor touches — README, issue templates, CONTRIBUTING.md, and the surrounding community-health files — then creates what's missing and upgrades what falls short. Analysis always comes first: never overwrite an existing file without showing the user what's wrong with it.
 

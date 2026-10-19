@@ -85,7 +85,7 @@ Find out where a repo stands, then keep it there.
 - **[maturity-analysis](./skills/maturity-analysis/SKILL.md)**: Project overview, key files, a maturity assessment across six dimensions, and a prioritized issue list.
 - **[guardrails-setup](./skills/guardrails-setup/SKILL.md)** `beta`: Automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo. Can also audit existing gates.
 - **[branch-ruleset-setup](./skills/branch-ruleset-setup/SKILL.md)** `beta`: A GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
-- **[contributor-setup](./skills/contributor-setup/SKILL.md)** `retired`: Moved to [`miragon-implementation`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/contributor-setup) in Miragon/skills. Whatever a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
+- **[contributor-setup](./skills/contributor-setup/SKILL.md)** `retired`: Moved to [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/contributor-setup) in Miragon/skills. Whatever a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
 
 ### Supply Chain & Releases
 
