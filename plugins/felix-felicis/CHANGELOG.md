@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v2.1.0...felix-felicis-v3.0.0) (2026-10-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **felix-felicis:** remove skills migrated to miragon/skills ([#134](https://github.com/emaarco/hogwarts/issues/134))
+
+### Features
+
+* **felix-felicis:** remove skills migrated to miragon/skills ([#134](https://github.com/emaarco/hogwarts/issues/134)) ([ece2c57](https://github.com/emaarco/hogwarts/commit/ece2c5785c7386848b92d5fb412934a4d4ad0ef8))
+
 ## [2.1.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v2.0.0...felix-felicis-v2.1.0) (2026-10-18)
 
 
