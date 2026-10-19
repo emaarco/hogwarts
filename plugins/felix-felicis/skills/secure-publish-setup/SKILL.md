@@ -100,7 +100,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v7          # SHA-pin in the real repo (see pin-github-actions)
+      - uses: actions/checkout@v7          # SHA-pin in the real repo (see miragon-implementation:pin-github-actions)
       - uses: actions/setup-node@v6
         with:
           node-version: 24
