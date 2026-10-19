@@ -10,9 +10,9 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 ## Skills
 
 - **maturity-analysis** — Analyzes the current repo end to end and reports a project overview, the key files, a maturity assessment across six dimensions, and a prioritized issue list.
-- **pin-github-actions** (retired → Miragon/skills `miragon-github`) — Checks that every GitHub Actions `uses:` reference is pinned to a full commit SHA, reports the unpinned ones, and optionally rewrites them to SHA + version comment.
-- **pin-node-dependencies** (retired → Miragon/skills `miragon-github`) — Checks that every `package.json` dependency is pinned to an exact version and the lockfile is committed, optionally rewrites ranges to exact pins, and adds a CI guardrail.
-- **contributor-setup** (retired → Miragon/skills `miragon-github`) — Creates or updates what a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
+- **pin-github-actions** (retired → Miragon/skills `miragon-implementation`) — Checks that every GitHub Actions `uses:` reference is pinned to a full commit SHA, reports the unpinned ones, and optionally rewrites them to SHA + version comment.
+- **pin-node-dependencies** (retired → Miragon/skills `miragon-implementation`) — Checks that every `package.json` dependency is pinned to an exact version and the lockfile is committed, optionally rewrites ranges to exact pins, and adds a CI guardrail.
+- **contributor-setup** (retired → Miragon/skills `miragon-implementation`) — Creates or updates what a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
 - **make-me-awesome** — Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm.
 - **medium-publish** — Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V (macOS). Images become placeholders.
 - **bpmn-export** — Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.

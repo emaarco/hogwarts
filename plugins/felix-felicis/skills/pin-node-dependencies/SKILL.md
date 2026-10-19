@@ -1,13 +1,13 @@
 ---
 name: pin-node-dependencies
-description: "Retired: moved to miragon-github in Miragon/skills. Supply-chain audit for Node.js (js/ts) repos: verifies every package.json dependency is pinned to an exact version and the lockfile is committed, optionally rewrites to exact pins, and wires up a CI guardrail + save-exact."
+description: "Retired: moved to miragon-implementation in Miragon/skills. Supply-chain audit for Node.js (js/ts) repos: verifies every package.json dependency is pinned to an exact version and the lockfile is committed, optionally rewrites to exact pins, and wires up a CI guardrail + save-exact."
 disable-model-invocation: true
 allowed-tools: Bash, Read, Edit, Grep, Glob, WebFetch
 ---
 
 # Skill: pin-node-dependencies
 
-> **Retired.** This skill is maintained in [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/pin-node-dependencies) at [Miragon/skills](https://github.com/Miragon/skills) — install `miragon-github@miragon-agent-skills`. This copy is frozen.
+> **Retired.** This skill is maintained in [`miragon-implementation`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-node-dependencies) at [Miragon/skills](https://github.com/Miragon/skills) — install `miragon-implementation@miragon-agent-skills`. This copy is frozen.
 
 Audits a Node.js / JS / TS repository and verifies that **every dependency in every `package.json` is pinned to an exact version**. Version ranges (`^1.2.3`, `~1.2.3`, `>=1`, `*`, `1.x`), floating dist-tags (`latest`, `next`), and mutable git refs (`#main`) mean `npm install` can silently pull a *different* build than the one that was reviewed and tested — the delivery vector behind worm-style npm supply-chain attacks. Exact pinning + a committed lockfile makes installs reproducible and shrinks the window for a malicious republish to slip in.
 

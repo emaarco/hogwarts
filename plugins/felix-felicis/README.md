@@ -27,8 +27,8 @@ Every one of these started as a problem I hit more than twice.
 
 **The Fix** is immutable references and short-lived credentials:
 
-- [`/miragon-github:pin-github-actions`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/pin-github-actions) — for workflow actions
-- [`/miragon-github:pin-node-dependencies`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/pin-node-dependencies) — for npm dependencies
+- [`/miragon-implementation:pin-github-actions`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-github-actions) — for workflow actions
+- [`/miragon-implementation:pin-node-dependencies`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-node-dependencies) — for npm dependencies
 - [`/secure-publish-setup`](./skills/secure-publish-setup/SKILL.md) — for publishing
 - [`/release-audit`](./skills/release-audit/SKILL.md) — to check all of it at once
 
@@ -85,14 +85,14 @@ Find out where a repo stands, then keep it there.
 - **[maturity-analysis](./skills/maturity-analysis/SKILL.md)**: Project overview, key files, a maturity assessment across six dimensions, and a prioritized issue list.
 - **[guardrails-setup](./skills/guardrails-setup/SKILL.md)** `beta`: Automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo. Can also audit existing gates.
 - **[branch-ruleset-setup](./skills/branch-ruleset-setup/SKILL.md)** `beta`: A GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
-- **[contributor-setup](./skills/contributor-setup/SKILL.md)** `retired`: Moved to [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/contributor-setup) in Miragon/skills. Whatever a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
+- **[contributor-setup](./skills/contributor-setup/SKILL.md)** `retired`: Moved to [`miragon-implementation`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/contributor-setup) in Miragon/skills. Whatever a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
 
 ### Supply Chain & Releases
 
 Immutable inputs, tokenless outputs.
 
-- **[pin-github-actions](./skills/pin-github-actions/SKILL.md)** `retired`: Moved to [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/pin-github-actions) in Miragon/skills. Checks every GitHub Actions `uses:` reference is pinned to a full commit SHA, and optionally rewrites the unpinned ones to SHA + version comment.
-- **[pin-node-dependencies](./skills/pin-node-dependencies/SKILL.md)** `retired`: Moved to [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/pin-node-dependencies) in Miragon/skills. Checks every `package.json` dependency is pinned to an exact version and the lockfile is committed, optionally rewrites ranges, and adds a CI guardrail.
+- **[pin-github-actions](./skills/pin-github-actions/SKILL.md)** `retired`: Moved to [`miragon-implementation`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-github-actions) in Miragon/skills. Checks every GitHub Actions `uses:` reference is pinned to a full commit SHA, and optionally rewrites the unpinned ones to SHA + version comment.
+- **[pin-node-dependencies](./skills/pin-node-dependencies/SKILL.md)** `retired`: Moved to [`miragon-implementation`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-node-dependencies) in Miragon/skills. Checks every `package.json` dependency is pinned to an exact version and the lockfile is committed, optionally rewrites ranges, and adds a CI guardrail.
 - **[release-please-setup](./skills/release-please-setup/SKILL.md)** `beta`: Sets up release-please as a single or per-module release, audits an existing setup, or switches release forms without breaking tag and changelog history.
 - **[secure-publish-setup](./skills/secure-publish-setup/SKILL.md)** `beta`: Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, and a publish step that is safe to re-run.
 - **[release-audit](./skills/release-audit/SKILL.md)** `beta`: Audits release and supply-chain readiness against a gold-standard reference and returns a prioritized action plan, with fixes delegated to the matching setup skills.
