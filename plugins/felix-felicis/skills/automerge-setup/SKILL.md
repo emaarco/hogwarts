@@ -1,10 +1,13 @@
 ---
 name: automerge-setup
-description: "Sets up, audits, or optimizes GitHub PR auto-merge for Dependabot, Renovate, and generic bot PRs, limiting what is auto-merged to what the repo's CI actually proves. Use when asked to set up, audit, fix, or optimize auto-merge / automerge / merge Dependabot or Renovate PRs automatically."
+description: "Retired: moved to miragon-github in Miragon/skills. Sets up, audits, or optimizes GitHub PR auto-merge for Dependabot, Renovate, and generic bot PRs, limiting what is auto-merged to what the repo's CI actually proves. Use when asked to set up, audit, fix, or optimize auto-merge / automerge / merge Dependabot or Renovate PRs automatically."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 
 # Skill: automerge-setup
+
+> **Retired.** This skill is maintained in [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/automerge-setup) at [Miragon/skills](https://github.com/Miragon/skills) — install `miragon-github@miragon-agent-skills`. This copy is frozen.
 
 The one place that owns GitHub PR auto-merge. Detects what's already there, audits it against best practice, and either optimizes it or creates it — working **collaboratively**: gather evidence first, present findings and a recommendation, let the user decide via AskUserQuestion, then write. Never overwrite an existing workflow without showing what's wrong with it.
 

@@ -24,9 +24,9 @@ Skills live in `skills/<skill-name>/SKILL.md`. Path-scoped rules live in `comman
 New and not yet battle-tested on real repos — see [Skill Status](#skill-status).
 
 - **optimize-github-actions** — Finds wasted CI runs in GitHub Actions — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
-- **dependabot-setup** — Audits or sets up `.github/dependabot.yml` with a grouping mode (low-noise, balanced, or fine-grained) recommended from the repo's use-case. Flags unpinned versions first and offers to pin them.
+- **dependabot-setup** (retired → Miragon/skills `miragon-github`) — Audits or sets up `.github/dependabot.yml` with a grouping mode (low-noise, balanced, or fine-grained) recommended from the repo's use-case. Flags unpinned versions first and offers to pin them.
 - **branch-ruleset-setup** — Creates or updates a GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
-- **automerge-setup** — Sets up or audits GitHub PR auto-merge for Dependabot, Renovate, or other bot PRs, and limits what gets auto-merged to what the repo's CI actually proves.
+- **automerge-setup** (retired → Miragon/skills `miragon-github`) — Sets up or audits GitHub PR auto-merge for Dependabot, Renovate, or other bot PRs, and limits what gets auto-merged to what the repo's CI actually proves.
 - **release-please-setup** — Sets up release-please as a single or per-module release, audits an existing setup, or switches release forms without breaking tag and changelog history.
 - **secure-publish-setup** — Sets up tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, and a publish step that is safe to re-run.
 - **release-audit** — Audits release and supply-chain readiness against a gold-standard reference and returns a prioritized action plan, with fixes delegated to the matching setup skills.

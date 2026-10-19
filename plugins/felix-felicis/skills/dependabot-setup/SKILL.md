@@ -1,10 +1,13 @@
 ---
 name: dependabot-setup
-description: "Audits and sets up .github/dependabot.yml with a grouping mode (low-noise, balanced, fine-grained) recommended from the repo's use-case, gated on pinned dependency versions. Use when asked to set up, review, fix, or audit Dependabot / automated dependency updates / dependency grouping."
+description: "Retired: moved to miragon-github in Miragon/skills. Audits and sets up .github/dependabot.yml with a grouping mode (low-noise, balanced, fine-grained) recommended from the repo's use-case, gated on pinned dependency versions. Use when asked to set up, review, fix, or audit Dependabot / automated dependency updates / dependency grouping."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 
 # Skill: dependabot-setup
+
+> **Retired.** This skill is maintained in [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/dependabot-setup) at [Miragon/skills](https://github.com/Miragon/skills) — install `miragon-github@miragon-agent-skills`. This copy is frozen.
 
 Analyzes `.github/dependabot.yml` — creating it if missing, repairing it if it deviates — and works **collaboratively**: gather evidence first, present findings and a recommended mode with reasons, let the user decide via AskUserQuestion, then write. Never overwrite an existing config without showing what's wrong with it. Pinned versions are the entry ticket: a Dependabot config over floating versions is theater, so the pin gate (Phase 3, delegating to the **`pin-node-dependencies`** / **`pin-github-actions`** siblings) must resolve before anything is written.
 

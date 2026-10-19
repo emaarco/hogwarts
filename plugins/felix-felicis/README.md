@@ -38,8 +38,8 @@ Every one of these started as a problem I hit more than twice.
 
 **The Fix** is less noise and fewer manual merges:
 
-- [`/dependabot-setup`](./skills/dependabot-setup/SKILL.md) — to group the updates
-- [`/automerge-setup`](./skills/automerge-setup/SKILL.md) — to merge the green ones
+- [`/miragon-github:dependabot-setup`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/dependabot-setup) — to group the updates
+- [`/miragon-github:automerge-setup`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/automerge-setup) — to merge the green ones
 - [`/dependency-update-shepherd`](./skills/dependency-update-shepherd/SKILL.md) — to rescue the red ones
 
 ### #3: Agents Erode Quality Quietly
@@ -101,8 +101,8 @@ Immutable inputs, tokenless outputs.
 
 Less noise, fewer red PRs.
 
-- **[dependabot-setup](./skills/dependabot-setup/SKILL.md)** `beta`: Audits or sets up `.github/dependabot.yml` with a grouping mode (low-noise, balanced, or fine-grained) recommended from the repo's use-case.
-- **[automerge-setup](./skills/automerge-setup/SKILL.md)** `beta`: Sets up or audits PR auto-merge for Dependabot, Renovate, or other bot PRs, limited to what the repo's CI actually proves.
+- **[dependabot-setup](./skills/dependabot-setup/SKILL.md)** `retired`: Moved to [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/dependabot-setup) in Miragon/skills. Audits or sets up `.github/dependabot.yml` with a grouping mode (low-noise, balanced, or fine-grained) recommended from the repo's use-case.
+- **[automerge-setup](./skills/automerge-setup/SKILL.md)** `retired`: Moved to [`miragon-github`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/automerge-setup) in Miragon/skills. Sets up or audits PR auto-merge for Dependabot, Renovate, or other bot PRs, limited to what the repo's CI actually proves.
 - **[dependency-update-shepherd](./skills/dependency-update-shepherd/SKILL.md)** `beta`: Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
 - **[optimize-github-actions](./skills/optimize-github-actions/SKILL.md)** `beta`: Finds wasted CI runs — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
 
