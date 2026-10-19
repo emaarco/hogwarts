@@ -27,8 +27,8 @@ Every one of these started as a problem I hit more than twice.
 
 **The Fix** is immutable references and short-lived credentials:
 
-- [`/pin-github-actions`](./skills/pin-github-actions/SKILL.md) — for workflow actions
-- [`/pin-node-dependencies`](./skills/pin-node-dependencies/SKILL.md) — for npm dependencies
+- [`/pin-github-actions`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-github-actions) — for workflow actions
+- [`/pin-node-dependencies`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-node-dependencies) — for npm dependencies
 - [`/secure-publish-setup`](./skills/secure-publish-setup/SKILL.md) — for publishing
 - [`/release-audit`](./skills/release-audit/SKILL.md) — to check all of it at once
 
@@ -38,8 +38,8 @@ Every one of these started as a problem I hit more than twice.
 
 **The Fix** is less noise and fewer manual merges:
 
-- [`/dependabot-setup`](./skills/dependabot-setup/SKILL.md) — to group the updates
-- [`/automerge-setup`](./skills/automerge-setup/SKILL.md) — to merge the green ones
+- [`/dependabot-setup`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/dependabot-setup) — to group the updates
+- [`/automerge-setup`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/automerge-setup) — to merge the green ones
 - [`/dependency-update-shepherd`](./skills/dependency-update-shepherd/SKILL.md) — to rescue the red ones
 
 ### #3: Agents Erode Quality Quietly
@@ -59,7 +59,7 @@ Every one of these started as a problem I hit more than twice.
 **The Fix** is to derive releases from the commit history:
 
 - [`/release-please-setup`](./skills/release-please-setup/SKILL.md) — for versions, changelogs, and releases
-- [`/pull-request-description`](./skills/pull-request-description/SKILL.md) — for the commit titles it depends on
+- [`/write-pr-description`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/write-pr-description) — for the commit titles it depends on
 
 ### #5: Parallel Agents Fight Over `localhost:3000`
 
@@ -85,14 +85,11 @@ Find out where a repo stands, then keep it there.
 - **[maturity-analysis](./skills/maturity-analysis/SKILL.md)**: Project overview, key files, a maturity assessment across six dimensions, and a prioritized issue list.
 - **[guardrails-setup](./skills/guardrails-setup/SKILL.md)** `beta`: Automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo. Can also audit existing gates.
 - **[branch-ruleset-setup](./skills/branch-ruleset-setup/SKILL.md)** `beta`: A GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
-- **[contributor-setup](./skills/contributor-setup/SKILL.md)**: Whatever a repo is missing for contributors: issue templates, README, `CONTRIBUTING.md`, and the other community-health files.
 
 ### Supply Chain & Releases
 
 Immutable inputs, tokenless outputs.
 
-- **[pin-github-actions](./skills/pin-github-actions/SKILL.md)**: Checks every GitHub Actions `uses:` reference is pinned to a full commit SHA, and optionally rewrites the unpinned ones to SHA + version comment.
-- **[pin-node-dependencies](./skills/pin-node-dependencies/SKILL.md)**: Checks every `package.json` dependency is pinned to an exact version and the lockfile is committed, optionally rewrites ranges, and adds a CI guardrail.
 - **[release-please-setup](./skills/release-please-setup/SKILL.md)** `beta`: Sets up release-please as a single or per-module release, audits an existing setup, or switches release forms without breaking tag and changelog history.
 - **[secure-publish-setup](./skills/secure-publish-setup/SKILL.md)** `beta`: Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, and a publish step that is safe to re-run.
 - **[release-audit](./skills/release-audit/SKILL.md)** `beta`: Audits release and supply-chain readiness against a gold-standard reference and returns a prioritized action plan, with fixes delegated to the matching setup skills.
@@ -101,8 +98,6 @@ Immutable inputs, tokenless outputs.
 
 Less noise, fewer red PRs.
 
-- **[dependabot-setup](./skills/dependabot-setup/SKILL.md)** `beta`: Audits or sets up `.github/dependabot.yml` with a grouping mode (low-noise, balanced, or fine-grained) recommended from the repo's use-case.
-- **[automerge-setup](./skills/automerge-setup/SKILL.md)** `beta`: Sets up or audits PR auto-merge for Dependabot, Renovate, or other bot PRs, limited to what the repo's CI actually proves.
 - **[dependency-update-shepherd](./skills/dependency-update-shepherd/SKILL.md)** `beta`: Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
 - **[optimize-github-actions](./skills/optimize-github-actions/SKILL.md)** `beta`: Finds wasted CI runs — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
 
@@ -115,7 +110,6 @@ For running many agents side by side.
 
 ### Tickets & Pull Requests
 
-- **[pull-request-description](./skills/pull-request-description/SKILL.md)** `beta`: Drafts a Conventional-Commit title and a compact body that links its issue, then creates or updates the PR/MR via `gh` or `glab`.
 - **[make-me-awesome](./skills/make-me-awesome/SKILL.md)**: Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm. Usage: `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`.
 
 ### Writing & Slides

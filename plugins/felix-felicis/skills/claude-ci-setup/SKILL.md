@@ -10,7 +10,7 @@ Gets a repo ready to run Claude unattended in GitHub Actions, then adds one smal
 
 **Unlisted beta.** The dependency-repair template has not completed a real repair run yet. Say so when you hand over.
 
-GitHub-only. Precondition: `gh auth status` authenticated with **admin** rights on the target repo (environments and secrets need it). Sibling skills own the neighbouring concerns: **`pin-github-actions`** (SHA-pinning), **`dependency-update-shepherd`** (the repair itself), **`automerge-setup`** (auto-merge for the green PRs).
+GitHub-only. Precondition: `gh auth status` authenticated with **admin** rights on the target repo (environments and secrets need it). Sibling skills own the neighbouring concerns: **`miragon-implementation:pin-github-actions`** (SHA-pinning), **`dependency-update-shepherd`** (the repair itself), **`miragon-github:automerge-setup`** (auto-merge for the green PRs).
 
 ## IMPORTANT — the token never passes through you
 
@@ -110,7 +110,7 @@ Keep these properties, and check them when auditing an existing workflow:
 
 ## Phase 3 — Hand-over
 
-1. SHA-pin every `uses:` to its current release — delegate to **`pin-github-actions`** rather than trusting the SHAs in the template.
+1. SHA-pin every `uses:` to its current release — delegate to **`miragon-implementation:pin-github-actions`** rather than trusting the SHAs in the template.
 2. `actionlint .github/workflows/<file>.yml` (not installed → `python3 -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" <file>` and say the lint was skipped).
 3. Report the foundation as a table (step, state, evidence) and list what only the first real run can confirm:
    - `workflow_run` fires only from the default branch — nothing happens until the workflow is merged and the next Dependabot PR goes red.

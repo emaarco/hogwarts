@@ -106,7 +106,7 @@ One-time app setup (walk the user through it):
 2. Install it on the target repo.
 3. Store the app's **Client ID** as a repo **variable** `RELEASE_PLEASE_APP_CLIENT_ID` and the generated private key as a **secret** `RELEASE_PLEASE_APP_PRIVATE_KEY`. Use the Client ID, not the numeric App ID — GitHub recommends it, and the action's `app-id` input is legacy.
 
-`.github/workflows/release-please.yml` (SHA-pin the actions — resolve current SHAs fresh via `gh api repos/<owner>/<repo>/commits/<tag> --jq .sha`, see **`pin-github-actions`**; the SHAs below were current for v3.2.0 / v5.0.0 as of 2026-07):
+`.github/workflows/release-please.yml` (SHA-pin the actions — resolve current SHAs fresh via `gh api repos/<owner>/<repo>/commits/<tag> --jq .sha`, see **`miragon-implementation:pin-github-actions`**; the SHAs below were current for v3.2.0 / v5.0.0 as of 2026-07):
 
 ```yaml
 name: Release
@@ -198,7 +198,7 @@ Re-run **Phase 1** on the repo as it is today, then question each design choice.
 - **Auth:** a PAT instead of a GitHub App token works but is a long-lived personal credential → offer migration (Phase 4). A deliberately-kept PAT is an observation.
 - **Scopes (Form B/C):** spot-check recent commits — `fix(core):` scopes should match `component`/path names.
 
-**Respect deliberate choices.** If git history shows a convention was intentional — tag-pins instead of SHAs (`pin-github-actions` would tighten it), custom secret names, a chosen merge strategy, a kept PAT — record it as an observation, don't impose this skill's defaults.
+**Respect deliberate choices.** If git history shows a convention was intentional — tag-pins instead of SHAs (`miragon-implementation:pin-github-actions` would tighten it), custom secret names, a chosen merge strategy, a kept PAT — record it as an observation, don't impose this skill's defaults.
 
 ### 8B — Mechanical drift (defects)
 

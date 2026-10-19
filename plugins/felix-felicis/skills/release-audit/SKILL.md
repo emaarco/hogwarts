@@ -65,10 +65,10 @@ Point each finding at the sibling skill that implements it instead of re-explain
 | Versioning / changelog / release automation — **absent** | `release-please-setup` (setup mode) |
 | Versioning config **already present** but suspect — wrong-fit (release form no longer matches the topology, validation vs. merge strategy, publishing) or drift (dangling `extra-files`, untracked package, version out of sync with manifest) | `release-please-setup` (Phase 0 → Phase 8 audit: questions the design via `AskUserQuestion`, fixes drift) |
 | Long-lived registry tokens, missing provenance | `secure-publish-setup` |
-| Unpinned GitHub Actions | `pin-github-actions` |
-| Floating npm versions / missing lockfile | `pin-node-dependencies` |
-| Missing/weak Dependabot config | `dependabot-setup` |
+| Unpinned GitHub Actions | `miragon-implementation:pin-github-actions` |
+| Floating npm versions / missing lockfile | `miragon-implementation:pin-node-dependencies` |
+| Missing/weak Dependabot config | `miragon-github:dependabot-setup` |
 | No branch protection / rulesets | `branch-ruleset-setup` |
-| Missing CODEOWNERS / community files | `contributor-setup` |
+| Missing CODEOWNERS / community files | `miragon-github:contributor-setup` |
 
 Keep prose tight — tables and snippets over paragraphs.

@@ -10,7 +10,7 @@ Audits a repository's GitHub Actions workflows for **wasted CI runs and job expl
 
 Run this when asked to "optimize CI", "why does every check run twice?", "too many jobs on my PR", "reduce CI minutes", or as a follow-up when a PR's check list looks inflated.
 
-Scope: **run efficiency** (which runs happen, how many jobs, what gets cancelled). For SHA-pinning see the sibling skill **`pin-github-actions`**; for release automation see **`release-audit`**; for ruleset edits delegate to **`branch-ruleset-setup`**.
+Scope: **run efficiency** (which runs happen, how many jobs, what gets cancelled). For SHA-pinning see the sibling skill **`miragon-implementation:pin-github-actions`**; for release automation see **`release-audit`**; for ruleset edits delegate to **`branch-ruleset-setup`**.
 
 ## Why the core anti-pattern is invisible to concurrency
 

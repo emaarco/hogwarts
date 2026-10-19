@@ -84,8 +84,8 @@ Adjacent concerns are owned by sibling skills — point at them instead of re-im
 | Concern | Sibling skill |
 |---|---|
 | Required checks, CODEOWNERS-backed review on guardrail paths, no force-push | `branch-ruleset-setup` (enforces the Phase 2b exception mechanism) |
-| Unpinned GitHub Actions | `pin-github-actions` |
-| Floating npm versions / missing lockfile | `pin-node-dependencies` |
+| Unpinned GitHub Actions | `miragon-implementation:pin-github-actions` |
+| Floating npm versions / missing lockfile | `miragon-implementation:pin-node-dependencies` |
 | Release automation & versioning | `release-please-setup` |
 | Publishing security / provenance | `secure-publish-setup` |
 | Release & supply-chain audit | `release-audit` |
