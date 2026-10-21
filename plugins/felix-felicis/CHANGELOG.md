@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.0.0...felix-felicis-v3.1.0) (2026-10-21)
+
+
+### Features
+
+* **felix-felicis:** add close-external-prs beta skill ([#136](https://github.com/emaarco/hogwarts/issues/136)) ([06a0ea7](https://github.com/emaarco/hogwarts/commit/06a0ea7725fad7e2d90a83d11fef3fccb5939340))
+
 ## [3.0.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v2.1.0...felix-felicis-v3.0.0) (2026-10-19)
 
 
