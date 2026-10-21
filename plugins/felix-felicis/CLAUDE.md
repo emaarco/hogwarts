@@ -30,6 +30,7 @@ New and not yet battle-tested on real repos — see [Skill Status](#skill-status
 - **guardrails-setup** — Adds automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo, so AI agents can change code safely. Can also audit existing gates.
 - **slidev-toolkit-migration** — Migrates an existing Slidev deck onto the Miragon slidev-toolkit template, slide by slide, with each chapter built and verified before the next.
 - **dependency-update-shepherd** — Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
+- **close-external-prs** — Stops accepting external pull requests on a GitHub repo: restricts PR creation to collaborators and closes open external PRs with a comment pointing to issues.
 - **clockify** — Reads and books Clockify time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars; times are Europe/Berlin.
 
 ### Unlisted Skills
