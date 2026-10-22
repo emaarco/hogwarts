@@ -1,12 +1,12 @@
 ---
 name: close-external-prs
-description: "Stops accepting pull requests from external contributors on a GitHub repo via the gh CLI: restricts PR creation to collaborators, then closes every open external PR with a friendly comment that points to issues instead. Use when asked to stop, block, or close external / outside / community pull requests, or to make a repo collaborators-only for PRs."
+description: "Stops accepting pull requests from external contributors on a GitHub repo via the gh CLI: restricts PR creation to collaborators, closes every open external PR with a friendly comment that points to issues instead, and notes the policy in CONTRIBUTING.md. Use when asked to stop, block, or close external / outside / community pull requests, or to make a repo collaborators-only for PRs."
 allowed-tools: Bash, AskUserQuestion
 ---
 
 # Skill: close-external-prs
 
-Two steps per repository: **lock** new external PRs, then **close** the open ones with a comment. Issues stay open to everyone — they are where external contributors are sent instead.
+Three things per repository: **lock** new external PRs, **close** the open ones with a comment, and **document** the policy in CONTRIBUTING.md. Issues stay open to everyone — they are where external contributors are sent instead.
 
 Precondition: `gh auth status` must be authenticated with **admin** rights on the target repo. Resolve the target once:
 
@@ -57,6 +57,15 @@ done
 
 Comment first, then close, so the author is notified with the reason. Do not delete branches — they live in the contributors' forks.
 
+## Step 4 — Note the policy in CONTRIBUTING.md
+
+The section text lives in [`references/contributing-section.md`](references/contributing-section.md). Locate the guide where GitHub looks for it — `.github/CONTRIBUTING.md`, `CONTRIBUTING.md`, or `docs/CONTRIBUTING.md` (case-insensitive):
+
+- **Guide exists** → replace any section that invites PRs or explains how to open one with the reference section; keep everything else (issue guidelines, code of conduct, dev setup). If the guide already states the policy, leave it.
+- **No guide** → create `CONTRIBUTING.md` with a `# Contributing` heading followed by the reference section.
+
+Rewrite the issue link to an absolute `https://github.com/$REPO/issues/new`. Commit on a new branch with `docs: note that external pull requests are not accepted` and open a PR — never push to the default branch directly.
+
 ## Report
 
-Per repo: whether PR creation is now collaborators-only (API or UI), and the list of closed PRs with links.
+Per repo: whether PR creation is now collaborators-only (API or UI), the list of closed PRs with links, and the link to the CONTRIBUTING.md PR.
