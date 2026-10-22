@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.1.0...felix-felicis-v3.2.0) (2026-10-22)
+
+
+### Features
+
+* **felix-felicis:** note external PR policy in CONTRIBUTING.md in close-external-prs ([#138](https://github.com/emaarco/hogwarts/issues/138)) ([f85542d](https://github.com/emaarco/hogwarts/commit/f85542dacf5b08b7f5ba679e321808a3fb1ce77a))
+
 ## [3.1.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.0.0...felix-felicis-v3.1.0) (2026-10-21)
 
 
