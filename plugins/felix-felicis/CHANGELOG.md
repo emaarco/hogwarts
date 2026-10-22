@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.2.0...felix-felicis-v3.3.0) (2026-10-22)
+
+
+### Features
+
+* **felix-felicis:** add CONTRIBUTING.md policy section instead of replacing PR guidance ([#140](https://github.com/emaarco/hogwarts/issues/140)) ([b90b8fa](https://github.com/emaarco/hogwarts/commit/b90b8fae4a62b9a26b2bc6bff74cb2ec53902272))
+
 ## [3.2.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.1.0...felix-felicis-v3.2.0) (2026-10-22)
 
 
