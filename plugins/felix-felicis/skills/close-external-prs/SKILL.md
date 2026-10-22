@@ -61,7 +61,7 @@ Comment first, then close, so the author is notified with the reason. Do not del
 
 The section text lives in [`references/contributing-section.md`](references/contributing-section.md). Locate the guide where GitHub looks for it — `.github/CONTRIBUTING.md`, `CONTRIBUTING.md`, or `docs/CONTRIBUTING.md` (case-insensitive):
 
-- **Guide exists** → replace any section that invites PRs or explains how to open one with the reference section; keep everything else (issue guidelines, code of conduct, dev setup). If the guide already states the policy, leave it.
+- **Guide exists** → insert the reference section right after the intro, before the first `##` section. Keep existing pull-request guidance (small PRs, local checks, commit conventions) — it still applies to the team. If the guide already states the policy, leave it.
 - **No guide** → create `CONTRIBUTING.md` with a `# Contributing` heading followed by the reference section.
 
 Rewrite the issue link to an absolute `https://github.com/$REPO/issues/new`. Commit on a new branch with `docs: note that external pull requests are not accepted` and open a PR — never push to the default branch directly.
