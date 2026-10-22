@@ -84,7 +84,7 @@ Find out where a repo stands, then keep it there.
 
 - **[maturity-analysis](./skills/maturity-analysis/SKILL.md)**: Project overview, key files, a maturity assessment across six dimensions, and a prioritized issue list.
 - **[guardrails-setup](./skills/guardrails-setup/SKILL.md)** `beta`: Automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo. Can also audit existing gates.
-- **[close-external-prs](./skills/close-external-prs/SKILL.md)** `beta`: Stops accepting external pull requests: restricts PR creation to collaborators and closes open external PRs with a comment pointing to issues.
+- **[close-external-prs](./skills/close-external-prs/SKILL.md)** `beta`: Stops accepting external pull requests: restricts PR creation to collaborators, closes open external PRs with a comment pointing to issues, and notes the policy in CONTRIBUTING.md.
 - **[branch-ruleset-setup](./skills/branch-ruleset-setup/SKILL.md)** `beta`: A GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
 
 ### Supply Chain & Releases
