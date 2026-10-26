@@ -28,6 +28,7 @@ New and not yet battle-tested on real repos — see [Skill Status](#skill-status
 - **svg-to-png** — Renders an SVG to a PNG locally with the `resvg` CLI, with optional scaling, DPI, background, or crop. Other raster formats go through a PNG intermediate.
 - **translate-post** — Translates a blog post into a language you choose, then loops a fresh reviewer agent over it until it reads as if written in that language. Can also polish an existing translation.
 - **guardrails-setup** — Adds automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo, so AI agents can change code safely. Can also audit existing gates.
+- **dependency-graph** — Draws the folder-level import graph of a TS/JS or Java/Kotlin codebase (dependency-cruiser or import scan + Graphviz): the whole picture first, then folder cycles and upward leaks against a layer order, each traced to the importing files, in an HTML report with recommendations.
 - **slidev-toolkit-migration** — Migrates an existing Slidev deck onto the Miragon slidev-toolkit template, slide by slide, with each chapter built and verified before the next.
 - **dependency-update-shepherd** — Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
 - **close-external-prs** — Stops accepting external pull requests on a GitHub repo: restricts PR creation to collaborators, closes open external PRs with a comment pointing to issues, and notes the policy in CONTRIBUTING.md.
