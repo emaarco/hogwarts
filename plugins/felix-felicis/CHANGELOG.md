@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.3.0...felix-felicis-v3.4.0) (2026-10-28)
+
+
+### Features
+
+* **felix-felicis:** format dependency-update-shepherd MR comments as a status table ([#144](https://github.com/emaarco/hogwarts/issues/144)) ([56a5333](https://github.com/emaarco/hogwarts/commit/56a53331c79b49f8f3547dc51db7abf4e2aa21e8))
+
 ## [3.3.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.2.0...felix-felicis-v3.3.0) (2026-10-26)
 
 
