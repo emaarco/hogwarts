@@ -108,7 +108,9 @@ Any box open → stop and report the blocker.
 
 ## MR comment
 
-Whenever the skill pushed, held a bump back, prepared a fix in **comment-only** mode, or stopped on a blocker, write **one** comment per MR and edit it on later iterations instead of stacking new ones (`gh pr comment <n> --edit-last` / `glab mr note`). It states: the failing job and command, the cause, what was done (code fix, or "held back `<pkg>` at `<kept-version>` because `<blocker>` does not support `<new-version>` yet"), which bumps the MR still contains, that the bot will propose the held-back bump again on its next run, and that the branch is no longer bot-maintained. In **comment-only** mode it carries the verified fix as a `diff` block instead, and why it was not pushed (no signing available, target requires signatures). After a hold-back, also strike the held-back entry in the MR description (`~~…~~ — held back, see comment`) so a squash commit does not claim a bump that was not made.
+Whenever the skill pushed, held a bump back, prepared a fix in **comment-only** mode, or stopped on a blocker, write **one** comment per MR and edit it on later iterations instead of stacking new ones (`gh pr comment <n> --edit-last` / `glab mr note`). After a hold-back, also strike the held-back entry in the MR description (`~~…~~ — held back, see comment`) so a squash commit does not claim a bump that was not made.
+
+Format it with the template in [`references/mr-comment.md`](references/mr-comment.md) (next to this SKILL.md).
 
 ## Phase 6 — Merge & confirm
 
