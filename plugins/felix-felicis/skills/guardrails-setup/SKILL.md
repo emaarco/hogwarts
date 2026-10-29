@@ -1,6 +1,7 @@
 ---
 name: guardrails-setup
 description: "Introduces and maintains machine-checkable guardrails (fitness functions) so AI agents can work safely in a repo: architecture gates, raise-only coverage, shrink-only debt lists, and a single verify command, right-sized to the repo. Use when asked to set up guardrails or fitness functions, make a repo safe for AI agents, stop quality erosion, protect coverage thresholds, or audit existing guardrails. For release or supply-chain audits use release-audit; for a whole-repo health check use maturity-analysis."
+disable-model-invocation: true
 allowed-tools: Agent, Bash, Read, Grep, Glob, Write, Edit, WebFetch, WebSearch, AskUserQuestion
 ---
 

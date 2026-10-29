@@ -1,6 +1,7 @@
 ---
 name: claude-ci-setup
 description: "Guided setup for running Claude unattended in GitHub Actions: checks the Claude GitHub App, a default-branch-restricted environment, the subscription token, the absence of pay-per-token credentials, and a default branch closed to direct commits, then adds the workflow for each chosen use case. Use when asked to set up or audit Claude / claude-code-action in CI, or to let Claude repair red Dependabot PRs."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, AskUserQuestion
 ---
 

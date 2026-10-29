@@ -2,6 +2,7 @@
 name: dependency-update-shepherd
 allowed-tools: Bash, Read, Grep, Glob, Edit, Write, mcp__github_file_ops__commit_files, mcp__github_file_ops__delete_files
 description: "Shepherds open dependency-update branches/MRs (Renovate, Dependabot, manual) to a mergeable state without asking: fixes the first causal CI failure or holds the offending bump back, and merges only when the invocation requests it. Use when dependency-update PRs/MRs are red, stuck, or piling up, or when asked to fix / rebase / merge dependency updates."
+disable-model-invocation: true
 ---
 
 # Skill: dependency-update-shepherd

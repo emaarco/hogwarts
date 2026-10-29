@@ -2,6 +2,7 @@
 name: patronum-add
 argument-hint: "\"<pattern>\" [--reason \"reason\"]"
 description: "Add a file pattern or command to the agento-patronum protection list. Use when the user wants to block access to a file, path, or command."
+disable-model-invocation: true
 allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-add.sh" *), Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-list.sh"), AskUserQuestion
 ---
 

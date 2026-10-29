@@ -1,6 +1,7 @@
 ---
 name: maturity-analysis
 description: "End-to-end repo analysis: project overview, key files, maturity assessment with expert subagents per dimension, and real issues found. Use when asked how mature a repo is, to assess or audit a codebase, or for a project health check."
+disable-model-invocation: true
 allowed-tools: Agent, WebFetch, WebSearch, Bash, Read, Glob, Grep
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: medium-publish
 description: "Copy a markdown blog post to the clipboard as rich text for pasting straight into Medium's editor (macOS). Converts the markdown to formatted HTML, loads it onto the clipboard as rich text, and opens Medium's new-story editor so you paste it in with ⌘V."
+disable-model-invocation: true
 allowed-tools: AskUserQuestion, Read, Write, Bash(textutil:*), Bash(osascript:*), Bash(open:*), Bash(rm:*)
 ---
 

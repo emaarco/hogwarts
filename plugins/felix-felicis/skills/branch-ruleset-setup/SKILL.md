@@ -1,6 +1,7 @@
 ---
 name: branch-ruleset-setup
 description: "Creates or updates a GitHub ruleset protecting the default branch via the gh CLI: no deletion, no force-push, linear history, signed commits, PR-only changes, and a required CI status check. Use when asked to protect the default branch, set up branch protection or rulesets, or require status checks before merge."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Grep, Glob, AskUserQuestion
 ---
 

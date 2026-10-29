@@ -1,6 +1,7 @@
 ---
 name: translate-post
 description: "Translates a blog post or article into a target language so it reads as if written in it, looping a fresh native-speaker reviewer agent until no translationese remains; also polishes a file already in the target language. Use when asked to translate a post or article, make a translation sound native, or check text for anglicisms / translationese."
+disable-model-invocation: true
 allowed-tools: Agent, Read, Glob, Grep, Bash, Edit, Write, AskUserQuestion
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: release-audit
 description: "Release & supply-chain readiness audit: compares real workflows, manifests, and repo settings against a gold-standard reference and returns a prioritized action plan whose fixes are delegated to the sibling setup skills. Use when asked to audit release automation, publishing security, CI or supply-chain maturity, or whether a repo is ready to release. For a whole-repo health check use maturity-analysis instead."
+disable-model-invocation: true
 allowed-tools: Agent, Bash, Read, Grep, Glob, WebFetch, WebSearch, AskUserQuestion
 ---
 

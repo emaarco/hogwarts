@@ -1,6 +1,6 @@
 ---
 name: svg-to-png
-description: "Render an SVG to a PNG raster image locally with the resvg CLI — no upload, no web tool. Use when asked to convert, render, export, or rasterize a .svg file to a .png (or to a .jpg/.webp/.tiff via a PNG intermediate)."
+description: "Rasterize an SVG to PNG locally with resvg. Use when asked to convert or render a .svg file to a .png or other raster format."
 allowed-tools: Bash, AskUserQuestion
 ---
 

@@ -2,6 +2,7 @@
 name: patronum-remove
 argument-hint: "\"<pattern>\""
 description: "Remove a pattern from the agento-patronum protection list. Use when the user wants to unblock access to a file or command."
+disable-model-invocation: true
 allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-remove.sh" *), Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-list.sh"), AskUserQuestion
 ---
 

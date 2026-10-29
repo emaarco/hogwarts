@@ -1,6 +1,6 @@
 ---
 name: bpmn-export
-description: "Export a BPMN file to an image using npx bpmn-to-image. Defaults to SVG; PNG and PDF available on request. Use when asked to export, render, or convert a .bpmn diagram to an image."
+description: "Export a .bpmn diagram to SVG, PNG or PDF. Use when asked to export, render or convert a BPMN file to an image."
 allowed-tools: Bash, AskUserQuestion
 ---
 

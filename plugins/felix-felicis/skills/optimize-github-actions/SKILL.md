@@ -1,6 +1,7 @@
 ---
 name: optimize-github-actions
 description: "CI run-efficiency audit for GitHub Actions: finds duplicate PR runs, matrix job explosion, missing concurrency, and noisy triggers, then fixes trigger scoping without breaking required status checks. Use when checks run twice, a PR shows too many jobs, CI minutes are too high, or a paths-filtered required check stays pending forever."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob, Edit, WebFetch, AskUserQuestion
 ---
 
