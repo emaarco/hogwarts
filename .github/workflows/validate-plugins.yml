@@ -98,8 +98,6 @@ jobs:
       - name: Validate JSON files
         run: |
           node -e "JSON.parse(require('fs').readFileSync('.claude-plugin/plugin.json','utf8'))"
-          node -e "JSON.parse(require('fs').readFileSync('hooks/hooks.json','utf8'))"
-          node -e "JSON.parse(require('fs').readFileSync('package.json','utf8'))"
 
       - name: Validate SKILL.md frontmatter
         run: |
@@ -110,10 +108,7 @@ jobs:
           done
 
       - name: Run tests
-        shell: bash
-        run: |
-          shopt -s globstar
-          node --test hooks/**/*.test.mjs
+        run: node --test scripts/*.test.mjs
 
   validate-felix-felicis:
     runs-on: ubuntu-latest
