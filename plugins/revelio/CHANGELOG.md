@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/emaarco/hogwarts/compare/revelio-v0.2.1...revelio-v1.0.0) (2026-10-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **revelio:** the hooks and /revelio-clear are removed; .claude/logs/revelio.jsonl is no longer written.
+
+### Features
+
+* **revelio:** replace the logging hooks with skills that read the agent's transcripts ([#149](https://github.com/emaarco/hogwarts/issues/149)) ([e9d348a](https://github.com/emaarco/hogwarts/commit/e9d348a6768bd69ec62c1fb71a4cd0c18cd9f3c2)), closes [#148](https://github.com/emaarco/hogwarts/issues/148)
+
 ## [0.2.1](https://github.com/emaarco/hogwarts/compare/revelio-v0.2.0...revelio-v0.2.1) (2026-07-02)
 
 
