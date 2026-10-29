@@ -1,40 +1,42 @@
 ---
 name: revelio
-description: "Show recent failed tool calls, API errors and permission denials from the Revelio log. Use when the user asks what went wrong or failed."
-allowed-tools: Bash(tail:*), Bash(wc:*), Bash(test:*), Bash(git rev-parse:*), Read
+description: "List recent failed tool calls, rejections, auto-mode denials and API errors from this repo's Claude Code transcripts."
+disable-model-invocation: true
+allowed-tools: Bash(node:*), Bash(git rev-parse:*)
 ---
 
 # /revelio
 
-Reveal the last N entries from the Revelio log, pretty-printed.
+Reveal the latest failures in this repo, read straight from Claude Code's session transcripts.
 
 ## Steps
 
-### 1. Locate the log
-Resolve the project root yourself — `$CLAUDE_PROJECT_DIR` is only set for hook processes, not for these commands. Use it if set, otherwise `git rev-parse --show-toplevel`, otherwise the current working directory. The log is `<project root>/.claude/logs/revelio.jsonl`.
+### 1. Resolve the project root
+Use `git rev-parse --show-toplevel`, otherwise the current working directory. Transcripts are stored per project root, so a git worktree has its own.
 
-### 2. Handle missing or empty log
-If the file does not exist or is empty (`test -s` fails), check the shared fallback log `$HOME/.claude/logs/revelio.jsonl` (the hook writes there when it has no project dir). If it has entries, continue with that file and note in the output that entries come from the shared fallback log. If both are missing or empty, reply with exactly:
+### 2. Read the failures
+Default limit is 20. Take a different number, a session id, or a time range from the user's prompt and pass them on. Turn relative ranges ("since yesterday", "last hour") into ISO 8601 timestamps.
 
-> Nothing to reveal — the log is quiet.
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/scripts/read-failures.mjs" --project "<root>" --limit 20 [--session <id>] [--since <iso>] [--until <iso>]
+```
+
+The script prints one JSON object per line, newest first: `timestamp`, `sessionId`, `kind`, `tool`, `input`, `error`.
+
+If it prints nothing, reply with exactly:
+
+> Nothing to reveal — the transcripts are quiet.
 
 Then stop.
 
-### 3. Determine N
-Default N = 20. If the user specified a number in the prompt (e.g. "show me the last 50"), use that.
+### 3. Render a compact table
+Columns: `time` | `session` | `kind` | `tool` | `summary`
 
-### 4. Read the last N lines
-Run `tail -n <N>` on the log, then parse each line as JSON.
+- `time`: `YYYY-MM-DD HH:MM` in local time
+- `session`: first 8 characters of `sessionId`
+- `kind`: `tool-error`, `user-rejected`, `automode-blocked`, `api-error`, or whatever other kind the script reports
+- `tool`: `tool`, or `—`
+- `summary`: the first meaningful line of `error`, at most 80 characters; for a Bash failure, prefix the command from `input`
 
-### 5. Render a compact table
-Columns: `time` | `event` | `tool` | `summary`
-
-- `time`: `HH:MM:SS` extracted from `timestamp`
-- `event`: short event name (`PostToolUseFailure` → `ToolFail`, `StopFailure` → `APIFail`, `PermissionDenied` → `Denied`)
-- `tool`: `tool_name` if present, else `—`
-- `summary`: first non-empty of `error`, `reason`, `stop_reason`, truncated to 80 chars; if the value is not a string (e.g. a structured `error` object), JSON-stringify it before truncating
-
-Show newest entries first.
-
-### 6. Footer
-Append one line in the form `N of TOTAL entries`, where TOTAL is obtained via `wc -l` on the log.
+### 4. Footer
+One line: `N failures shown. Transcripts older than cleanupPeriodDays (default 30) are gone.`

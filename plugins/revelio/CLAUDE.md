@@ -2,36 +2,26 @@
 
 ## What this is
 
-A Claude Code plugin that reveals failures. Every time a tool call fails, the turn ends on an API error, or auto-mode denies a permission, one hook writes a JSONL record to `$CLAUDE_PROJECT_DIR/.claude/logs/revelio.jsonl` (or `$HOME/.claude/logs/revelio.jsonl` as a fallback). Users then read the log and act on it.
+A skills-only Claude Code plugin that reveals failures. It reads Claude Code's own session transcripts (`~/.claude/projects/<encoded project root>/<session>.jsonl`) and lists failed tool calls, rejections, auto-mode denials and API errors. Users then act on them.
 
 ## Architecture
 
-`stdin (hook payload) → normalize for this event → append JSONL line → exit 0`
+`/revelio` or `/revelio-patterns` → `scripts/read-failures.mjs` → one normalized JSON record per failure on stdout → the skill renders or groups them.
 
-On session start (`UserPromptSubmit`), `ensure-gitignore.js` idempotently adds `.claude/logs/` to the project `.gitignore` so log files are never accidentally committed.
-
-One hook script per event. Shared lib for stdin + log-path + append. No router, no config, no runtime deps.
+The script streams every transcript of the project, keeps only `user`/`assistant` entries, pairs each failing `tool_result` with its `tool_use` for tool name and input, and classifies it by `toolDenialKind` (falling back to the message text). No hooks, no own log file, no runtime deps.
 
 ## Files
 
 - `.claude-plugin/plugin.json` — plugin manifest (marketplace entry lives in repo root `/.claude-plugin/marketplace.json`)
-- `hooks/hooks.json` — registers 3 events → 3 scripts
-- `hooks/log-tool-failure.js` — `PostToolUseFailure` entrypoint
-- `hooks/log-api-failure.js` — `StopFailure` entrypoint
-- `hooks/log-permission-denied.js` — `PermissionDenied` entrypoint
-- `hooks/lib/read-stdin.js` — parse stdin JSON (null on error)
-- `hooks/lib/resolve-log-path.js` — compute log path with homedir fallback
-- `hooks/lib/append-record.js` — mkdir + append a JSONL line, never throws
-- `hooks/ensure-gitignore.js` — `UserPromptSubmit` entrypoint; idempotently adds `.claude/logs/` to `.gitignore`
-- `hooks/*.test.mjs` — co-located tests (every source file has one)
-- `hooks/multi-event.test.mjs` — cross-script sanity check
-- `skills/revelio/SKILL.md` — `/revelio` slash command
-- `skills/revelio-clear/SKILL.md` — `/revelio-clear` slash command
+- `scripts/read-failures.mjs` — transcript reader with `--project`, `--limit`, `--session`, `--since`, `--until`
+- `scripts/read-failures.test.mjs` — co-located tests
+- `skills/revelio/SKILL.md` — `/revelio`, recent failures
+- `skills/revelio-patterns/SKILL.md` — `/revelio-patterns`, recurring failures with suggested fixes
 
 ## Running tests
 
 ```
-node --test "hooks/**/*.test.mjs"
+node --test scripts/*.test.mjs
 ```
 
 Node 20+ required (uses built-in test runner).
@@ -39,13 +29,12 @@ Node 20+ required (uses built-in test runner).
 ## Conventions
 
 - Zero runtime dependencies. If you reach for a dep, stop and reconsider.
-- Hooks must never throw and must always `process.exit(0)`. Logging never blocks Claude.
-- One responsibility per file. Tests co-located beside their source (`foo.js` + `foo.test.mjs` in the same dir).
-- No new config surface unless there's a concrete user need.
+- Read the transcripts defensively: the format is not a documented API. Skip lines and fields you don't understand, never throw on them.
+- Skills are user-invocable only (`disable-model-invocation: true`).
+- Tests co-located beside their source (`foo.mjs` + `foo.test.mjs` in the same dir).
 
 ## Scope boundaries
 
-- No log rotation, compression, or remote sync.
-- No redaction (v0.1 records `tool_input` as-is — see README Non-goals).
-- No TUI/dashboard.
-- No success-path logging. Noise is the enemy.
+- Read-only. Revelio never writes, moves or deletes transcripts.
+- No redaction: `input` and `error` are shown as recorded, truncated.
+- No TUI/dashboard, no cross-machine or team view (that's OpenTelemetry's job).

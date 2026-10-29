@@ -18,7 +18,7 @@ Add the marketplace once, then install only the spells you need.
 | Plugin | What it does |
 |---|---|
 | [`agento-patronum`](./plugins/agento-patronum/) | Blocks Claude's access to sensitive files & commands (`.env`, SSH keys, credentials, `printenv`) via a PreToolUse hook. |
-| [`revelio`](./plugins/revelio/) | Logs failed tool calls, API errors, and permission denials to a per-repo JSONL log you review with `/revelio`. |
+| [`revelio`](./plugins/revelio/) | Lists and groups failed tool calls, rejections, and API errors from Claude Code's session transcripts with `/revelio` and `/revelio-patterns`. |
 | [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — awesome-list submissions, repo setup, and more. |
 
 Each plugin has its own README with full details.

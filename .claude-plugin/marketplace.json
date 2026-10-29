@@ -15,7 +15,7 @@
     {
       "name": "revelio",
       "source": "./plugins/revelio",
-      "description": "Reveals failed tool calls, API errors, and permission denials via per-repo JSONL log."
+      "description": "Reveals failed tool calls, rejections, and API errors from Claude Code's session transcripts."
     },
     {
       "name": "felix-felicis",
