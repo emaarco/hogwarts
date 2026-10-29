@@ -1,6 +1,7 @@
 ---
 name: close-external-prs
 description: "Stops accepting pull requests from external contributors on a GitHub repo via the gh CLI: restricts PR creation to collaborators, closes every open external PR with a friendly comment that points to issues instead, and notes the policy in CONTRIBUTING.md. Use when asked to stop, block, or close external / outside / community pull requests, or to make a repo collaborators-only for PRs."
+disable-model-invocation: true
 allowed-tools: Bash, AskUserQuestion
 ---
 

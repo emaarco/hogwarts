@@ -1,6 +1,6 @@
 ---
 name: revelio
-description: Reveal recent failed tool calls, API errors, and permission denials from the per-repo Revelio log. Use when the user asks to see what went wrong, what failed, or runs /revelio.
+description: "Show recent failed tool calls, API errors and permission denials from the Revelio log. Use when the user asks what went wrong or failed."
 allowed-tools: Bash(tail:*), Bash(wc:*), Bash(test:*), Bash(git rev-parse:*), Read
 ---
 

@@ -1,6 +1,7 @@
 ---
 name: make-me-awesome
 description: "Analyze a GitHub repo and submit it to an awesome list via PR or issue. Usage: /make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]"
+disable-model-invocation: true
 allowed-tools: AskUserQuestion, WebFetch, WebSearch, Bash, Read, Edit
 ---
 

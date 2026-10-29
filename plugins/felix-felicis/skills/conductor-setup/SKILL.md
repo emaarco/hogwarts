@@ -1,6 +1,7 @@
 ---
 name: conductor-setup
 description: "Sets up a repo for Conductor by writing .conductor/settings.toml: setup script, selectable Run targets (nothing autostarts), and archive cleanup. Use when asked to set up conductor, configure a workspace, add run targets, stop conductor autostarting, make a run-button menu, or add archive/cleanup on workspace removal."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob, AskUserQuestion
 ---
 

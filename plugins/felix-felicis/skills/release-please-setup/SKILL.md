@@ -1,6 +1,7 @@
 ---
 name: release-please-setup
 description: "Sets up, audits, or migrates release-please (Conventional-Commit versioning, changelogs, GitHub releases). Use to set up release automation, automated versioning/changelogs, or release-please; to audit, review, fix, or question an existing setup; or to switch release forms (single ↔ per-module) without breaking changelog/tag history."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 

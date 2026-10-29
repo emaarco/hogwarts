@@ -1,6 +1,7 @@
 ---
 name: secure-publish-setup
 description: "Sets up tokenless npm publishing via OIDC trusted publishing: no NPM_TOKEN secret, automatic provenance attestations, and an idempotent publish step. Use when asked to publish npm packages securely, remove or replace NPM_TOKEN, or set up trusted publishing / provenance."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, WebFetch, AskUserQuestion
 ---
 

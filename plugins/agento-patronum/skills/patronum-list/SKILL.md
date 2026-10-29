@@ -1,6 +1,7 @@
 ---
 name: patronum-list
-description: "Show all patterns currently protected by agento-patronum. Use when the user asks what is protected, whether a specific file or command is blocked, or wants to review the current protection shield."
+description: "Show the patterns agento-patronum protects. Use when asked what is protected or whether a file or command is blocked."
+disable-model-invocation: true
 allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-list.sh")
 ---
 

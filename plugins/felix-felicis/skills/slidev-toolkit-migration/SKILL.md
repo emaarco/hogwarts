@@ -1,6 +1,7 @@
 ---
 name: slidev-toolkit-migration
 description: "Migrates an existing Slidev presentation onto the Miragon slidev-toolkit template (@miragon/slidev-toolkit), slide by slide behind build and verify gates. Use when asked to migrate/port/rebuild a slide deck onto the Miragon template or toolkit, modernise an old Slidev deck, or move slides to the corporate design system."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob, WebFetch, AskUserQuestion
 ---
 

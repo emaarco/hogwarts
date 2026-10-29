@@ -1,6 +1,7 @@
 ---
 name: dependency-graph
 description: "Draws the folder-level import graph of a TS/JS or Java/Kotlin codebase (Spring and co): the whole picture first, then folder cycles and upward leaks against a layer order, each traced to the importing files, ending in an HTML report with recommendations. Use before restructuring folders or packages, introducing layers or writing architecture tests, or when asked how folders depend on each other."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob, AskUserQuestion
 ---
 

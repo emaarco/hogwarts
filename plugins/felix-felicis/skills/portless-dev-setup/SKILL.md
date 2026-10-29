@@ -1,6 +1,7 @@
 ---
 name: portless-dev-setup
 description: "Adopts portless for stable, git-worktree-aware .localhost dev URLs on the JS/TS frontend dev server and wires it into Conductor via .conductor/settings.toml. Use when asked to set up portless, fix stable dev URLs across worktrees, or make a repo Conductor-friendly for parallel agents."
+disable-model-invocation: true
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob, WebFetch, AskUserQuestion
 ---
 

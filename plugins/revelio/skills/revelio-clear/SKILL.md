@@ -1,6 +1,7 @@
 ---
 name: revelio-clear
 description: Clear (truncate) the Revelio log after explicit user confirmation. Use when the user asks to wipe, clear, reset, or obliviate the Revelio log, or runs /revelio-clear.
+disable-model-invocation: true
 allowed-tools: Bash(wc:*), Bash(test:*), Bash(: >*), Bash(git rev-parse:*)
 ---
 

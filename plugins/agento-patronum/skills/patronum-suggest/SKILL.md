@@ -1,6 +1,6 @@
 ---
 name: patronum-suggest
-description: "Suggest protection patterns based on project context. Invoke automatically when user mentions a new tech stack, cloud provider, or sensitive tooling. Also invoke when user asks what to protect."
+description: "Suggest agento-patronum protection patterns for the project. Use when the user mentions a new tech stack, cloud provider or sensitive tooling, or asks what to protect."
 allowed-tools: Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-list.sh"), Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/patronum-add.sh" *), Glob, Read, AskUserQuestion, WebSearch
 ---
 
