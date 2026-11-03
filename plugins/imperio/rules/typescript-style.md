@@ -1,0 +1,63 @@
+---
+paths:
+  - "**/*.ts"
+  - "**/*.tsx"
+---
+
+# TypeScript Code Style
+
+## Variable Naming
+
+Use full, descriptive names for variables. Avoid abbreviated or cryptic shorthand.
+
+**Bad:**
+```typescript
+const wsId = c.req.query("ws");
+const cid = c.req.query("clientId") ?? "default";
+const usr = await getUser(id);
+const cfg = loadConfig();
+```
+
+**Good:**
+```typescript
+const websocketId = c.req.query("ws");
+const clientId = c.req.query("clientId") ?? "default";
+const user = await getUser(id);
+const config = loadConfig();
+```
+
+This applies to all identifiers: local variables, function parameters, destructured bindings, and loop variables. Single-letter names are acceptable only for trivial loop counters (`i`, `j`) or conventional math variables.
+
+## Code Structure
+
+Group logic that belongs together into a class with a clear name and one responsibility, one class per file, named after the class. Avoid files that export many loose functions side by side. Use them only for real utils.
+
+**Bad:** `invoice.ts` exports loose functions that share state through parameters.
+```typescript
+export function calculateNet(items: LineItem[]): number { ... }
+export function calculateGross(items: LineItem[], taxRate: number): number { ... }
+export function sendInvoice(invoice: Invoice, mailer: Mailer): Promise<void> { ... }
+```
+
+**Good:** each class names its job, holds what it needs and lives in its own file.
+
+`invoice-calculator.ts`
+```typescript
+export class InvoiceCalculator {
+  constructor(private readonly taxRate: number) {}
+
+  netTotal(items: LineItem[]): number { ... }
+  grossTotal(items: LineItem[]): number { ... }
+}
+```
+
+`invoice-sender.ts`
+```typescript
+export class InvoiceSender {
+  constructor(private readonly mailer: Mailer) {}
+
+  async send(invoice: Invoice): Promise<void> { ... }
+}
+```
+
+Keep plain functions where a class adds nothing: React components and hooks, small pure helpers, and entry points a framework expects to be functions.
