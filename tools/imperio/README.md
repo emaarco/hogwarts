@@ -30,13 +30,13 @@ A file counts as managed when its frontmatter contains `cursed-by: imperio`. Imp
 From a clone of this repo:
 
 ```bash
-npx ./plugins/imperio
+npx ./tools/imperio
 ```
 
 Rerun it whenever the repo changes. It respects `CLAUDE_CONFIG_DIR`, so you can try it on a throwaway folder first:
 
 ```bash
-CLAUDE_CONFIG_DIR=/tmp/claude-test npx ./plugins/imperio
+CLAUDE_CONFIG_DIR=/tmp/claude-test npx ./tools/imperio
 ```
 
 Needs Node 20+.

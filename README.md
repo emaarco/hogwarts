@@ -22,10 +22,12 @@ Add the marketplace once, then install only the spells you need.
 
 Each plugin has its own README with full details.
 
-## 📚 Spellbook docs
+## 🛠 Tools
 
-- [Protego Totalum](./plugins/protego-totalum/) — no plugin needed: a script that puts Claude Code into the strict sandbox and installs a hook that blocks access to secrets (`.env`, SSH keys, credentials, `printenv`), without touching your own settings.
-- [Imperio](./plugins/imperio/) — no plugin needed: a script that keeps path-scoped code style rules (Kotlin, TypeScript, `package.json`) up to date in `~/.claude/rules/`.
+Not plugins: small scripts that sync config into your user-level `~/.claude`.
+
+- [Protego Totalum](./tools/protego-totalum/) — puts Claude Code into the strict sandbox and installs a hook that blocks access to secrets (`.env`, SSH keys, credentials, `printenv`), without touching your own settings.
+- [Imperio](./tools/imperio/) — keeps path-scoped code style rules (Kotlin, TypeScript, `package.json`) up to date in `~/.claude/rules/`.
 
 Together: **Protego guards and seals, Revelio reveals.**
 
@@ -35,7 +37,8 @@ Together: **Protego guards and seals, Revelio reveals.**
 hogwarts/
 ├── .claude-plugin/marketplace.json   # registers all plugins
 ├── .github/workflows/                # shared CI
-└── plugins/<name>/                   # one self-contained plugin each
+├── plugins/<name>/                   # one self-contained Claude Code plugin each
+└── tools/<name>/                     # one self-contained npm script each, not in the marketplace
 ```
 
 To add a plugin: drop it under `plugins/<name>/` with its own `.claude-plugin/plugin.json`, then add an entry to `marketplace.json`.
