@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Keep the title concise and prefix with the plugin (`agento-patronum:` or `revelio:`).
+        Keep the title concise and prefix with the plugin (e.g. `protego-totalum:` or `revelio:`).
         Example: `revelio: failed calls not appearing in log`.
 
   - type: dropdown
@@ -15,7 +15,7 @@ body:
     attributes:
       label: Plugin
       options:
-        - agento-patronum
+        - protego-totalum
         - revelio
         - other / unsure
     validations:

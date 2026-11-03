@@ -8,11 +8,6 @@
   },
   "plugins": [
     {
-      "name": "agento-patronum",
-      "source": "./plugins/agento-patronum",
-      "description": "Blocks Claude Code's access to sensitive files, credentials, and commands (.env, SSH keys, AWS/kube configs, printenv) via a PreToolUse hook."
-    },
-    {
       "name": "revelio",
       "source": "./plugins/revelio",
       "description": "Reveals failed tool calls, rejections, and API errors from Claude Code's session transcripts."

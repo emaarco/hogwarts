@@ -10,14 +10,13 @@ Add the marketplace once, then install only the spells you need.
 
 ```bash
 /plugin marketplace add emaarco/hogwarts     # once per machine
-/plugin install <plugin>@emaarco             # e.g. agento-patronum@emaarco
+/plugin install <plugin>@emaarco             # e.g. revelio@emaarco
 ```
 
 ## 🧰 Plugins
 
 | Plugin | What it does |
 |---|---|
-| [`agento-patronum`](./plugins/agento-patronum/) | Blocks Claude's access to sensitive files & commands (`.env`, SSH keys, credentials, `printenv`) via a PreToolUse hook. |
 | [`revelio`](./plugins/revelio/) | Lists and groups failed tool calls, rejections, and API errors from Claude Code's session transcripts with `/revelio` and `/revelio-patterns`. |
 | [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — awesome-list submissions, repo setup, and more. |
 
@@ -25,10 +24,10 @@ Each plugin has its own README with full details.
 
 ## 📚 Spellbook docs
 
-- [Protego Totalum](./plugins/protego-totalum/) — no plugin needed: how to seal Claude Code with the built-in `/sandbox` command.
+- [Protego Totalum](./plugins/protego-totalum/) — no plugin needed: a script that puts Claude Code into the strict sandbox and installs a hook that blocks access to secrets (`.env`, SSH keys, credentials, `printenv`), without touching your own settings.
 - [Imperio](./plugins/imperio/) — no plugin needed: a script that keeps path-scoped code style rules (Kotlin, TypeScript, `package.json`) up to date in `~/.claude/rules/`.
 
-Together: **Patronum guards, Protego seals, Revelio reveals.**
+Together: **Protego guards and seals, Revelio reveals.**
 
 ## 🗂 Structure
 

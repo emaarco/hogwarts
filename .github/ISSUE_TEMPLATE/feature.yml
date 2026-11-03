@@ -14,7 +14,7 @@ body:
     attributes:
       label: Plugin
       options:
-        - agento-patronum
+        - protego-totalum
         - revelio
         - new plugin / monorepo-wide
     validations:

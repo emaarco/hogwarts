@@ -9,7 +9,7 @@ body:
     attributes:
       label: Plugin
       options:
-        - agento-patronum
+        - protego-totalum
         - revelio
         - monorepo-wide (CI, structure, etc.)
     validations:

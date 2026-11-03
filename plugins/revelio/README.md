@@ -62,7 +62,7 @@ Revelio used to write its own log through hooks. That log is gone:
 
 ## 🎭 Companion
 
-See [`agento-patronum`](../agento-patronum/) for the other side of the coin. *Patronum guards; Revelio reveals.*
+See [`protego-totalum`](../protego-totalum/) for the other side of the coin. *Protego guards; Revelio reveals.*
 
 ## 🤝 Contributing
 
