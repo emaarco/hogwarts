@@ -10,13 +10,13 @@ This isn't a plugin. It's a script that raises two shields in your user-level Cl
 ## 🪄 Cast it
 
 ```bash
-npx ./plugins/protego-totalum
+npx ./tools/protego-totalum
 ```
 
 Run it from a clone of this repo, and again whenever you pull. It needs Node 20+ and [`jq`](https://jqlang.github.io/jq/) for the hook. Try it on a scratch config first:
 
 ```bash
-CLAUDE_CONFIG_DIR=/tmp/claude-test npx ./plugins/protego-totalum
+CLAUDE_CONFIG_DIR=/tmp/claude-test npx ./tools/protego-totalum
 ```
 
 ## ⚙️ What a run does
