@@ -70,13 +70,22 @@ jobs:
         run: |
           python3 -c "import json,sys; json.load(open('.claude-plugin/plugin.json'))" && echo "plugin.json: OK"
 
-      - name: Validate SKILL.md frontmatter
-        run: |
-          for f in skills/*/SKILL.md; do
-            head -10 "$f" | grep -q "^name:" || { echo "$f: missing name"; exit 1; }
-            head -10 "$f" | grep -q "^description:" || { echo "$f: missing description"; exit 1; }
-            echo "$f: frontmatter OK"
-          done
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+
+      - name: Install validator
+        working-directory: plugins/felix-felicis/validator
+        run: npm ci
+
+      - name: Test validator
+        working-directory: plugins/felix-felicis/validator
+        run: npm test
+
+      - name: Validate skills
+        working-directory: plugins/felix-felicis/validator
+        run: npm run validate
 
   validate-imperio:
     runs-on: ubuntu-latest

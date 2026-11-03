@@ -10,7 +10,7 @@
   "packages": {
     // each entry below defines one independently-released crate (own version, tag, changelog).
     // {} is enough since cargo-workspace reads name/version straight from each Cargo.toml
-    // (verified against graphprotocol/indexer-rs — see reference/examples.md)
+    // (verified against graphprotocol/indexer-rs — see references/examples.md)
     "crates/<module-a>": {},
     "crates/<module-b>": {},
     "crates/<module-c>": {}
