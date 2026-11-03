@@ -81,11 +81,11 @@ Any output means the Claude app may commit to the default branch: show it and as
 
 ## Phase 2 — Use cases
 
-Ask via **AskUserQuestion** (multi-select) which use cases to add. Each is a template under `reference/` next to this SKILL.md plus the few values it needs.
+Ask via **AskUserQuestion** (multi-select) which use cases to add. Each is a template under `assets/` next to this SKILL.md plus the few values it needs.
 
 | Use case | Template | Status |
 |---|---|---|
-| **Dependency repair** — a red Dependabot PR gets one pass of `dependency-update-shepherd`; never merges | `reference/dependency-repair-workflow.yml` | unproven |
+| **Dependency repair** — a red Dependabot PR gets one pass of `dependency-update-shepherd`; never merges | `assets/dependency-repair-workflow.yml` | unproven |
 
 Not shipped yet: `@claude` mentions, PR review, CI auto-fix for non-bot PRs, issue triage, scheduled runs. For those, point the user at the examples in https://github.com/anthropics/claude-code-action and keep the Phase 1 foundation.
 

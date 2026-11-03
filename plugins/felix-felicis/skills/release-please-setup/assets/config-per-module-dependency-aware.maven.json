@@ -10,7 +10,7 @@
     // each entry below defines one independently-released Maven module (own version, tag, changelog);
     // maven-workspace reads the dependency graph from each module's pom.xml
     // (verified against chingor13/release-please-playground, a release-please maintainer's own
-    // demo repo for this exact plugin — see reference/examples.md)
+    // demo repo for this exact plugin — see references/examples.md)
     "<parent-dir>/<module-a>": { "component": "<module-a>" },
     "<parent-dir>/<module-b>": { "component": "<module-b>" }
   }

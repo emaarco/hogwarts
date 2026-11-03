@@ -34,7 +34,7 @@ produce garbage.
   produces plausible-looking rubbish. The mapping table + tracking checklist guide
   the handwork; the scripts never touch meaning.
 
-Two shipped scripts back this (`reference/`): `enumerate-slides.mjs` (parser-based
+Two shipped scripts back this (`scripts/`): `enumerate-slides.mjs` (parser-based
 slide checklist) and `leftover-report.mjs` (raw-HTML / old-component progress gate).
 Copy them into the deck's tooling and run them from inside the deck.
 
@@ -82,7 +82,7 @@ Copy them into the deck's tooling and run them from inside the deck.
 
 4. **Write the plan + mapping table first**, into `.context/migration/`:
    - `plan.md` — phases, chapter order, the chosen PR strategy, the pilot sub-chapter.
-   - `mapping-table.md` — copy `reference/mapping-table.md` and fill the Source
+   - `mapping-table.md` — copy `references/mapping-table.md` and fill the Source
      columns from step 2. **No slide is migrated until its constructs have a row.**
    - `tracking.md` — the per-slide checklist (generated in Phase 3), plus a
      **Deferred polish** section for rough-but-functional bits (e.g. an awkward
@@ -91,16 +91,16 @@ Copy them into the deck's tooling and run them from inside the deck.
 ## Phase 1 — Scaffold the target deck(s)
 
 **Consume the toolkit from npm, pinned to one version across all decks; never vendor
-the toolkit source.** Use the shipped `reference/new-topic-deck.sh` — it scaffolds
+the toolkit source.** Use the shipped `scripts/new-topic-deck.sh` — it scaffolds
 one deck per topic via the public `@miragon/create-slidev-deck`, strips the demo
 chapters, writes a workspace `package.json` + a minimal `slides.md` (cover +
 closing), and keeps every deck identical:
 ```bash
 # run from the repo root, once per topic:
-reference/new-topic-deck.sh <slug> <@scope/npm-name> "Deck Title"
+scripts/new-topic-deck.sh <slug> <@scope/npm-name> "Deck Title"
 # offline/deterministic against a local template checkout:
-CREATE_DECK_SKELETON=.context/slidev-deck-template reference/new-topic-deck.sh ...
-# drop an unused addon: DECK_ADDONS="bpmn" reference/new-topic-deck.sh ...   (no dmn)
+CREATE_DECK_SKELETON=.context/slidev-deck-template scripts/new-topic-deck.sh ...
+# drop an unused addon: DECK_ADDONS="bpmn" scripts/new-topic-deck.sh ...   (no dmn)
 ```
 Then add `decks/*` to the root `package.json` workspaces (once), wire numbered root
 scripts (`mdeck:N` / `mbuild:N` / `mverify:N`) so any deck runs from the root, and
@@ -142,7 +142,7 @@ import per chapter, and a `closing`. **Wire chapters in incrementally** — add 
 `src:` line only once that chapter is migrated, so the deck always builds with just
 what's done and a broken in-progress chapter never blocks the build.
 
-Enumerate each old chapter with the shipped `reference/enumerate-slides.mjs` — the
+Enumerate each old chapter with the shipped `scripts/enumerate-slides.mjs` — the
 **old-side analyzer** (parser-based, never regex). It writes a per-chapter checklist
 to `.context/migration/checklists/<chapter>.md` with, per slide, the old layout + a
 suggested toolkit layout, every component used, raw-HTML/hex signals, and last-resort
@@ -150,7 +150,7 @@ custom flags. Pass the source deck's own component names (a first run lists what
 sees, so you know what to pass):
 ```bash
 # from inside the deck (so @slidev/parser resolves):
-node reference/enumerate-slides.mjs path/to/source-chapter.md \
+node scripts/enumerate-slides.mjs path/to/source-chapter.md \
   --old <old component tags to migrate> --customs <interactive tags to port as-is>
 ```
 `npm run verify` guards the new side; this guards the old side.
@@ -168,7 +168,7 @@ For each slide in the tracking checklist:
    raw HTML/CSS/hex. Turn Fließtext into bullets where it's really a list. Move
    assets into the chapter's `resources/` and reference `/resources/<chapter>/<file>`.
 3. **Handle every visualisation via the decision tree** (full version in
-   `reference/mapping-table.md`). A **content-bearing** visual is **never** flattened
+   `references/mapping-table.md`). A **content-bearing** visual is **never** flattened
    to Cards and raw `<svg>`/HTML is **never a valid end state** — a migrated slide
    must never look like content was lost. (A purely **decorative** SVG — ornament,
    divider, chrome — is not content: just delete it.) For content, walk top-down,
@@ -189,7 +189,7 @@ For each slide in the tracking checklist:
        template's `excalidraw` skill) when **placement carries meaning** — freeform
        architecture sketches, deliberately arranged boxes, custom shapes, hand-drawn
        polish. That's most deck diagrams; Mermaid's auto-layout looks generic there.
-       One-time, bootstrap the exporter with `reference/setup-excalidraw.sh` — it
+       One-time, bootstrap the exporter with `scripts/setup-excalidraw.sh` — it
        installs the CLI as a **local devDependency** (no global install), handles the
        Firefox-revision mismatch + macOS keyboard patch — then export a scene JSON
        into the chapter's `resources/` via `npx excalidraw-brute-export-cli` (integer
@@ -201,7 +201,7 @@ For each slide in the tracking checklist:
        polish"; don't fall further just because it looks off.
    - **c) Untransformable custom-HTML picture → rasterise to PNG.** Only when a redraw
      is genuinely infeasible (a picture built from `<div>`/CSS/SVG, too complex, or
-     the conversion erred). Use the shipped `reference/render-svgs-from-md.mjs`
+     the conversion erred). Use the shipped `scripts/render-svgs-from-md.mjs`
      (Playwright screenshots each inline `<svg>`, writing both `.svg` and `.png` into
      `resources/`); embed the PNG via `<Figure src>` and log "Deferred polish". A
      raster `Figure` is a component, so it passes `no-raw-html`; still confirm the
@@ -239,7 +239,7 @@ npm run verify:source    # fast source guardrails (also what CI runs)
 ```
 Then the leftover gate — nothing old must remain:
 ```bash
-node reference/leftover-report.mjs deck/chapter/<chapter>/*.md --old <OldComp1,OldComp2>
+node scripts/leftover-report.mjs deck/chapter/<chapter>/*.md --old <OldComp1,OldComp2>
 ```
 
 **`build` ≠ `verify` — run both.** The verify dev-server tolerates errors the static
@@ -249,7 +249,7 @@ tag" — even inside inline code or a table cell — while verify stays green. A
 verify does **not** mean the deck builds.
 
 **Overflow tuning converges fast if you know the mechanism** (full rules +
-thresholds in [`reference/build-and-overflow-lessons.md`](reference/build-and-overflow-lessons.md)):
+thresholds in [`references/build-and-overflow-lessons.md`](references/build-and-overflow-lessons.md)):
 - Fit is **element-COUNT driven, not text-length** — shortening words does nothing;
   remove/merge lines, `Step`s, or bullets, or shrink a `Figure`'s `maxHeight`.
 - The real threshold is **≥16px clearance (content ≤536px)**, not ≤552px, and it
@@ -260,7 +260,7 @@ thresholds in [`reference/build-and-overflow-lessons.md`](reference/build-and-ov
 - **Large decks (~70+ slides) crash the rendered verify mid-run** (a Playwright
   resource limit, not content) — run it in halves: `VERIFY_PAGES="1-40"` then
   `"41-77"`.
-- To eyeball **one** slide while tuning, `reference/screenshot-slide.mjs <url> <out.png>`
+- To eyeball **one** slide while tuning, `scripts/screenshot-slide.mjs <url> <out.png>`
   screenshots it from the running dev server and prints an overflow probe (content vs
   canvas), without touching the server.
 
@@ -282,7 +282,7 @@ verify run (stop a stuck verify server or set `VERIFY_PORT`).
 - Turn the **Deferred polish** list from `tracking.md` into follow-up issues (e.g.
   rough Excalidraw redraws) so nothing rough-but-functional is silently forgotten.
 
-## Shipped scripts (`reference/`)
+## Shipped scripts (`scripts/`)
 
 Copy these into the deck's tooling (e.g. `scripts/migration/`) and run from inside a
 deck. All are repo-agnostic; the parser-based ones need `@slidev/parser` (ships with
@@ -303,4 +303,4 @@ The whole migration distils to: **this skill + the mapping table + the shipped
 scripts + the build/overflow lessons + the verify gates.** Keep the mechanical steps
 as committed scripts (e.g. under `scripts/migration/`) and turn each recurring gotcha
 into project memory, so the next topic — and the next deck — converges faster. After
-a real migration, feed new mapping rows, scripts, or lessons back into `reference/`.
+a real migration, feed new mapping rows, scripts, or lessons back into `references/` and `scripts/`.

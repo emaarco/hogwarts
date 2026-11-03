@@ -35,11 +35,11 @@ release-please can be scoped three ways. The wrong pick floods the repo with irr
 
 | Form                                 | Behavior                                                                                                                                          | Choose when                                                                                    | Template                                                        |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| **A — Single release**               | One Release PR, one tag, one CHANGELOG for the whole repo. Internal packages (if any) still bump their own `package.json`/manifest, but in lockstep. | Everything ships as one product/artifact; a change anywhere is "one release" for the consumer. | `reference/config-single-release.json`                          |
-| **B — Per-module, dependency-aware** | One release line (tag `<component>-vX.Y.Z`, own CHANGELOG) per module. A module that depends on another gets an automatic patch release when that dependency releases — even with no code change of its own. | Modules are consumed independently **and** depend on each other (an npm/cargo/maven workspace). | `reference/config-per-module-dependency-aware.json` (+ `.rust.json` / `.maven.json`) |
-| **C — Per-module, self-contained**   | One release line per module, same as B, but modules don't depend on each other — nothing to auto-propagate.                                          | Modules are consumed independently and are self-contained (e.g. plugins in a marketplace).      | `reference/config-per-module-independent.json`                  |
+| **A — Single release**               | One Release PR, one tag, one CHANGELOG for the whole repo. Internal packages (if any) still bump their own `package.json`/manifest, but in lockstep. | Everything ships as one product/artifact; a change anywhere is "one release" for the consumer. | `assets/config-single-release.json`                          |
+| **B — Per-module, dependency-aware** | One release line (tag `<component>-vX.Y.Z`, own CHANGELOG) per module. A module that depends on another gets an automatic patch release when that dependency releases — even with no code change of its own. | Modules are consumed independently **and** depend on each other (an npm/cargo/maven workspace). | `assets/config-per-module-dependency-aware.json` (+ `.rust.json` / `.maven.json`) |
+| **C — Per-module, self-contained**   | One release line per module, same as B, but modules don't depend on each other — nothing to auto-propagate.                                          | Modules are consumed independently and are self-contained (e.g. plugins in a marketplace).      | `assets/config-per-module-independent.json`                  |
 
-Form B and C look identical in config until you check for internal dependencies — that's exactly what Phase 1 does. Verified examples for all three forms are in `reference/examples.md` — pull one up when explaining a form, it lands better than the abstract table.
+Form B and C look identical in config until you check for internal dependencies — that's exactly what Phase 1 does. Verified examples for all three forms are in `references/examples.md` — pull one up when explaining a form, it lands better than the abstract table.
 
 ## Phase 1 — Map the repo topology
 
@@ -51,7 +51,7 @@ Gather evidence before asking anything — aim for a *recommendation*, not a dec
    - Node: does a workspace package's `dependencies`/`peerDependencies` reference another workspace package's `name`?
    - Rust: does a crate's `Cargo.toml` have a `path = "../other-crate"` dependency on another member?
    - Maven: does a module's `pom.xml` `<dependency>` reference a sibling module's `artifactId`?
-   - Anything else (e.g. `release-type: simple`, like this marketplace's `plugins/*`): no workspace plugin exists (Form B caveat in `reference/examples.md`) — a hand-maintained dependency graph won't auto-trigger releases. Flag this instead of proposing Form B.
+   - Anything else (e.g. `release-type: simple`, like this marketplace's `plugins/*`): no workspace plugin exists (Form B caveat in `references/examples.md`) — a hand-maintained dependency graph won't auto-trigger releases. Flag this instead of proposing Form B.
 
 Turn that into a proposal — ecosystem, single vs. multi-module, and (if multi-module) which form fits — then hold off on writing anything until Phase 2.
 
@@ -72,7 +72,7 @@ Do not write `release-please-config.json` or `.release-please-manifest.json` bef
 
 ## Phase 3 — Write the config from the matching template
 
-Copy the matching template from `reference/` to `release-please-config.json` at the repo root, then adapt it. Templates use `//` comments and `<placeholder>` tokens for readability — **strip both** before the file reaches release-please, which requires strict JSON.
+Copy the matching template from `assets/` to `release-please-config.json` at the repo root, then adapt it. Templates use `//` comments and `<placeholder>` tokens for readability — **strip both** before the file reaches release-please, which requires strict JSON.
 
 - **Form A** (`config-single-release.json`): single `"."` package entry. If there are internal sub-packages, list every `version` field *and* every cross-package `dependencies` pin under that one package's `extra-files`, so one Release PR bumps all of them in lockstep.
 - **Form B** — pick the template by ecosystem: `config-per-module-dependency-aware.json` (Node, `node-workspace`), `.rust.json` (Rust, `cargo-workspace`), `.maven.json` (Java/Maven, `maven-workspace`). Same shape: one `packages` entry per module path (often `{}` — the module's own manifest already has what the plugin needs), and the ecosystem's workspace plugin turned on in `plugins`.
@@ -88,7 +88,7 @@ Copy the matching template from `reference/` to `release-please-config.json` at 
 | Rust | `cargo-workspace` | each crate's `Cargo.toml` `path = "../other-crate"` entries |
 | Java/Maven | `maven-workspace` | each module's `pom.xml` `<dependency>`/parent-module references |
 
-Worked example (Node; same mechanic elsewhere — verified live in [graphprotocol/indexer-rs](https://github.com/graphprotocol/indexer-rs), see `reference/examples.md`): `packages/cli/package.json` depends on `@scope/core: ^1.2.0`; a `feat:` commit scoped to `packages/core` ships `core` 1.2.0 → 1.3.0. The **same Release PR** also bumps `cli` 2.0.0 → 2.0.1 and its dependency pin to `^1.3.0`, with a "Dependencies" changelog entry — even though no `cli` file changed. Propagates across major bumps by default; set `"always-link-local": false` to limit it to within-semver-range updates.
+Worked example (Node; same mechanic elsewhere — verified live in [graphprotocol/indexer-rs](https://github.com/graphprotocol/indexer-rs), see `references/examples.md`): `packages/cli/package.json` depends on `@scope/core: ^1.2.0`; a `feat:` commit scoped to `packages/core` ships `core` 1.2.0 → 1.3.0. The **same Release PR** also bumps `cli` 2.0.0 → 2.0.1 and its dependency pin to `^1.3.0`, with a "Dependencies" changelog entry — even though no `cli` file changed. Propagates across major bumps by default; set `"always-link-local": false` to limit it to within-semver-range updates.
 
 Seed `.release-please-manifest.json` with the versions currently in the manifests:
 
@@ -193,7 +193,7 @@ Mainly judging **whether the setup still makes sense** — fixing drift is secon
 
 Re-run **Phase 1** on the repo as it is today, then question each design choice. Divergences are the highest-value thing this audit finds — raise via `AskUserQuestion` like the Phase 2 form choice:
 
-- **Release form vs. topology:** Form A but packages now consumed independently → B/C? Form C but packages now depend on each other → B (won't auto-bump otherwise)? Form B but no workspace plugin for the ecosystem (Form B caveat in `reference/examples.md`) → graph isn't propagating, A or C? A new top-level package/app no form covers?
+- **Release form vs. topology:** Form A but packages now consumed independently → B/C? Form C but packages now depend on each other → B (won't auto-bump otherwise)? Form B but no workspace plugin for the ecosystem (Form B caveat in `references/examples.md`) → graph isn't propagating, A or C? A new top-level package/app no form covers?
 - **Validation vs. merge strategy:** check the *current* strategy (`gh api repos/{owner}/{repo} --jq '{squash:.allow_squash_merge,merge:.allow_merge_commit,rebase:.allow_rebase_merge}'`). Squash-merge with no PR-title validation → offer `amannn/action-semantic-pull-request`; a title validator left in place after squash was disabled → switch to commit-message linting.
 - **Publishing:** ships artifacts (npm/marketplace/container) but the workflow stops at the tag (no publish job gated on `releases_created`, Phase 6) → wire it via **`secure-publish-setup`**.
 - **Auth:** a PAT instead of a GitHub App token works but is a long-lived personal credential → offer migration (Phase 4). A deliberately-kept PAT is an observation.
@@ -290,8 +290,8 @@ release-please finds "the last release" primarily via git tags matching its conf
 
 ## Resources
 
-- `reference/config-single-release.json` (Form A), `reference/config-per-module-dependency-aware.json` + `.rust.json` + `.maven.json` (Form B, one per ecosystem), `reference/config-per-module-independent.json` (Form C) — copy-ready, annotated templates.
-- `reference/examples.md` — real repos (Miragon, emaarco, and well-known OSS monorepos) for each form, verified against their actual `release-please-config.json`, plus the release-please plugin docs.
+- `assets/config-single-release.json` (Form A), `assets/config-per-module-dependency-aware.json` + `.rust.json` + `.maven.json` (Form B, one per ecosystem), `assets/config-per-module-independent.json` (Form C) — copy-ready, annotated templates.
+- `references/examples.md` — real repos (Miragon, emaarco, and well-known OSS monorepos) for each form, verified against their actual `release-please-config.json`, plus the release-please plugin docs.
 - release-please action: https://github.com/googleapis/release-please-action
 - release-please manifest/config + plugins docs: https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md
 - `GITHUB_TOKEN` does not trigger workflows: https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
