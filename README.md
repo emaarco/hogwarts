@@ -26,6 +26,7 @@ Each plugin has its own README with full details.
 ## 📚 Spellbook docs
 
 - [Protego Totalum](./plugins/protego-totalum/) — no plugin needed: how to seal Claude Code with the built-in `/sandbox` command.
+- [Imperio](./plugins/imperio/) — no plugin needed: a script that keeps path-scoped code style rules (Kotlin, TypeScript, `package.json`) up to date in `~/.claude/rules/`.
 
 Together: **Patronum guards, Protego seals, Revelio reveals.**
 

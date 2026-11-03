@@ -1,0 +1,27 @@
+{
+  "name": "@emaarco/imperio",
+  "version": "0.0.0",
+  "description": "Keeps the path-scoped rules of emaarco/hogwarts up to date in ~/.claude/rules.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emaarco/hogwarts.git",
+    "directory": "plugins/imperio"
+  },
+  "bin": {
+    "imperio": "bin/imperio.mjs"
+  },
+  "files": [
+    "bin/imperio.mjs",
+    "lib/rules-folder.mjs",
+    "lib/rules-sync.mjs",
+    "rules"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test lib/*.test.mjs bin/*.test.mjs"
+  }
+}
