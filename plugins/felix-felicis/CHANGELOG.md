@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.0.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.4.0...felix-felicis-v4.0.0) (2026-11-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **felix-felicis:** move the style rules into imperio, a script that syncs them into ~/.claude/rules ([#152](https://github.com/emaarco/hogwarts/issues/152))
+
+### Features
+
+* **felix-felicis:** move the style rules into imperio, a script that syncs them into ~/.claude/rules ([#152](https://github.com/emaarco/hogwarts/issues/152)) ([8cf6031](https://github.com/emaarco/hogwarts/commit/8cf60314f0d37b58f2b4c8f303b0f9dadbe667a7))
+* **felix-felicis:** validate skills with a rule-based validator ([#156](https://github.com/emaarco/hogwarts/issues/156)) ([3d68c40](https://github.com/emaarco/hogwarts/commit/3d68c406ae1c9a04694313b2017c5b044a7c6f55))
+
 ## [3.4.0](https://github.com/emaarco/hogwarts/compare/felix-felicis-v3.3.0...felix-felicis-v3.4.0) (2026-10-28)
 
 

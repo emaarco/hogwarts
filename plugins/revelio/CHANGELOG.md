@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/emaarco/hogwarts/compare/revelio-v1.0.0...revelio-v2.0.0) (2026-11-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **protego-totalum:** merge agento-patronum into a script that syncs hooks and strict sandbox settings into ~/.claude ([#154](https://github.com/emaarco/hogwarts/issues/154))
+
+### Features
+
+* **protego-totalum:** merge agento-patronum into a script that syncs hooks and strict sandbox settings into ~/.claude ([#154](https://github.com/emaarco/hogwarts/issues/154)) ([9ec0569](https://github.com/emaarco/hogwarts/commit/9ec05692d5fc8e124c37db576d1b4aef321b05de))
+
 ## [1.0.0](https://github.com/emaarco/hogwarts/compare/revelio-v0.2.1...revelio-v1.0.0) (2026-10-29)
 
 
