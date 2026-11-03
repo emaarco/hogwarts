@@ -1,0 +1,29 @@
+{
+  "name": "@emaarco/protego-totalum",
+  "version": "0.0.0",
+  "description": "Syncs the protection hooks and sandbox settings of emaarco/hogwarts into ~/.claude without touching your own settings.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emaarco/hogwarts.git",
+    "directory": "plugins/protego-totalum"
+  },
+  "bin": {
+    "protego-totalum": "bin/protego-totalum.mjs"
+  },
+  "files": [
+    "bin/protego-totalum.mjs",
+    "lib/hooks-sync.mjs",
+    "lib/json-file.mjs",
+    "lib/settings-sync.mjs",
+    "hooks",
+    "settings.json"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test lib/*.test.mjs bin/*.test.mjs test/*.test.mjs"
+  }
+}

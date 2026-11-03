@@ -1,0 +1,52 @@
+{
+  "entries": [
+    {
+      "pattern": "**/.env",
+      "reason": "Environment files may contain credentials"
+    },
+    {
+      "pattern": "**/.env.*",
+      "reason": "Environment variable overrides may contain secrets"
+    },
+    {
+      "pattern": "**/*.pem",
+      "reason": "PEM files contain private keys or certificates"
+    },
+    {
+      "pattern": "**/*.key",
+      "reason": "Key files contain private keys"
+    },
+    {
+      "pattern": "~/.ssh/*",
+      "reason": "SSH directory contains private keys and config"
+    },
+    {
+      "pattern": "~/.aws/credentials",
+      "reason": "AWS credentials file contains access keys"
+    },
+    {
+      "pattern": "~/.aws/config",
+      "reason": "AWS config may contain sensitive account data"
+    },
+    {
+      "pattern": "~/.docker/config.json",
+      "reason": "Docker config may contain registry auth tokens"
+    },
+    {
+      "pattern": "~/.kube/config",
+      "reason": "Kubernetes config contains cluster credentials"
+    },
+    {
+      "pattern": "~/.npmrc",
+      "reason": "NPM config may contain auth tokens"
+    },
+    {
+      "pattern": "~/.pypirc",
+      "reason": "PyPI config may contain auth tokens"
+    },
+    {
+      "pattern": "Bash(printenv)",
+      "reason": "Exposes all environment variables including secrets"
+    }
+  ]
+}

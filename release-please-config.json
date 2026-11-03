@@ -8,17 +8,6 @@
   "draft": false,
   "prerelease": false,
   "packages": {
-    "plugins/agento-patronum": {
-      "package-name": "agento-patronum",
-      "component": "agento-patronum",
-      "extra-files": [
-        {
-          "type": "json",
-          "path": ".claude-plugin/plugin.json",
-          "jsonpath": "$.version"
-        }
-      ]
-    },
     "plugins/felix-felicis": {
       "package-name": "felix-felicis",
       "component": "felix-felicis",
