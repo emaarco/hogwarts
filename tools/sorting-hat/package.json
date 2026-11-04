@@ -1,0 +1,32 @@
+{
+  "name": "@emaarco/sorting-hat",
+  "version": "0.0.0",
+  "description": "Sorts every plugin and skill of emaarco/hogwarts into its house: claude plugin validate plus stricter rules for the skill layout.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emaarco/hogwarts.git",
+    "directory": "tools/sorting-hat"
+  },
+  "bin": {
+    "sorting-hat": "bin/sorting-hat.ts"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "validate": "node bin/sorting-hat.ts ../..",
+    "typecheck": "tsc",
+    "test": "tsc && node --test \"lib/**/*.test.ts\""
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "2.1.305",
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  },
+  "allowScripts": {
+    "@anthropic-ai/claude-code@2.1.305": true
+  }
+}

@@ -5,16 +5,7 @@ Claude Code plugin for everyday automation tasks.
 ## Architecture
 
 Pure skill-based plugin — no hooks, no build step, no runtime dependencies.
-Skills live in `skills/<skill-name>/SKILL.md`.
-
-`validator/` is dev tooling only, not part of any skill: a TypeScript npm package that checks every skill against a set of rules, run by Node 24 without a build step.
-
-- `src/skill-rule.ts` — the `SkillRule` interface every rule implements: a `name` and `check(skill)` returning violation messages
-- `src/rules/<name>-rule.ts` — one class per rule
-- `src/rule-validator.ts` — `RuleValidator`, runs every rule against every skill
-- `src/validate-skills.ts` — CLI entrypoint, registers the rules and prints the violations
-
-Run `npm test` and `npm run validate` inside `validator/`. To add a rule, implement `SkillRule` in a new file under `src/rules/`, add a co-located test and register it in `src/validate-skills.ts`.
+Skills live in `skills/<skill-name>/SKILL.md`. CI checks them with [`tools/sorting-hat`](../../tools/sorting-hat/CLAUDE.md).
 
 ## Skills
 
@@ -72,7 +63,7 @@ allowed-tools: AskUserQuestion
 ---
 ```
 
-Everything else in the skill folder goes into one of the standard folders: `scripts/` for code, `references/` for Markdown docs loaded on demand, `assets/` for templates and data, `evals/` for evals. No file may exceed 500 lines. `validator/` enforces this in CI.
+Everything else in the skill folder goes into one of the standard folders: `scripts/` for code, `references/` for Markdown docs loaded on demand, `assets/` for templates and data, `evals/` for evals. No file may exceed 500 lines. `tools/sorting-hat` enforces this in CI.
 
 ## Scope Boundaries
 

@@ -24,10 +24,11 @@ Each plugin has its own README with full details.
 
 ## 🛠 Tools
 
-Not plugins: small scripts that sync config into your user-level `~/.claude`.
+Not plugins: small scripts that sync config into your user-level `~/.claude`, plus dev tooling for this repo.
 
 - [Protego Totalum](./tools/protego-totalum/) — puts Claude Code into the strict sandbox and installs a hook that blocks access to secrets (`.env`, SSH keys, credentials, `printenv`), without touching your own settings.
 - [Imperio](./tools/imperio/) — keeps path-scoped code style rules (Kotlin, TypeScript, `package.json`) up to date in `~/.claude/rules/`.
+- [Sorting Hat](./tools/sorting-hat/) — repo dev tooling, not for installing: runs `claude plugin validate` on every plugin and sorts their skills against stricter house rules (layout, frontmatter, line limits) in CI.
 
 Together: **Protego guards and seals, Revelio reveals.**
 
@@ -38,7 +39,7 @@ hogwarts/
 ├── .claude-plugin/marketplace.json   # registers all plugins
 ├── .github/workflows/                # shared CI
 ├── plugins/<name>/                   # one self-contained Claude Code plugin each
-└── tools/<name>/                     # one self-contained npm script each, not in the marketplace
+└── tools/<name>/                     # one self-contained npm script each (config sync or repo dev tooling), not in the marketplace
 ```
 
 To add a plugin: drop it under `plugins/<name>/` with its own `.claude-plugin/plugin.json`, then add an entry to `marketplace.json`.
