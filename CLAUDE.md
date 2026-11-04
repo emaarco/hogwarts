@@ -6,7 +6,7 @@ This repository is a Claude Code **marketplace** that hosts multiple plugins, pl
 
 - `.claude-plugin/marketplace.json` — registers every plugin in `plugins/`
 - `plugins/<name>/` — one self-contained plugin per folder, each with its own `.claude-plugin/plugin.json`, `hooks/`, `skills/`, and `CLAUDE.md`
-- `tools/<name>/` — one self-contained npm package per folder with a CLI that syncs config into `~/.claude`; not registered in the marketplace
+- `tools/<name>/` — one self-contained npm package per folder with a CLI, either syncing config into `~/.claude` or dev tooling for this repo (e.g. `sorting-hat` validates every plugin and its skills); not registered in the marketplace
 - `.github/workflows/validate-plugins.yml` — single CI pipeline that validates the marketplace, each plugin and each tool
 
 When working on a specific plugin or tool, read its `CLAUDE.md` for context (architecture, conventions, scope boundaries).
