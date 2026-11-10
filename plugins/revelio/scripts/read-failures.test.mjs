@@ -23,7 +23,36 @@ function tempDir() {
 }
 
 test('transcriptDirFor encodes the project path like Claude Code', () => {
-  assert.equal(transcriptDirFor('/Users/me/my.repo', '/home'), '/home/.claude/projects/-Users-me-my-repo');
+  assert.equal(transcriptDirFor('/Users/me/my.repo', '/home/.claude'), '/home/.claude/projects/-Users-me-my-repo');
+});
+
+test('transcriptDirFor reads from CLAUDE_CONFIG_DIR when it is set', () => {
+  const previousConfigDir = process.env.CLAUDE_CONFIG_DIR;
+  process.env.CLAUDE_CONFIG_DIR = '/custom/claude';
+  try {
+    assert.equal(transcriptDirFor('/repo'), '/custom/claude/projects/-repo');
+  } finally {
+    if (previousConfigDir === undefined) delete process.env.CLAUDE_CONFIG_DIR;
+    else process.env.CLAUDE_CONFIG_DIR = previousConfigDir;
+  }
+});
+
+test('collects failures from subagent transcripts of a session', async () => {
+  const dir = tempDir();
+  writeTranscript(dir, 's1.jsonl', [
+    toolUse('t1', 'Bash', { command: 'pnpm test' }, '2026-01-01T10:00:00Z'),
+    toolResult('t1', 'Exit code 1', '2026-01-01T10:00:01Z'),
+  ]);
+  const subagentDir = path.join(dir, 's1', 'subagents');
+  fs.mkdirSync(subagentDir, { recursive: true });
+  writeTranscript(subagentDir, 'agent-a1.jsonl', [
+    toolUse('t2', 'Read', { file_path: '/x' }, '2026-01-01T11:00:00Z'),
+    toolResult('t2', 'File does not exist.', '2026-01-01T11:00:01Z'),
+  ]);
+
+  const records = await collectFailures(dir);
+
+  assert.deepEqual(records.map(r => r.tool), ['Read', 'Bash']);
 });
 
 test('collects tool errors with tool name and input, newest first', async () => {
