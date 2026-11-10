@@ -111,3 +111,13 @@ test('leaves subdirectories and files that are not markdown alone', () => {
   assert.equal(fs.existsSync(path.join(targetDirectory, 'settings.json')), true);
   assert.equal(fs.existsSync(path.join(targetDirectory, 'team.md')), true);
 });
+
+test('adds the imperio marker into the existing frontmatter of a rule with CRLF line endings', () => {
+  const crlfKotlinRule = kotlinRule.replaceAll('\n', '\r\n');
+  const sourceDirectory = directoryWith({ 'kotlin-style.md': crlfKotlinRule });
+  const targetDirectory = path.join(directoryWith({}), 'rules');
+
+  syncRules({ sourceDirectory, targetDirectory });
+
+  assert.equal(read(targetDirectory, 'kotlin-style.md'), installedKotlinRule.replaceAll('\n', '\r\n'));
+});
