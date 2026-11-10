@@ -1,53 +1,61 @@
-# hogwarts
+# 🏰 hogwarts
 
-> A Hogwarts for Claude Code — a spellbook of plugins that guard, reveal & automate. 🏰🪄
+[![CI](https://github.com/emaarco/hogwarts/actions/workflows/validate-plugins.yml/badge.svg)](https://github.com/emaarco/hogwarts/actions/workflows/validate-plugins.yml)
+[![License: MIT](https://img.shields.io/github/license/emaarco/hogwarts)](LICENSE)
 
-**hogwarts** is a [Claude Code](https://docs.claude.com/en/docs/claude-code) plugin marketplace. Instead of one big config, it bundles several small, focused plugins — each named after a spell or potion — that harden, observe, and automate your everyday agent workflows.
+**See what your agent failed at, keep it away from your secrets, give it a code style and hand off repo chores.**
 
-Add the marketplace once, then install only the spells you need.
+hogwarts is a spellbook for Claude Code: a plugin marketplace plus two scripts that set up your `~/.claude`, each one spell that does one job, so you learn only the ones you need. 🪄
+
+## 📖 The spellbook
+
+- **🔍 Revelio, the revealing charm (plugin).** [Revelio](plugins/revelio/) lists your agent's failed tool calls, rejections and API errors in a repo and suggests a fix per recurring pattern.
+- **🍀 Felix Felicis, liquid luck (plugin).** [Felix Felicis](plugins/felix-felicis/) audits a repo with `/maturity-analysis`, sets up branch protection, releases and CI on GitHub, and gets failing dependency update PRs green on GitHub and GitLab.
+- **🛡️ Protego Totalum, the camp shield (script).** [Protego Totalum](tools/protego-totalum/) turns on Claude Code's [sandbox](https://code.claude.com/docs/en/sandboxing) in strict mode and blocks Claude's file tools from `.env` files, keys and credentials.
+- **🌀 Imperio, the Imperius Curse (script).** [Imperio](tools/imperio/) installs style rules for Kotlin, TypeScript and `package.json` that Claude loads only when it touches matching files.
+
+Together: **Protego guards, Revelio reveals, Imperio commands, Felix brings the luck.**
 
 ## ⚡ Install
 
+**Plugins:** inside Claude Code, add the marketplace once (it registers as `emaarco`), then install the plugins you want.
+
+```text
+/plugin marketplace add emaarco/hogwarts
+/plugin install revelio@emaarco
+/plugin install felix-felicis@emaarco
+```
+
+**Scripts:** they change user settings, which a plugin cannot, so they run from a clone. They need Node 20 or later; Protego Totalum also needs [jq](https://jqlang.github.io/jq/), plus `bubblewrap` and `socat` on Linux, and does not support native Windows (use WSL2).
+
 ```bash
-/plugin marketplace add emaarco/hogwarts     # once per machine
-/plugin install <plugin>@emaarco             # e.g. revelio@emaarco
+git clone https://github.com/emaarco/hogwarts.git
+cd hogwarts
+npx ./tools/protego-totalum
+npx ./tools/imperio
 ```
 
-## 🧰 Plugins
+Settings and rules you already have win over the shipped ones; rerun after `git pull` to update. Prefix a command with `CLAUDE_CONFIG_DIR=/tmp/claude-try` to practise on a scratch folder first. In strict mode, each host a repo needs must be allowlisted, as [Protego Totalum's README](tools/protego-totalum/) explains.
 
-| Plugin | What it does |
-|---|---|
-| [`revelio`](./plugins/revelio/) | Lists and groups failed tool calls, rejections, and API errors from Claude Code's session transcripts with `/revelio` and `/revelio-patterns`. |
-| [`felix-felicis`](./plugins/felix-felicis/) | Everyday automation skills — awesome-list submissions, repo setup, and more. |
+## 🪄 Your first spells
 
-Each plugin has its own README with full details.
+1. Cast `/revelio` in a repo to see what your agent failed at recently.
+2. Cast `/maturity-analysis` there for a prioritized list of what the repo is missing.
+3. Run Protego Totalum and Imperio, restart Claude Code, and ask it to read a `.env` file: the shield holds.
 
-## 🛠 Tools
+## 🦉 Help and feedback
 
-Not plugins: small scripts that sync config into your user-level `~/.claude`, plus dev tooling for this repo.
+- **Details:** each plugin and script has its own README, linked above.
+- **Bugs and ideas:** send an owl, or [open an issue](https://github.com/emaarco/hogwarts/issues/new/choose).
 
-- [Protego Totalum](./tools/protego-totalum/) — puts Claude Code into the strict sandbox and installs a hook that blocks access to secrets (`.env`, SSH keys, credentials, `printenv`), without touching your own settings.
-- [Imperio](./tools/imperio/) — keeps path-scoped code style rules (Kotlin, TypeScript, `package.json`) up to date in `~/.claude/rules/`.
-- [Sorting Hat](./tools/sorting-hat/) — repo dev tooling, not for installing: runs `claude plugin validate` on every plugin and sorts their skills against stricter house rules (layout, frontmatter, line limits) in CI.
+## 🧹 Contributing
 
-Together: **Protego guards and seals, Revelio reveals.**
-
-## 🗂 Structure
-
-```
-hogwarts/
-├── .claude-plugin/marketplace.json   # registers all plugins
-├── .github/workflows/                # shared CI
-├── plugins/<name>/                   # one self-contained Claude Code plugin each
-└── tools/<name>/                     # one self-contained npm script each (config sync or repo dev tooling), not in the marketplace
-```
-
-To add a plugin: drop it under `plugins/<name>/` with its own `.claude-plugin/plugin.json`, then add an entry to `marketplace.json`.
+Repository layout, adding a plugin or script, and validation are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 📜 License
 
-[MIT](./LICENSE)
+[MIT](LICENSE) © Marco Schäck
 
 ---
 
-*Created with ♥ by [Marco Schaeck](https://www.linkedin.com/in/schaeckm)*
+_Mischief managed. Created with ♥ by [Marco Schaeck](https://www.linkedin.com/in/schaeckm)._
