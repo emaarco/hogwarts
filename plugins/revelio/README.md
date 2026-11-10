@@ -1,10 +1,10 @@
-# Revelio
+# 🔍 Revelio
 
 > *Revelio* — the revealing charm. Surfaces what your agent tried, and failed.
 
-Claude Code plugin that reveals failed tool calls, rejections, auto-mode denials and API errors in your repo so you can see patterns and act on them — sharpen a skill, add a hook, adjust a permission.
+**See what your agent failed at in a repo, and what to change so it stops.**
 
-> Early development. Expect the shape to move.
+A Claude Code plugin that lists what failed in your repo so you can act on it: sharpen a skill, add a hook, adjust a permission.
 
 ## 🪄 The spell
 
@@ -23,59 +23,48 @@ Other denial kinds Claude Code records (`cancelled`, `interrupted`, `permission-
 
 ## ⚡ Install
 
-```
+Inside Claude Code:
+
+```text
 /plugin marketplace add emaarco/hogwarts
 /plugin install revelio@emaarco
 ```
 
 ## 📜 Usage
 
-```
+```text
 /revelio              # the last 20 failures in this repo (or "last 50", "since yesterday", "in session abc123")
-/revelio-patterns     # recurring failures across sessions, each with a suggested fix
+/revelio-patterns     # failures that recur in 2+ sessions, each with a suggested fix
 ```
 
-Both are user-invoked only. They share `scripts/read-failures.mjs`, which you can also run yourself:
-
-```
-node scripts/read-failures.mjs --project "$(git rev-parse --show-toplevel)" --limit 20
-```
+Claude never runs them on its own; you type them.
 
 ## 🧰 Act on what you reveal
 
 - A tool keeps failing the same way → write or refine a skill that does it right.
 - A permission keeps getting denied → widen the permission or rework the approach.
-- An API error recurs → fix the login, back off, or add a `PreToolUse` guard.
+- An API error recurs → fix the login, the network or the rate limit.
 
 ## ⚠️ Limits
 
-- Claude Code deletes transcripts after `cleanupPeriodDays` (default 30 days). There is no long-term history.
+- Claude Code deletes transcripts after `cleanupPeriodDays` (default 30 days); raise it in `~/.claude/settings.json` to keep more history.
 - The transcript format is not a documented API. The reader skips what it does not understand, but a Claude Code update can change what it finds.
-- Transcripts are per user and per machine. For a shared view across a team, use Claude Code's OpenTelemetry export.
+- Transcripts are stored per project root, so sessions started in a subfolder or another worktree of the repo don't show up.
+- Transcripts are per user and per machine. For a shared view across a team, use Claude Code's [OpenTelemetry export](https://code.claude.com/docs/en/monitoring-usage).
 
-## 🔁 Migrating from 0.2
+## 🔁 Upgrading from 0.x
 
-Revelio used to write its own log through hooks. That log is gone:
-
-- The hooks and `/revelio-clear` are removed. Nothing writes `.claude/logs/revelio.jsonl` any more.
-- Delete old `.claude/logs/revelio.jsonl` files (and `$HOME/.claude/logs/revelio.jsonl`). The `.claude/logs/` line Revelio added to `.gitignore` can go too, unless something else writes there.
+Revelio no longer writes its own log. See [Migrating from 0.2](docs/migrating-from-0.2.md) for what to clean up.
 
 ## 🎭 Companion
 
-See [`protego-totalum`](../protego-totalum/) for the other side of the coin. *Protego guards; Revelio reveals.*
+Calls blocked by [Protego Totalum](../../tools/protego-totalum/)'s hook show up here as `tool-error`. *Protego guards; Revelio reveals.*
 
-## 🤝 Contributing
+## 🦉 Help and feedback
 
-Revelio welcomes contributions — bug reports, feature ideas, refactors, and docs improvements.
+- **Bugs and ideas:** [open a bug report](https://github.com/emaarco/hogwarts/issues/new?template=bug.yml) or [a feature request](https://github.com/emaarco/hogwarts/issues/new?template=feature.yml).
+- **Contributing:** contributions are welcome; see [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
-- **Report a bug**: [Open a bug report](https://github.com/emaarco/hogwarts/issues/new?template=bug.yml)
-- **Request a feature**: [Open a feature request](https://github.com/emaarco/hogwarts/issues/new?template=feature.yml)
-- **Propose a refactor**: [Open a refactor issue](https://github.com/emaarco/hogwarts/issues/new?template=refactor.yml)
-- **Improve a skill**: Skills live in `skills/*/SKILL.md` — plain Markdown, easy to edit
-- **Improve the transcript reader**: `scripts/read-failures.mjs` with a co-located test — run `node --test scripts/*.test.mjs`
+## 📜 License
 
-Licensed under [MIT](LICENSE).
-
----
-
-*Created with ♥ by [Marco Schaeck](https://www.linkedin.com/in/schaeckm) · [LinkedIn](https://www.linkedin.com/in/schaeckm) · [Medium](https://medium.com/@emaarco)*
+[MIT](../../LICENSE)

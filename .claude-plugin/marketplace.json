@@ -15,7 +15,7 @@
     {
       "name": "felix-felicis",
       "source": "./plugins/felix-felicis",
-      "description": "Everyday automation skills — submit repos to awesome lists and more."
+      "description": "Liquid luck for running a repo — audits, branch protection, releases, dependency updates and everyday chores."
     }
   ]
 }

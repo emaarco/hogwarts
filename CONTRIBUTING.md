@@ -30,7 +30,7 @@ Each plugin and tool has its own `CLAUDE.md` with its architecture and conventio
 
 ## 🎩 Validation
 
-The [Sorting Hat](tools/sorting-hat/) runs `claude plugin validate` on every plugin and checks each skill against this repo's house rules. CI runs it on every push; run it locally with:
+The [Sorting Hat](tools/sorting-hat/) runs `claude plugin validate` on every plugin and checks each skill against this repo's house rules. CI runs it on every push; run it locally with Node 24 or later:
 
 ```bash
 cd tools/sorting-hat
