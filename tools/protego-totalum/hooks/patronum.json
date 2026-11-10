@@ -45,6 +45,26 @@
       "reason": "PyPI config may contain auth tokens"
     },
     {
+      "pattern": "~/.config/gh/hosts.yml",
+      "reason": "GitHub CLI config contains auth tokens"
+    },
+    {
+      "pattern": "~/.config/glab-cli/config.yml",
+      "reason": "GitLab CLI config contains auth tokens"
+    },
+    {
+      "pattern": "~/.git-credentials",
+      "reason": "Git credential store contains plaintext tokens"
+    },
+    {
+      "pattern": "~/.netrc",
+      "reason": "netrc contains plaintext logins for remote hosts"
+    },
+    {
+      "pattern": "~/.claude/.credentials.json",
+      "reason": "Claude Code credentials contain your login token"
+    },
+    {
       "pattern": "Bash(printenv)",
       "reason": "Exposes all environment variables including secrets"
     }

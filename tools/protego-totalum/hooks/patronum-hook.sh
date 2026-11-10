@@ -6,8 +6,8 @@ set -euo pipefail
 
 # Check for jq dependency
 if ! command -v jq &> /dev/null; then
-  echo "ERROR: jq is required but not installed. protego-totalum cannot function." >&2
-  exit 1
+  echo "PATRONUM: jq is required but not installed — blocking all tool calls as safe default" >&2
+  exit 2
 fi
 
 # Fail closed if HOME is unset — no config path can be computed
@@ -17,7 +17,7 @@ if [ -z "${HOME:-}" ]; then
 fi
 
 PATRONUM_CONFIG="$(dirname "${BASH_SOURCE[0]}")/patronum.json"
-PATRONUM_LOG="$HOME/.claude/patronum.log"
+PATRONUM_LOG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/patronum.log"
 
 # If no config exists, allow everything
 if [ ! -f "$PATRONUM_CONFIG" ]; then

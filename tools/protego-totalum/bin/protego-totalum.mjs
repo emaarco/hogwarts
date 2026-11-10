@@ -2,10 +2,17 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { HooksSync } from '../lib/hooks-sync.mjs';
 import { JsonFile } from '../lib/json-file.mjs';
 import { SettingsSync } from '../lib/settings-sync.mjs';
+
+const jqCheck = spawnSync('jq', ['--version']);
+if (jqCheck.error || jqCheck.status !== 0) {
+  console.error('protego-totalum: needs jq, which the patronum hook uses to read tool calls. Install it and run again.');
+  process.exit(1);
+}
 
 const claudeConfigDirectory = process.env.CLAUDE_CONFIG_DIR ?? path.join(os.homedir(), '.claude');
 const hooksDirectory = path.join(claudeConfigDirectory, 'hooks', 'protego-totalum');
@@ -36,4 +43,8 @@ console.log(`  ${(settingsReport.changed ? 'updated' : 'unchanged').padEnd(10)}s
 for (const keyPath of settingsReport.skipped) console.log(`  ${'skipped'.padEnd(10)}${keyPath}`);
 if (settingsReport.skipped.length > 0) {
   console.log('\nSkipped keys already hold a value of your own and stay as they are.');
+}
+const skippedSandboxKeys = settingsReport.skipped.filter((keyPath) => keyPath.startsWith('sandbox.'));
+if (skippedSandboxKeys.length > 0) {
+  console.error(`\nprotego-totalum: the strict sandbox is not fully active, because your own value wins for ${skippedSandboxKeys.join(', ')}.`);
 }

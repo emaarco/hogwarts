@@ -7,7 +7,7 @@
 A script, not a plugin (plugins can't change user settings), that raises two shields in your user-level Claude Code config and keeps them up to date:
 
 - **The sandbox, set to strict.** Every shell command runs inside Claude Code's built-in OS sandbox. Writes stay in the working directory, and unknown hosts are refused.
-- **The patronum hook.** A PreToolUse hook blocks `Read`, `Write`, `Edit` and `MultiEdit` calls that touch secrets (`.env`, private keys, SSH, AWS, Docker, kube, npm and PyPI credentials), and `Bash` commands starting with `printenv`, sandbox or not. `**/.env.*` also covers `.env.example`. Blocks are logged to `~/.claude/patronum.log`.
+- **The patronum hook.** A PreToolUse hook blocks `Read`, `Write`, `Edit` and `MultiEdit` calls that touch secrets (`.env`, private keys, SSH, AWS, Docker, kube, npm and PyPI credentials, GitHub and GitLab CLI tokens, git and netrc logins, Claude Code's own login), and `Bash` commands starting with `printenv`, sandbox or not. `**/.env.*` also covers `.env.example`. Blocks are logged to `~/.claude/patronum.log` (or `$CLAUDE_CONFIG_DIR/patronum.log`).
 
 ## 🪄 Cast it
 
@@ -17,7 +17,7 @@ cd hogwarts
 npx ./tools/protego-totalum
 ```
 
-Restart Claude Code, then check: `/sandbox` shows **Strict sandbox mode**, and asking Claude to read a `.env` file gets blocked. Run it again whenever you pull. It needs Node 20+ and [`jq`](https://jqlang.github.io/jq/) for the hook. Try it on a scratch config first:
+Restart Claude Code, then check: `/sandbox` shows **Strict sandbox mode**, and asking Claude to read a `.env` file gets blocked. Run it again whenever you pull. It needs Node 20+ and [`jq`](https://jqlang.github.io/jq/) for the hook; the script stops without jq, and a hook that finds no jq blocks every call. Try it on a scratch config first:
 
 ```bash
 CLAUDE_CONFIG_DIR=/tmp/claude-test npx ./tools/protego-totalum
@@ -83,7 +83,7 @@ Full spellbook: [Claude Code → Sandboxing](https://code.claude.com/docs/en/san
 Shipped patterns live in [`hooks/patronum.json`](./hooks/patronum.json) and are overwritten on every run. Add your own as deny rules in `~/.claude/settings.json`, which the script never removes:
 
 ```json
-{ "permissions": { "deny": ["Read(~/.config/gh/hosts.yml)"] } }
+{ "permissions": { "deny": ["Read(~/.config/gcloud/**)"] } }
 ```
 
 `Read` deny rules also feed into the sandbox, so they stop sandboxed shell commands too.
