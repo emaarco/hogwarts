@@ -46,7 +46,9 @@ export class RulesSync {
   }
 
   static #curse(content) {
-    if (content.startsWith('---\n')) return `---\n${IMPERIO_CURSE}\n${content.slice('---\n'.length)}`;
-    return `---\n${IMPERIO_CURSE}\n---\n\n${content}`;
+    const [openingFence] = content.match(/^---\r?\n/) ?? [];
+    if (!openingFence) return `---\n${IMPERIO_CURSE}\n---\n\n${content}`;
+    const lineEnding = openingFence.slice('---'.length);
+    return `${openingFence}${IMPERIO_CURSE}${lineEnding}${content.slice(openingFence.length)}`;
   }
 }
