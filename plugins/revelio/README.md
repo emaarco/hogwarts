@@ -8,7 +8,7 @@ A Claude Code plugin that lists what failed in your repo so you can act on it: s
 
 ## 🪄 The spell
 
-Claude sometimes fails quietly. A Bash exits non-zero, auto mode refuses a write, the API rate-limits mid-turn. By the time you read the summary, the evidence has scrolled away — but Claude Code still has it in its session transcripts, `~/.claude/projects/<project>/<session>.jsonl`. **Revelio** reads them for you. No hooks, no extra log file.
+Claude sometimes fails quietly. A Bash exits non-zero, auto mode refuses a write, the API rate-limits mid-turn. By the time you read the summary, the evidence has scrolled away — but Claude Code still has it in its session transcripts, `~/.claude/projects/<project>/<session>.jsonl` (or under `$CLAUDE_CONFIG_DIR`), including those of its subagents. **Revelio** reads them for you. No hooks, no extra log file.
 
 ## 🔍 What it reveals
 

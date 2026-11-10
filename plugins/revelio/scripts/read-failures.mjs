@@ -10,8 +10,21 @@ const ERROR_TEXT_LIMIT = 500;
 const INPUT_TEXT_LIMIT = 300;
 const MESSAGE_TYPES = new Set(['user', 'assistant']);
 
-export function transcriptDirFor(projectRoot, home = os.homedir()) {
-  return path.join(home, '.claude', 'projects', projectRoot.replace(/[^a-zA-Z0-9]/g, '-'));
+export function transcriptDirFor(projectRoot, claudeConfigDir = process.env.CLAUDE_CONFIG_DIR ?? path.join(os.homedir(), '.claude')) {
+  return path.join(claudeConfigDir, 'projects', projectRoot.replace(/[^a-zA-Z0-9]/g, '-'));
+}
+
+function jsonlFilesIn(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir).filter(name => name.endsWith('.jsonl')).map(name => path.join(dir, name));
+}
+
+function transcriptPathsIn(transcriptDir) {
+  const sessionTranscripts = jsonlFilesIn(transcriptDir);
+  const subagentTranscripts = sessionTranscripts.flatMap(sessionPath =>
+    jsonlFilesIn(path.join(transcriptDir, path.basename(sessionPath, '.jsonl'), 'subagents')),
+  );
+  return [...sessionTranscripts, ...subagentTranscripts];
 }
 
 export function classifyToolError(entry, text) {
@@ -79,11 +92,9 @@ function isWithin(record, { session, since, until }) {
 }
 
 export async function collectFailures(transcriptDir, filters = {}) {
-  if (!fs.existsSync(transcriptDir)) return [];
-  const transcripts = fs.readdirSync(transcriptDir).filter(name => name.endsWith('.jsonl'));
   const records = [];
-  for (const name of transcripts) {
-    for await (const record of readFailures(path.join(transcriptDir, name))) {
+  for (const transcriptPath of transcriptPathsIn(transcriptDir)) {
+    for await (const record of readFailures(transcriptPath)) {
       if (isWithin(record, filters)) records.push(record);
     }
   }
