@@ -4,9 +4,9 @@
 
 **Get a repo into a state where agents — and humans — can ship safely, without doing the chores by hand.**
 
-These are the skills I use for that: an audit of what's missing, a protected default branch, releases that cut themselves, dependency updates that get green without me. Plus a handful of everyday chores I got tired of doing by hand.
+These are the skills I use for that: an audit of what's missing, a protected default branch, releases that cut themselves, dependency updates that get green without me. Plus a handful of everyday chores I got tired of.
 
-Each skill is small and does one thing. Most of them audit first, show you the evidence, and only then change anything. None of them need a build step, a hook, or a runtime dependency — they are plain `SKILL.md` files driving tools you already have (`gh`, `glab`, `npx`, `curl`).
+Each skill is small and does one thing. Most of them audit first, show you the evidence, and only then change anything; the ones that push or open PRs on their own say so below. None of them need a build step or a hook: they are plain `SKILL.md` files driving tools like `gh`, `glab`, `npx` and `jq`, and the few that need more (`resvg`, Graphviz) say so or install it on first run.
 
 ## ⚡ Install
 
@@ -23,7 +23,13 @@ Not sure where to start? Run [`/maturity-analysis`](./skills/maturity-analysis/S
 
 ## 🧪 Why These Skills Exist
 
-Every one of these started as a problem I hit more than twice. Links to `Miragon/skills` point to skills from the separate [Miragon skills](https://github.com/Miragon/skills) marketplace, which brew well with this one.
+Every one of these started as a problem I hit more than twice. Skills marked *(Miragon)* come from the separate [Miragon skills](https://github.com/Miragon/skills) marketplace, which brews well with this one:
+
+```text
+/plugin marketplace add Miragon/skills
+/plugin install miragon-github@miragon-agent-skills
+/plugin install miragon-implementation@miragon-agent-skills
+```
 
 ### #1: A Green Build Doesn't Mean What You Think
 
@@ -31,8 +37,8 @@ Every one of these started as a problem I hit more than twice. Links to `Miragon
 
 **The Fix** is immutable references and short-lived credentials:
 
-- [`/pin-github-actions`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-github-actions) — for workflow actions
-- [`/pin-node-dependencies`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-node-dependencies) — for npm dependencies
+- [`/pin-github-actions`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-github-actions) *(Miragon)* — for workflow actions
+- [`/pin-node-dependencies`](https://github.com/Miragon/skills/tree/main/plugins/miragon-implementation/skills/pin-node-dependencies) *(Miragon)* — for npm dependencies
 - [`/secure-publish-setup`](./skills/secure-publish-setup/SKILL.md) — for publishing
 - [`/release-audit`](./skills/release-audit/SKILL.md) — to check all of it at once
 
@@ -42,8 +48,8 @@ Every one of these started as a problem I hit more than twice. Links to `Miragon
 
 **The Fix** is less noise and fewer manual merges:
 
-- [`/dependabot-setup`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/dependabot-setup) — to group the updates
-- [`/automerge-setup`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/automerge-setup) — to merge the green ones
+- [`/dependabot-setup`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/dependabot-setup) *(Miragon)* — to group the updates
+- [`/automerge-setup`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/automerge-setup) *(Miragon)* — to merge the green ones
 - [`/dependency-update-shepherd`](./skills/dependency-update-shepherd/SKILL.md) — to rescue the red ones
 
 ### #3: Agents Erode Quality Quietly
@@ -63,7 +69,7 @@ Every one of these started as a problem I hit more than twice. Links to `Miragon
 **The Fix** is to derive releases from the commit history:
 
 - [`/release-please-setup`](./skills/release-please-setup/SKILL.md) — for versions, changelogs, and releases
-- [`/write-pr-description`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/write-pr-description) — for the commit titles it depends on
+- [`/write-pr-description`](https://github.com/Miragon/skills/tree/main/plugins/miragon-github/skills/write-pr-description) *(Miragon)* — for the commit titles it depends on
 
 ### #5: Parallel Agents Fight Over `localhost:3000`
 
@@ -87,7 +93,7 @@ Skills marked `beta` are new and not yet battle-tested on real repos — expect 
 Find out where a repo stands, then keep it there.
 
 - **[maturity-analysis](./skills/maturity-analysis/SKILL.md)**: Project overview, key files, a maturity assessment across six dimensions, and a prioritized issue list.
-- **[guardrails-setup](./skills/guardrails-setup/SKILL.md)** `beta`: Automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo. Can also audit existing gates.
+- **[guardrails-setup](./skills/guardrails-setup/SKILL.md)** `beta` `GitHub`: Automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo. Can also audit existing gates.
 - **[dependency-graph](./skills/dependency-graph/SKILL.md)** `beta`: Draws the folder-level import graph of a TS/JS or Java/Kotlin codebase: the whole picture first, then folder cycles and upward leaks against a layer order, each traced to the importing files, in a visual HTML report with recommendation cards. Offers the matching rules to enforce the layering.
 - **[close-external-prs](./skills/close-external-prs/SKILL.md)** `beta` `GitHub`: Stops accepting external pull requests: restricts PR creation to collaborators, closes open external PRs with a comment pointing to issues, and notes the policy in CONTRIBUTING.md.
 - **[branch-ruleset-setup](./skills/branch-ruleset-setup/SKILL.md)** `beta` `GitHub`: A GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
@@ -105,14 +111,13 @@ Immutable inputs, tokenless outputs.
 Less noise, fewer red PRs.
 
 - **[dependency-update-shepherd](./skills/dependency-update-shepherd/SKILL.md)** `beta`: Gets red or stale Renovate/Dependabot PRs on GitHub and MRs on GitLab mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
-- **[claude-ci-setup](./skills/claude-ci-setup/SKILL.md)** `GitHub`: Runs Claude unattended in GitHub Actions: checks the Claude GitHub App, a restricted environment and the subscription token, then adds a workflow per use case, such as repairing red Dependabot PRs.
 - **[optimize-github-actions](./skills/optimize-github-actions/SKILL.md)** `beta` `GitHub`: Finds wasted CI runs — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
 
 ### 🧰 Dev Environment
 
 For running many agents side by side.
 
-- **[portless-dev-setup](./skills/portless-dev-setup/SKILL.md)**: Sets up [portless](https://portless.sh) for stable, worktree-aware `.localhost` dev URLs on the JS/TS frontend dev server and wires it into Conductor.
+- **[portless-dev-setup](./skills/portless-dev-setup/SKILL.md)**: Sets up [portless](https://portless.sh) for stable, worktree-aware `.localhost` dev URLs on the JS/TS frontend dev server and wires it into [Conductor](https://conductor.build).
 - **[conductor-setup](./skills/conductor-setup/SKILL.md)**: Writes a repo's `.conductor/settings.toml`: a setup script, a menu of selectable run targets instead of one auto-starting script, and an archive script for cleanup.
 
 ### 🎫 Tickets & Pull Requests
@@ -122,20 +127,20 @@ For running many agents side by side.
 ### ✍️ Writing & Slides
 
 - **[translate-post](./skills/translate-post/SKILL.md)** `beta`: Translates a blog post, then loops a fresh reviewer agent over it until it reads as if written in the target language. Can also polish an existing translation.
-- **[medium-publish](./skills/medium-publish/SKILL.md)** `macOS`: Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V (macOS). Images become placeholders.
+- **[medium-publish](./skills/medium-publish/SKILL.md)** `macOS`: Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V. Images become `[Bild N]` placeholders.
 - **[slidev-toolkit-migration](./skills/slidev-toolkit-migration/SKILL.md)** `beta`: Migrates an existing [Slidev](https://sli.dev) deck onto the [Miragon slidev-toolkit template](https://github.com/Miragon/slidev-deck-template), slide by slide, each chapter built and verified before the next.
 
 ### 🧹 Everyday Chores
 
 General workflow tools, not code-specific.
 
-- **[clockify](./skills/clockify/SKILL.md)** `beta`: Reads and books [Clockify](https://clockify.me) time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars (the setup assumes `~/.zshrc` and the macOS Keychain); times are Europe/Berlin.
+- **[clockify](./skills/clockify/SKILL.md)** `beta`: Reads and books [Clockify](https://clockify.me) time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars (the setup assumes `~/.zshrc` and the macOS Keychain) and `jq`; output is partly German and times are Europe/Berlin.
 - **[bpmn-export](./skills/bpmn-export/SKILL.md)**: Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 - **[svg-to-png](./skills/svg-to-png/SKILL.md)** `beta`: Renders an SVG to a PNG locally with the [`resvg`](https://github.com/linebender/resvg) CLI, with optional scaling, DPI, background, or crop.
 
 ## 🦉 Help and feedback
 
-Found a bug or missing a skill? [Open an issue](https://github.com/emaarco/hogwarts/issues/new/choose). How to add or change a skill is in [CONTRIBUTING.md](../../CONTRIBUTING.md).
+Found a bug or missing a skill? [Open an issue](https://github.com/emaarco/hogwarts/issues/new/choose). Contributing: [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## 📜 License
 
