@@ -1,6 +1,8 @@
-# Sorting Hat
+# 🎩 Sorting Hat
 
 > *The Sorting Hat* — looks inside every plugin and skill and decides where each file belongs. Whatever fits no house gets called out.
+
+**Catch a broken plugin or skill before CI does.**
 
 Not a plugin and not for installing: dev tooling for this repo that CI runs on every push.
 
@@ -30,6 +32,6 @@ npm run validate
 
 Needs Node 24+.
 
-## License
+## 📜 License
 
-MIT
+[MIT](../../LICENSE)

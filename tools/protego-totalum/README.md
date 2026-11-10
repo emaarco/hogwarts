@@ -2,10 +2,12 @@
 
 > *Protego Totalum!* — the shield Hermione casts around the whole camp. Nothing gets in, nothing slips out.
 
+**Keep Claude Code away from your secrets, in every project on your machine.**
+
 This isn't a plugin. It's a script that raises two shields in your user-level Claude Code config and keeps them up to date:
 
 - **The sandbox, set to strict.** Every shell command runs inside Claude Code's built-in OS sandbox. Writes stay in the working directory, and unknown hosts are refused.
-- **The patronum hook.** A PreToolUse hook blocks `Read`, `Write`, `Edit`, `MultiEdit` and `Bash` calls that touch secrets (`.env`, private keys, SSH, AWS, Docker, kube, npm and PyPI credentials) or run `printenv`, sandbox or not.
+- **The patronum hook.** A PreToolUse hook blocks `Read`, `Write`, `Edit` and `MultiEdit` calls that touch secrets (`.env`, private keys, SSH, AWS, Docker, kube, npm and PyPI credentials), and `Bash` calls that run `printenv`, sandbox or not.
 
 ## 🪄 Cast it
 
@@ -13,7 +15,7 @@ This isn't a plugin. It's a script that raises two shields in your user-level Cl
 npx ./tools/protego-totalum
 ```
 
-Run it from a clone of this repo, and again whenever you pull. It needs Node 20+ and [`jq`](https://jqlang.github.io/jq/) for the hook. Try it on a scratch config first:
+Run it from a clone of this repo (`git clone https://github.com/emaarco/hogwarts.git`), and again whenever you pull. It needs Node 20+ and [`jq`](https://jqlang.github.io/jq/) for the hook. Try it on a scratch config first:
 
 ```bash
 CLAUDE_CONFIG_DIR=/tmp/claude-test npx ./tools/protego-totalum
@@ -84,14 +86,19 @@ Shipped patterns live in [`hooks/patronum.json`](./hooks/patronum.json) and are 
 
 `Read` deny rules also feed into the sandbox, so they stop sandboxed shell commands too.
 
-## 🔁 Migrating from agento-patronum
+## 🔁 Coming from agento-patronum
 
-`agento-patronum` and its skills are gone. Clean up by hand:
-
-- `/plugin uninstall agento-patronum@emaarco`, otherwise the hook runs twice.
-- Delete `~/.claude/patronum.json`. Keep `~/.claude/patronum.log` if you still want the old entries; the hook keeps writing to it.
+The old plugin is gone and needs a manual clean-up: see [Migrating from agento-patronum](docs/migrating-from-agento-patronum.md).
 
 ## 🤝 Related spells
 
-- [`revelio`](../revelio) — shows what got blocked.
-- [`imperio`](../imperio) — the same sync pattern, for code style rules.
+- [Revelio](../../plugins/revelio/) — shows what got blocked.
+- [Imperio](../imperio/) — the same sync pattern, for code style rules.
+
+## 🦉 Help and feedback
+
+A crack in the shield? [Open an issue](https://github.com/emaarco/hogwarts/issues/new/choose). How to work on the script is in [CONTRIBUTING.md](../../CONTRIBUTING.md) and [CLAUDE.md](CLAUDE.md).
+
+## 📜 License
+
+[MIT](../../LICENSE)

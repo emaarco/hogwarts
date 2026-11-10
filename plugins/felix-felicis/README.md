@@ -1,25 +1,29 @@
-# felix-felicis
+# 🍀 Felix Felicis
 
-Liquid luck for the boring parts of running a repo.
+> *Felix Felicis* — liquid luck. One sip, and the boring parts of running a repo go your way.
 
-These are the skills I use to get a repository into a state where agents — and humans — can ship safely: pinned dependencies, a protected default branch, releases that cut themselves, dependency updates that merge without me. Plus a handful of everyday chores I got tired of doing by hand.
+**Get a repo into a state where agents — and humans — can ship safely, without doing the chores by hand.**
+
+These are the skills I use for that: an audit of what's missing, a protected default branch, releases that cut themselves, dependency updates that get green without me. Plus a handful of everyday chores I got tired of doing by hand.
 
 Each skill is small and does one thing. Most of them audit first, show you the evidence, and only then change anything. None of them need a build step, a hook, or a runtime dependency — they are plain `SKILL.md` files driving tools you already have (`gh`, `glab`, `npx`, `curl`).
 
-## Installation
+## ⚡ Install
 
-```bash
+Inside Claude Code:
+
+```text
 /plugin marketplace add emaarco/hogwarts     # once per machine
 /plugin install felix-felicis@emaarco
 ```
 
-That's it. Every skill below is now available as a slash command, and Claude reaches for them on its own when a task matches.
+That's it. Every skill below is now a slash command. Most of them only run when you cast them; `bpmn-export` and `svg-to-png` Claude also reaches for on its own when a task matches.
 
 Not sure where to start? Run [`/maturity-analysis`](./skills/maturity-analysis/SKILL.md) on a repo. It tells you what's missing, and most of what it finds maps to one of the skills below.
 
-## Why These Skills Exist
+## 🧪 Why These Skills Exist
 
-Every one of these started as a problem I hit more than twice.
+Every one of these started as a problem I hit more than twice. Links to `Miragon/skills` point to skills from the separate [Miragon skills](https://github.com/Miragon/skills) marketplace, which brew well with this one.
 
 ### #1: A Green Build Doesn't Mean What You Think
 
@@ -72,62 +76,67 @@ Every one of these started as a problem I hit more than twice.
 
 ### Summary
 
-Pin it, protect it, automate it — then an agent can do real work in the repo without supervision.
+Pin it, protect it, automate it — then an agent can do real work in the repo without supervision. That's the luck.
 
-## Reference
+## 📖 Reference
 
-Skills marked `beta` are new and not yet battle-tested on real repos — expect rough edges and review their output more carefully.
+Skills marked `beta` are new and not yet battle-tested on real repos — expect rough edges and review their output more carefully. Skills marked `GitHub` work on GitHub only, `macOS` ones only on a Mac.
 
-### Repo Health
+### 🏥 Repo Health
 
 Find out where a repo stands, then keep it there.
 
 - **[maturity-analysis](./skills/maturity-analysis/SKILL.md)**: Project overview, key files, a maturity assessment across six dimensions, and a prioritized issue list.
 - **[guardrails-setup](./skills/guardrails-setup/SKILL.md)** `beta`: Automated quality gates (architecture rules, raise-only coverage, shrink-only debt lists) sized to the repo. Can also audit existing gates.
 - **[dependency-graph](./skills/dependency-graph/SKILL.md)** `beta`: Draws the folder-level import graph of a TS/JS or Java/Kotlin codebase: the whole picture first, then folder cycles and upward leaks against a layer order, each traced to the importing files, in a visual HTML report with recommendation cards. Offers the matching rules to enforce the layering.
-- **[close-external-prs](./skills/close-external-prs/SKILL.md)** `beta`: Stops accepting external pull requests: restricts PR creation to collaborators, closes open external PRs with a comment pointing to issues, and notes the policy in CONTRIBUTING.md.
-- **[branch-ruleset-setup](./skills/branch-ruleset-setup/SKILL.md)** `beta`: A GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
+- **[close-external-prs](./skills/close-external-prs/SKILL.md)** `beta` `GitHub`: Stops accepting external pull requests: restricts PR creation to collaborators, closes open external PRs with a comment pointing to issues, and notes the policy in CONTRIBUTING.md.
+- **[branch-ruleset-setup](./skills/branch-ruleset-setup/SKILL.md)** `beta` `GitHub`: A GitHub ruleset protecting the default branch: no deletion or force-push, linear history, signed commits, PR-only changes, and a required CI check.
 
-### Supply Chain & Releases
+### 🔒 Supply Chain & Releases
 
 Immutable inputs, tokenless outputs.
 
-- **[release-please-setup](./skills/release-please-setup/SKILL.md)** `beta`: Sets up release-please as a single or per-module release, audits an existing setup, or switches release forms without breaking tag and changelog history.
-- **[secure-publish-setup](./skills/secure-publish-setup/SKILL.md)** `beta`: Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, and a publish step that is safe to re-run.
-- **[release-audit](./skills/release-audit/SKILL.md)** `beta`: Audits release and supply-chain readiness against a gold-standard reference and returns a prioritized action plan, with fixes delegated to the matching setup skills.
+- **[release-please-setup](./skills/release-please-setup/SKILL.md)** `beta` `GitHub`: Sets up release-please as a single or per-module release, audits an existing setup, or switches release forms without breaking tag and changelog history.
+- **[secure-publish-setup](./skills/secure-publish-setup/SKILL.md)** `beta` `GitHub`: Tokenless npm publishing via OIDC trusted publishing: no `NPM_TOKEN` secret, automatic provenance attestations, and a publish step that is safe to re-run.
+- **[release-audit](./skills/release-audit/SKILL.md)** `beta` `GitHub`: Audits release and supply-chain readiness against a gold-standard reference and returns a prioritized action plan, with fixes delegated to the matching setup skills.
 
-### CI & Dependency Updates
+### 🤖 CI & Dependency Updates
 
 Less noise, fewer red PRs.
 
-- **[dependency-update-shepherd](./skills/dependency-update-shepherd/SKILL.md)** `beta`: Gets red or stale Renovate/Dependabot PRs/MRs mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
-- **[optimize-github-actions](./skills/optimize-github-actions/SKILL.md)** `beta`: Finds wasted CI runs — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
+- **[dependency-update-shepherd](./skills/dependency-update-shepherd/SKILL.md)** `beta`: Gets red or stale Renovate/Dependabot PRs on GitHub and MRs on GitLab mergeable without asking you: fixes the root-cause CI failure or holds the offending bump back. Merges only on request.
+- **[claude-ci-setup](./skills/claude-ci-setup/SKILL.md)** `GitHub`: Runs Claude unattended in GitHub Actions: checks the Claude GitHub App, a restricted environment and the subscription token, then adds a workflow per use case, such as repairing red Dependabot PRs.
+- **[optimize-github-actions](./skills/optimize-github-actions/SKILL.md)** `beta` `GitHub`: Finds wasted CI runs — duplicate PR runs, matrix job explosion, missing concurrency — and fixes trigger scoping without breaking required status checks.
 
-### Dev Environment
+### 🧰 Dev Environment
 
 For running many agents side by side.
 
 - **[portless-dev-setup](./skills/portless-dev-setup/SKILL.md)**: Sets up [portless](https://portless.sh) for stable, worktree-aware `.localhost` dev URLs on the JS/TS frontend dev server and wires it into Conductor.
 - **[conductor-setup](./skills/conductor-setup/SKILL.md)**: Writes a repo's `.conductor/settings.toml`: a setup script, a menu of selectable run targets instead of one auto-starting script, and an archive script for cleanup.
 
-### Tickets & Pull Requests
+### 🎫 Tickets & Pull Requests
 
-- **[make-me-awesome](./skills/make-me-awesome/SKILL.md)**: Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm. Usage: `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`.
+- **[make-me-awesome](./skills/make-me-awesome/SKILL.md)** `GitHub`: Researches a GitHub repo, picks the best-fit category in an awesome list, and submits it as a PR or issue after you confirm. Usage: `/make-me-awesome [REPO_TO_PROMOTE] [AWESOME_LIST_REPO]`.
 
-### Writing & Slides
+### ✍️ Writing & Slides
 
 - **[translate-post](./skills/translate-post/SKILL.md)** `beta`: Translates a blog post, then loops a fresh reviewer agent over it until it reads as if written in the target language. Can also polish an existing translation.
-- **[medium-publish](./skills/medium-publish/SKILL.md)**: Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V (macOS). Images become placeholders.
+- **[medium-publish](./skills/medium-publish/SKILL.md)** `macOS`: Copies a Markdown blog post to the clipboard as rich text and opens Medium's editor so you paste it with ⌘V (macOS). Images become placeholders.
 - **[slidev-toolkit-migration](./skills/slidev-toolkit-migration/SKILL.md)** `beta`: Migrates an existing [Slidev](https://sli.dev) deck onto the [Miragon slidev-toolkit template](https://github.com/Miragon/slidev-deck-template), slide by slide, each chapter built and verified before the next.
 
-### Everyday Chores
+### 🧹 Everyday Chores
 
 General workflow tools, not code-specific.
 
-- **[clockify](./skills/clockify/SKILL.md)** `beta`: Reads and books [Clockify](https://clockify.me) time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars; times are Europe/Berlin.
+- **[clockify](./skills/clockify/SKILL.md)** `beta`: Reads and books [Clockify](https://clockify.me) time entries and timers via its REST API, previewing every write for your confirmation. Needs the `CLOCKIFY_*` env vars (the setup assumes `~/.zshrc` and the macOS Keychain); times are Europe/Berlin.
 - **[bpmn-export](./skills/bpmn-export/SKILL.md)**: Exports a BPMN file to an image (SVG, PNG, or PDF) using `npx bpmn-to-image`.
 - **[svg-to-png](./skills/svg-to-png/SKILL.md)** `beta`: Renders an SVG to a PNG locally with the [`resvg`](https://github.com/linebender/resvg) CLI, with optional scaling, DPI, background, or crop.
 
-## License
+## 🦉 Help and feedback
 
-MIT
+Found a bug or missing a skill? [Open an issue](https://github.com/emaarco/hogwarts/issues/new/choose). How to add or change a skill is in [CONTRIBUTING.md](../../CONTRIBUTING.md).
+
+## 📜 License
+
+[MIT](../../LICENSE)

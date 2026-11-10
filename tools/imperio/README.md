@@ -1,8 +1,10 @@
-# Imperio
+# 🌀 Imperio
 
 > *Imperio* — the Imperius Curse. Puts your rules into the agent's head. Like Harry, it can still fight back.
 
-Not a plugin: a small script that keeps a set of path-scoped code style rules up to date in your user-level `~/.claude/rules/`.
+**Give Claude Code a code style in every project, loaded only when it touches matching files.**
+
+Not a plugin: a small script that keeps the code style rules below, written by the author of this repo, up to date in your user-level `~/.claude/rules/`.
 
 ## 🪄 The spell
 
@@ -27,7 +29,7 @@ A file counts as managed when its frontmatter contains `cursed-by: imperio`. Imp
 
 ## ⚡ Run
 
-From a clone of this repo:
+From a clone of this repo (`git clone https://github.com/emaarco/hogwarts.git`):
 
 ```bash
 npx ./tools/imperio
@@ -46,6 +48,10 @@ Needs Node 20+.
 - **No enforcement.** The curse can be resisted. A rule in context is guidance, not a check. Use a linter for that.
 - **No project rules.** Imperio only writes to the user-level folder. Rules that belong to one repo go into that repo's `.claude/rules/`.
 
-## License
+## 🦉 Help and feedback
 
-MIT
+A rule that misfires? [Open an issue](https://github.com/emaarco/hogwarts/issues/new/choose). How to work on the script is in [CONTRIBUTING.md](../../CONTRIBUTING.md) and [CLAUDE.md](CLAUDE.md).
+
+## 📜 License
+
+[MIT](../../LICENSE)

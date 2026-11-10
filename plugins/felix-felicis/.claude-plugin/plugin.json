@@ -1,6 +1,6 @@
 {
   "name": "felix-felicis",
-  "description": "Everyday automation skills — repo analysis, awesome-list submissions, and Medium publishing.",
+  "description": "Liquid luck for running a repo — audits, branch protection, releases, dependency updates and everyday chores.",
   "version": "4.0.0",
   "author": {
     "name": "emaarco"
