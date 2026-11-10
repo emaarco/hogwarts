@@ -9,9 +9,9 @@ import { fileURLToPath } from 'node:url';
 const cli = fileURLToPath(new URL('./protego-totalum.mjs', import.meta.url));
 const shippedHooksDirectory = fileURLToPath(new URL('../hooks', import.meta.url));
 
-function runProtegoTotalum(claudeConfigDirectory) {
-  return spawnSync('node', [cli], {
-    env: { ...process.env, CLAUDE_CONFIG_DIR: claudeConfigDirectory },
+function runProtegoTotalum(claudeConfigDirectory, env = {}) {
+  return spawnSync(process.execPath, [cli], {
+    env: { ...process.env, CLAUDE_CONFIG_DIR: claudeConfigDirectory, ...env },
     encoding: 'utf8',
   });
 }
@@ -57,4 +57,24 @@ test('stops without writing anything when the settings file is not valid JSON', 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /is not valid JSON/);
   assert.deepEqual(fs.readdirSync(claudeConfigDirectory), ['settings.json']);
+});
+
+test('stops without writing anything when jq is missing', () => {
+  const claudeConfigDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'protego-totalum-config-'));
+
+  const result = runProtegoTotalum(claudeConfigDirectory, { PATH: '/nonexistent' });
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /needs jq/);
+  assert.deepEqual(fs.readdirSync(claudeConfigDirectory), []);
+});
+
+test('warns that the strict sandbox is not active when a sandbox key of the user is skipped', () => {
+  const claudeConfigDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'protego-totalum-config-'));
+  fs.writeFileSync(path.join(claudeConfigDirectory, 'settings.json'), '{ "sandbox": { "enabled": false } }');
+
+  const result = runProtegoTotalum(claudeConfigDirectory);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stderr, /strict sandbox is not fully active/);
 });
