@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/emaarco/hogwarts/compare/revelio-v2.0.0...revelio-v2.0.1) (2026-11-12)
+
+
+### Bug Fixes
+
+* **revelio:** read transcripts from CLAUDE_CONFIG_DIR and include subagent transcripts ([#160](https://github.com/emaarco/hogwarts/issues/160)) ([24dbe0a](https://github.com/emaarco/hogwarts/commit/24dbe0a6ce37eb93d7ba335054fc1553a4d0a88c))
+
 ## [2.0.0](https://github.com/emaarco/hogwarts/compare/revelio-v1.0.0...revelio-v2.0.0) (2026-11-03)
 
 
